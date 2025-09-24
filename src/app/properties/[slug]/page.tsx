@@ -9,9 +9,9 @@ import { Property } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
 interface PropertyDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
@@ -41,8 +41,8 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             // Set initial image
             let initialImage = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop';
             
-            if (foundProperty.featured_image && foundProperty.featured_image.trim() !== '') {
-              initialImage = foundProperty.featured_image;
+            if (foundProperty.images && foundProperty.images.length > 0 && foundProperty.images[0].trim() !== '') {
+              initialImage = foundProperty.images[0];
             }
             
             setSelectedImage(initialImage);
@@ -59,24 +59,23 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             const mockProperty = {
               id: 999,
               slug: resolvedParams.slug,
-              name: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-              featured_image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop',
+              title: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              images: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop'],
               price: 450000,
-              sale_price: 425000,
               description: 'This is a beautiful property with modern amenities and excellent location.',
-              long_description: 'Experience luxury living in this stunning property. Featuring modern design, premium finishes, and excellent connectivity. Perfect for families looking for comfort and convenience.',
-              property_type: 'House',
+              location: 'Downtown',
+              type: 'House',
               bedrooms: 4,
               bathrooms: 3,
-              area: '2,500 sq ft',
-              year_built: '2020',
-              location: 'Downtown',
+              area: 2500,
+              amenities: ['Parking', 'Garden', 'Swimming Pool', 'Gym'],
               status: 'publish',
-              stock_quantity: 1
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z'
             };
             
             setProperty(mockProperty);
-            setSelectedImage(mockProperty.featured_image);
+            setSelectedImage(mockProperty.images[0]);
           }
         }
       } catch (err) {
@@ -86,24 +85,23 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
         const fallbackProperty = {
           id: 999,
           slug: resolvedParams.slug,
-          name: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-          featured_image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop',
+          title: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          images: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop'],
           price: 450000,
-          sale_price: 425000,
           description: 'This is a beautiful property with modern amenities and excellent location.',
-          long_description: 'Experience luxury living in this stunning property. Featuring modern design, premium finishes, and excellent connectivity.',
-          property_type: 'House',
+          location: 'Downtown',
+          type: 'House',
           bedrooms: 4,
           bathrooms: 3,
-          area: '2,500 sq ft',
-          year_built: '2020',
-          location: 'Downtown',
+          area: 2500,
+          amenities: ['Parking', 'Garden', 'Swimming Pool', 'Gym'],
           status: 'publish',
-          stock_quantity: 1
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z'
         };
         
         setProperty(fallbackProperty);
-        setSelectedImage(fallbackProperty.featured_image);
+        setSelectedImage(fallbackProperty.images[0]);
       } finally {
         setLoading(false);
       }
@@ -118,12 +116,13 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
     // Add property to cart
     addToCart({
       productId: property.id.toString(),
-      name: property.name,
-      price: parseFloat((property.sale_price || property.price).toString()),
+      name: property.title,
+      price: parseFloat(property.price.toString()),
       quantity: quantity,
       image: selectedImage,
-      vendor: property.business_name || 'Property Dealer',
-      sku: property.sku || property.slug,
+      slug: property.slug,
+      vendor: 'Property Dealer',
+      sku: property.slug,
     });
     
     // Open the cart drawer
@@ -131,18 +130,8 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
   };
 
   const getGalleryImages = () => {
-    if (!property?.gallery) return [selectedImage];
-    
-    try {
-      if (typeof property.gallery === 'string') {
-        const parsedGallery = JSON.parse(property.gallery);
-        return Array.isArray(parsedGallery) ? parsedGallery : [selectedImage];
-      }
-      return Array.isArray(property.gallery) ? property.gallery : [selectedImage];
-    } catch (e) {
-      console.error("Failed to parse gallery:", e);
-      return [selectedImage];
-    }
+    if (!property?.images || property.images.length === 0) return [selectedImage];
+    return property.images;
   };
 
   const galleryImages = getGalleryImages();
@@ -195,7 +184,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><Link href="/">Home</Link></li>
               <li className="breadcrumb-item"><Link href="/properties">Properties</Link></li>
-              <li className="breadcrumb-item active" aria-current="page">{property.name}</li>
+              <li className="breadcrumb-item active" aria-current="page">{property.title}</li>
             </ol>
           </nav>
 
@@ -206,7 +195,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                 <div className="main-image mb-3">
                   <Image
                     src={selectedImage || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop'}
-                    alt={property.name}
+                    alt={property.title}
                     width={600}
                     height={600}
                     className="img-fluid rounded"
@@ -221,7 +210,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                     >
                       <Image
                         src={img || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=100&h=100&fit=crop'}
-                        alt={`${property.name} thumbnail ${index + 1}`}
+                        alt={`${property.title} thumbnail ${index + 1}`}
                         width={100}
                         height={100}
                         className="img-fluid rounded"
@@ -235,9 +224,9 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             {/* Property Details */}
             <div className="col-lg-6">
               <div className="property-details">
-                <h1 className="property-title">{property.name}</h1>
+                <h1 className="property-title">{property.title}</h1>
                 <div className="property-meta mb-3">
-                  <span className="type me-3">Type: <strong>{property.property_type || 'House'}</strong></span>
+                  <span className="type me-3">Type: <strong>{property.type || 'House'}</strong></span>
                   <span className="location">Location: <strong>{property.location || 'Downtown'}</strong></span>
                 </div>
 
@@ -255,11 +244,6 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
 
                 <div className="property-price mb-4">
                   <span className="current-price">${property.price?.toLocaleString() || '450,000'}</span>
-                  {property.sale_price && (
-                    <span className="compare-price ms-2">
-                      <del>${property.sale_price.toLocaleString()}</del>
-                    </span>
-                  )}
                 </div>
 
                 <p className="property-description mb-4">
@@ -291,8 +275,8 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                 </div>
 
                 <div className="property-stock mb-4">
-                  <span className={`badge ${property.stock_quantity > 0 ? 'bg-success' : 'bg-danger'}`}>
-                    {property.stock_quantity > 0 ? 'Available' : 'Not Available'}
+                  <span className="badge bg-success">
+                    Available
                   </span>
                 </div>
 
@@ -313,10 +297,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                     </div>
                     <div className="col-6">
                       <div className="spec-item">
-                        <strong>Year Built:</strong> {property.year_built || 'N/A'}
-                      </div>
-                      <div className="spec-item">
-                        <strong>Property Type:</strong> {property.property_type || 'N/A'}
+                        <strong>Property Type:</strong> {property.type || 'House'}
                       </div>
                       <div className="spec-item">
                         <strong>Location:</strong> {property.location || 'N/A'}
@@ -335,7 +316,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                     </h2>
                     <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#propertyDetailsAccordion">
                       <div className="accordion-body">
-                        {property.long_description || property.description || 'No detailed description available.'}
+                        {property.description || 'No detailed description available.'}
                       </div>
                     </div>
                   </div>
@@ -466,8 +447,8 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             {relatedProperties.map((relatedProperty) => {
               let relatedImageUrl = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&h=300&fit=crop';
               
-              if (relatedProperty.featured_image && relatedProperty.featured_image.trim() !== '') {
-                relatedImageUrl = relatedProperty.featured_image;
+              if (relatedProperty.images && relatedProperty.images.length > 0 && relatedProperty.images[0].trim() !== '') {
+                relatedImageUrl = relatedProperty.images[0];
               }
 
               return (
@@ -478,7 +459,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                         <div className="related-property-image">
                           <Image
                             src={relatedImageUrl}
-                            alt={relatedProperty.name}
+                            alt={relatedProperty.title}
                             width={300}
                             height={300}
                             className="img-fluid"
@@ -488,27 +469,17 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                       
                       {/* Property Badges */}
                       <div className="related-property-badges">
-                        {relatedProperty.is_featured && (
-                          <span className="badge badge-featured">Featured</span>
-                        )}
-                        {relatedProperty.sale_price && (
-                          <span className="badge badge-sale">Sale</span>
-                        )}
+                        <span className="badge badge-featured">Featured</span>
                       </div>
                     </div>
 
                     <div className="related-property-info">
                       <h4 className="related-property-title">
-                        <Link href={`/properties/${relatedProperty.slug}`}>{relatedProperty.name}</Link>
+                        <Link href={`/properties/${relatedProperty.slug}`}>{relatedProperty.title}</Link>
                       </h4>
                       
                       <div className="related-property-price">
                         <span className="current-price">${relatedProperty.price?.toLocaleString() || '450,000'}</span>
-                        {relatedProperty.sale_price && (
-                          <span className="compare-price">
-                            <del>${relatedProperty.sale_price.toLocaleString()}</del>
-                          </span>
-                        )}
                       </div>
 
                       {/* Rating */}

@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 import Image from 'next/image';
-import { apiService, Auction } from '@/services/api';
+import { apiService } from '@/services/api';
+import { Auction } from '@/types';
 
 export default function AuctionsPage() {
   const [auctions, setAuctions] = useState<Auction[]>([]);
@@ -28,7 +29,11 @@ export default function AuctionsPage() {
   });
 
   // Available filter options
-  const [filterOptions, setFilterOptions] = useState({
+  const [filterOptions, setFilterOptions] = useState<{
+    categories: string[];
+    sellers: string[];
+    statuses: string[];
+  }>({
     categories: [],
     sellers: [],
     statuses: ['live', 'ending_soon', 'upcoming', 'ended']
@@ -47,7 +52,7 @@ export default function AuctionsPage() {
           setFilteredAuctions(auctionsData);
           
           // Extract filter options from data
-          const categories = [...new Set(auctionsData.map(a => a.category).filter(Boolean))];
+          const categories = [...new Set(auctionsData.map(a => a.category_name).filter((name): name is string => Boolean(name)))];
           const sellers = [...new Set(auctionsData.map(a => a.seller_name).filter(Boolean))];
           
           setFilterOptions({
@@ -77,7 +82,7 @@ export default function AuctionsPage() {
       filtered = filtered.filter(auction =>
         auction.product_name?.toLowerCase().includes(searchTerm) ||
         auction.seller_name?.toLowerCase().includes(searchTerm) ||
-        auction.category?.toLowerCase().includes(searchTerm)
+        auction.category_name?.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -96,7 +101,7 @@ export default function AuctionsPage() {
     // Category filter
     if (filters.category) {
       filtered = filtered.filter(auction => 
-        auction.category === filters.category
+        auction.category_name === filters.category
       );
     }
 
@@ -156,10 +161,18 @@ export default function AuctionsPage() {
     // Sorting
     switch (sortBy) {
       case 'newest':
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        filtered.sort((a, b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateB - dateA;
+        });
         break;
       case 'oldest':
-        filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        filtered.sort((a, b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateA - dateB;
+        });
         break;
       case 'highest_bid':
         filtered.sort((a, b) => (b.current_bid || 0) - (a.current_bid || 0));

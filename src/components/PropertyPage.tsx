@@ -31,7 +31,7 @@ interface PropertyPageProps {
       agency: string;
       avatar: string;
     };
-    specifications: any;
+    specifications: Record<string, unknown>;
     nearbyAmenities: Array<{
       name: string;
       distance: string;

@@ -4,13 +4,14 @@ import React, { useEffect, useState, use } from 'react';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
-import { apiService, Auction } from '@/services/api';
+import { apiService } from '@/services/api';
+import { Auction } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuctionDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function AuctionDetailPage({ params }: AuctionDetailPageProps) {

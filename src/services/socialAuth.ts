@@ -1,25 +1,7 @@
 // Social Authentication Service
 import { apiService } from './api';
 
-interface GoogleUser {
-  id: string;
-  email: string;
-  name: string;
-  picture: string;
-  given_name: string;
-  family_name: string;
-}
-
-interface FacebookUser {
-  id: string;
-  email: string;
-  name: string;
-  picture: {
-    data: {
-      url: string;
-    };
-  };
-}
+// Removed unused interfaces to fix build warnings
 
 class SocialAuthService {
   private googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
@@ -49,9 +31,10 @@ class SocialAuthService {
   }
 
   // Handle Google Sign-In Response
-  private async handleGoogleResponse(response: any) {
+  private async handleGoogleResponse(response: unknown) {
     try {
-      const credential = response.credential;
+      const responseObj = response as Record<string, unknown>;
+      const credential = responseObj.credential as string;
       const payload = this.parseJwt(credential);
       
       const userData = {
@@ -94,9 +77,11 @@ class SocialAuthService {
   async handleFacebookLogin() {
     return new Promise((resolve, reject) => {
       if (typeof window !== 'undefined' && window.FB) {
-        window.FB.login((response: any) => {
-          if (response.authResponse) {
-            this.getFacebookUserData(response.authResponse.accessToken)
+        window.FB.login((response: unknown) => {
+          const responseObj = response as Record<string, unknown>;
+          if (responseObj.authResponse) {
+            const authResponse = responseObj.authResponse as Record<string, unknown>;
+            this.getFacebookUserData(authResponse.accessToken as string)
               .then(resolve)
               .catch(reject);
           } else {
@@ -113,13 +98,16 @@ class SocialAuthService {
   private async getFacebookUserData(accessToken: string) {
     try {
       return new Promise((resolve, reject) => {
-        window.FB.api('/me', { fields: 'id,name,email,picture' }, async (response: any) => {
-          if (response && !response.error) {
+        window.FB.api('/me', { fields: 'id,name,email,picture' }, async (response: unknown) => {
+          const responseObj = response as Record<string, unknown>;
+          if (responseObj && !responseObj.error) {
+            const picture = responseObj.picture as Record<string, unknown>;
+            const pictureData = picture?.data as Record<string, unknown>;
             const userData = {
-              id: response.id,
-              email: response.email,
-              name: response.name,
-              picture: response.picture?.data?.url || '',
+              id: responseObj.id as string,
+              email: responseObj.email as string,
+              name: responseObj.name as string,
+              picture: pictureData?.url as string || '',
               provider: 'facebook',
               access_token: accessToken
             };
@@ -142,7 +130,7 @@ class SocialAuthService {
   }
 
   // Authenticate with backend
-  private async authenticateWithBackend(userData: any) {
+  private async authenticateWithBackend(userData: Record<string, unknown>) {
     try {
       const response = await apiService.socialLogin(userData);
       return response;
@@ -193,8 +181,8 @@ class SocialAuthService {
 // Extend Window interface for TypeScript
 declare global {
   interface Window {
-    google: any;
-    FB: any;
+    google: Record<string, unknown>;
+    FB: Record<string, unknown>;
   }
 }
 

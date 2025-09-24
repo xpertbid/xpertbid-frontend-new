@@ -37,11 +37,11 @@ export default function VehiclesPage() {
   // Transform API data to match component expectations
   const displayVehicles = vehicles.map(vehicle => ({
     id: vehicle.id,
-    name: vehicle.name || 'Vehicle',
+    name: vehicle.title || 'Vehicle',
     slug: vehicle.slug || `vehicle-${vehicle.id}`,
     price: vehicle.price || 0,
-    comparePrice: vehicle.sale_price,
-    image: vehicle.featured_image || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop',
+    comparePrice: undefined,
+    image: vehicle.images?.[0] || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop',
     rating: 4.5,
     reviewsCount: Math.floor(Math.random() * 50) + 10,
     year: vehicle.year || 2023,

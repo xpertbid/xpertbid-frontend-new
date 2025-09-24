@@ -43,7 +43,7 @@ const CartPage: React.FC = () => {
                   Your cart is empty
                 </h3>
                 <p className="text-muted mb-4">
-                  Looks like you haven't added any items to your cart yet.
+                  Looks like you haven&apos;t added any items to your cart yet.
                 </p>
                 <Link href="/shop" className="btn btn-primary btn-lg">
                   <i className="fas fa-shopping-bag me-2"></i>

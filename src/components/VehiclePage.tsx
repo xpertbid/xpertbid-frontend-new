@@ -30,7 +30,7 @@ interface VehiclePageProps {
     condition: string;
     warranty: string;
     features: string[];
-    specifications: any;
+    specifications: Record<string, unknown>;
     dealer: {
       name: string;
       phone: string;

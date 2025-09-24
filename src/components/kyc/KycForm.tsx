@@ -24,13 +24,25 @@ const KycForm: React.FC<KycFormProps> = ({ kycType, documentId, onSuccess, onCan
 
   useEffect(() => {
     if (isEditMode && currentDocument) {
-      setFormData(currentDocument.data || {});
-      setSelectedKycType(currentDocument.type);
+      setFormData(currentDocument.documents || {});
+      // Find the kyc type name from the kyc_type_id
+      const kycType = kycTypes.find(type => type.id === currentDocument.kyc_type_id);
+      setSelectedKycType(kycType ? kycType.name : '');
     }
   }, [isEditMode, currentDocument]);
 
-  const availableTypes = Object.keys(kycTypes);
-  const currentTypeFields = kycService.getKycTypeFields(kycTypes, selectedKycType);
+  const availableTypes = kycTypes.map(type => type.name);
+  // Get fields for the selected KYC type
+  const currentTypeFields = (() => {
+    const kycType = kycTypes.find(type => type.name === selectedKycType);
+    if (kycType) {
+      return {
+        required: kycType.required_fields || [],
+        optional: []
+      };
+    }
+    return { required: [], optional: [] };
+  })();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -102,9 +114,9 @@ const KycForm: React.FC<KycFormProps> = ({ kycType, documentId, onSuccess, onCan
       }
 
       onSuccess();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting KYC:', error);
-      setErrors({ general: error.message || 'Failed to submit KYC. Please try again.' });
+      setErrors({ general: error instanceof Error ? error.message : 'Failed to submit KYC. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }

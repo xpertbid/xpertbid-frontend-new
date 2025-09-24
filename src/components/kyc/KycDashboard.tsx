@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useKyc } from '@/contexts/KycContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { User } from '@/types';
 import { kycService } from '@/services/kycService';
 import KycForm from './KycForm';
 import KycDocumentCard from './KycDocumentCard';
 
 interface KycDashboardProps {
-  user?: any;
+  user?: User;
 }
 
 const KycDashboard: React.FC<KycDashboardProps> = ({ user }) => {
@@ -70,8 +71,11 @@ const KycDashboard: React.FC<KycDashboardProps> = ({ user }) => {
     );
   }
 
-  const availableTypes = Object.keys(kycTypes);
-  const submittedTypes = documents.map(doc => doc.type);
+  const availableTypes = kycTypes.map(type => type.name);
+  const submittedTypes = documents.map(doc => {
+    const kycType = kycTypes.find(type => type.id === doc.kyc_type_id);
+    return kycType ? kycType.name : 'Unknown';
+  });
   const pendingDocuments = documents.filter(doc => doc.status === 'pending' || doc.status === 'under_review');
   const approvedDocuments = documents.filter(doc => doc.status === 'approved');
   const rejectedDocuments = documents.filter(doc => doc.status === 'rejected');
@@ -153,7 +157,10 @@ const KycDashboard: React.FC<KycDashboardProps> = ({ user }) => {
             <div className="row">
               {availableTypes.map(type => {
                 const isSubmitted = submittedTypes.includes(type);
-                const userDocument = documents.find(doc => doc.type === type);
+                const userDocument = documents.find(doc => {
+                  const kycType = kycTypes.find(kt => kt.id === doc.kyc_type_id);
+                  return kycType && kycType.name === type;
+                });
                 const status = userDocument?.status;
                 
                 return (

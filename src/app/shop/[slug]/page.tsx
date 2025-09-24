@@ -9,9 +9,9 @@ import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
@@ -59,8 +59,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             setSelectedImage(initialImage);
             
             // Fetch related products from the same category
-            const relatedProductsData = productsResponse.data.filter(p => 
-              p.category_id === foundProduct.category_id && 
+            const relatedProductsData = productsResponse.data.filter(p =>
+              p.category_name === foundProduct.category_name &&
               p.id !== foundProduct.id &&
               p.status === 'publish'
             ).slice(0, 4); // Show 4 related products
@@ -91,6 +91,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
       price: parseFloat((product.sale_price || product.price).toString()),
       quantity: quantity,
       image: selectedImage,
+      slug: product.slug,
       vendor: product.business_name || 'Unknown Vendor',
       sku: product.sku,
     });

@@ -7,6 +7,7 @@ export interface User {
   phone?: string;
   status: string;
   avatar?: string;
+  role?: 'ecommerce' | 'vendor' | 'bidder' | 'auction_seller' | 'property_buyer' | 'property_seller';
   created_at: string;
   updated_at: string;
 }
@@ -62,6 +63,8 @@ export interface Auction {
   status: string;
   description?: string;
   category_name?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Property {
@@ -140,11 +143,19 @@ export interface ApiResponse<T> {
 
 export interface CartItem {
   id: string;
+  productId: string;
   name: string;
   price: number;
+  salePrice?: number;
   quantity: number;
   image: string;
   slug: string;
+  variations?: {
+    size?: string;
+    color?: string;
+  };
+  vendor: string;
+  sku: string;
 }
 
 export interface Bid {
@@ -154,6 +165,9 @@ export interface Bid {
   bidder_email: string;
   bid_amount: number;
   created_at: string;
+  auction_status?: string;
+  product_name?: string;
+  product_image?: string;
 }
 
 export interface KycType {

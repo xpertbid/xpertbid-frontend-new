@@ -1,22 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-
-interface CartItem {
-  id: string;
-  productId: string;
-  name: string;
-  price: number;
-  salePrice?: number;
-  quantity: number;
-  image: string;
-  variations?: {
-    size?: string;
-    color?: string;
-  };
-  vendor: string;
-  sku: string;
-}
+import { CartItem } from '@/types';
 
 interface CartState {
   items: CartItem[];
@@ -130,7 +115,7 @@ const calculateTotals = (state: CartState): CartState => {
   };
 };
 
-const generateCartItemId = (productId: string, variations?: any): string => {
+const generateCartItemId = (productId: string, variations?: Record<string, unknown>): string => {
   const variationString = variations ? JSON.stringify(variations) : '';
   return `${productId}_${variationString}`.replace(/[^a-zA-Z0-9_]/g, '_');
 };

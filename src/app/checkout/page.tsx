@@ -5,7 +5,8 @@ import Layout from '@/components/Layout';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiService, PaymentGateway } from '@/services/api';
+import { apiService } from '@/services/api';
+import { PaymentGateway } from '@/types';
 import Image from 'next/image';
 
 export default function CheckoutPage() {

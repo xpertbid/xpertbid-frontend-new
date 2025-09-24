@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { apiService } from '@/services/api';
-import { User, AuthResponse, LoginFormData, RegisterFormData } from '@/types';
+import { User, RegisterFormData } from '@/types';
 
 interface AuthState {
   user: User | null;
@@ -97,8 +97,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = localStorage.getItem('auth_user');
 
         if (token && userData) {
-          const user = JSON.parse(userData);
-          
           // Set token in API service
           apiService.setAuthToken(token);
           
@@ -117,7 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               apiService.removeAuthToken();
               dispatch({ type: 'AUTH_LOGOUT' });
             }
-          } catch (error) {
+          } catch {
             // Token is invalid, clear storage
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_user');

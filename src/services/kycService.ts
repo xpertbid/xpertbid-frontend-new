@@ -5,7 +5,7 @@ export interface KycDocument {
   user_id: number;
   type: 'user' | 'vendor' | 'property' | 'vehicle' | 'auction';
   status: 'pending' | 'approved' | 'rejected' | 'under_review';
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   documents: string[];
   admin_notes?: string;
   reviewed_at?: string;
@@ -26,7 +26,7 @@ export interface KycDocument {
 
 export interface KycFormData {
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   documents?: File[];
 }
 

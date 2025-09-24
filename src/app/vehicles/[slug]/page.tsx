@@ -9,9 +9,9 @@ import { Vehicle } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
 interface VehicleDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
@@ -41,8 +41,8 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
             // Set initial image
             let initialImage = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop';
             
-            if (foundVehicle.featured_image && foundVehicle.featured_image.trim() !== '') {
-              initialImage = foundVehicle.featured_image;
+            if (foundVehicle.images && foundVehicle.images.length > 0 && foundVehicle.images[0].trim() !== '') {
+              initialImage = foundVehicle.images[0];
             }
             
             setSelectedImage(initialImage);
@@ -59,27 +59,27 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
             const mockVehicle = {
               id: 999,
               slug: resolvedParams.slug,
-              name: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-              featured_image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop',
+              title: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              images: ['https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop'],
               price: 25000,
-              sale_price: 23000,
               description: 'This is a premium vehicle with excellent features and performance.',
-              long_description: 'Experience the perfect blend of style, comfort, and performance. This vehicle offers cutting-edge technology, superior safety features, and an exhilarating driving experience. Perfect for both city driving and long road trips.',
-              year: '2023',
+              year: 2023,
               make: 'Honda',
               model: 'Civic',
-              mileage: '15,000 miles',
+              mileage: 15000,
               fuel_type: 'Gasoline',
               transmission: 'Automatic',
               body_type: 'Sedan',
               color: 'White',
               condition: 'Excellent',
+              features: ['Air Conditioning', 'Power Steering', 'Bluetooth'],
               status: 'publish',
-              stock_quantity: 1
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z'
             };
             
             setVehicle(mockVehicle);
-            setSelectedImage(mockVehicle.featured_image);
+            setSelectedImage(mockVehicle.images[0]);
           }
         }
       } catch (err) {
@@ -89,27 +89,27 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
         const fallbackVehicle = {
           id: 999,
           slug: resolvedParams.slug,
-          name: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-          featured_image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop',
+          title: resolvedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          images: ['https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop'],
           price: 25000,
-          sale_price: 23000,
           description: 'This is a premium vehicle with excellent features and performance.',
-          long_description: 'Experience the perfect blend of style, comfort, and performance. This vehicle offers cutting-edge technology, superior safety features, and an exhilarating driving experience.',
-          year: '2023',
+          year: 2023,
           make: 'Honda',
           model: 'Civic',
-          mileage: '15,000 miles',
+          mileage: 15000,
           fuel_type: 'Gasoline',
           transmission: 'Automatic',
           body_type: 'Sedan',
           color: 'White',
           condition: 'Excellent',
+          features: ['Air Conditioning', 'Power Steering', 'Bluetooth'],
           status: 'publish',
-          stock_quantity: 1
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z'
         };
         
         setVehicle(fallbackVehicle);
-        setSelectedImage(fallbackVehicle.featured_image);
+        setSelectedImage(fallbackVehicle.images[0]);
       } finally {
         setLoading(false);
       }
@@ -124,12 +124,13 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
     // Add vehicle to cart
     addToCart({
       productId: vehicle.id.toString(),
-      name: vehicle.name,
-      price: parseFloat((vehicle.sale_price || vehicle.price).toString()),
+      name: vehicle.title,
+      price: parseFloat(vehicle.price.toString()),
       quantity: quantity,
       image: selectedImage,
-      vendor: vehicle.business_name || 'Vehicle Dealer',
-      sku: vehicle.sku || vehicle.slug,
+      slug: vehicle.slug,
+      vendor: 'Vehicle Dealer',
+      sku: vehicle.slug,
     });
     
     // Open the cart drawer
@@ -137,18 +138,8 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
   };
 
   const getGalleryImages = () => {
-    if (!vehicle?.gallery) return [selectedImage];
-    
-    try {
-      if (typeof vehicle.gallery === 'string') {
-        const parsedGallery = JSON.parse(vehicle.gallery);
-        return Array.isArray(parsedGallery) ? parsedGallery : [selectedImage];
-      }
-      return Array.isArray(vehicle.gallery) ? vehicle.gallery : [selectedImage];
-    } catch (e) {
-      console.error("Failed to parse gallery:", e);
-      return [selectedImage];
-    }
+    if (!vehicle?.images || vehicle.images.length === 0) return [selectedImage];
+    return vehicle.images;
   };
 
   const galleryImages = getGalleryImages();
@@ -201,7 +192,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><Link href="/">Home</Link></li>
               <li className="breadcrumb-item"><Link href="/vehicles">Vehicles</Link></li>
-              <li className="breadcrumb-item active" aria-current="page">{vehicle.name}</li>
+              <li className="breadcrumb-item active" aria-current="page">{vehicle.title}</li>
             </ol>
           </nav>
 
@@ -212,7 +203,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                 <div className="main-image mb-3">
                   <Image
                     src={selectedImage || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop'}
-                    alt={vehicle.name}
+                    alt={vehicle.title}
                     width={600}
                     height={600}
                     className="img-fluid rounded"
@@ -227,7 +218,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                     >
                       <Image
                         src={img || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=100&h=100&fit=crop'}
-                        alt={`${vehicle.name} thumbnail ${index + 1}`}
+                        alt={`${vehicle.title} thumbnail ${index + 1}`}
                         width={100}
                         height={100}
                         className="img-fluid rounded"
@@ -241,7 +232,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
             {/* Vehicle Details */}
             <div className="col-lg-6">
               <div className="vehicle-details">
-                <h1 className="vehicle-title">{vehicle.name}</h1>
+                <h1 className="vehicle-title">{vehicle.title}</h1>
                 <div className="vehicle-meta mb-3">
                   <span className="year me-3">Year: <strong>{vehicle.year || 'N/A'}</strong></span>
                   <span className="make me-3">Make: <strong>{vehicle.make || 'N/A'}</strong></span>
@@ -262,11 +253,6 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
 
                 <div className="vehicle-price mb-4">
                   <span className="current-price">${vehicle.price?.toLocaleString() || '25,000'}</span>
-                  {vehicle.sale_price && (
-                    <span className="compare-price ms-2">
-                      <del>${vehicle.sale_price.toLocaleString()}</del>
-                    </span>
-                  )}
                 </div>
 
                 <p className="vehicle-description mb-4">
@@ -298,8 +284,8 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                 </div>
 
                 <div className="vehicle-stock mb-4">
-                  <span className={`badge ${vehicle.stock_quantity > 0 ? 'bg-success' : 'bg-danger'}`}>
-                    {vehicle.stock_quantity > 0 ? 'Available' : 'Not Available'}
+                  <span className="badge bg-success">
+                    Available
                   </span>
                 </div>
 
@@ -320,13 +306,13 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                     </div>
                     <div className="col-6">
                       <div className="spec-item">
-                        <strong>Body Type:</strong> {vehicle.body_type || 'N/A'}
+                        <strong>Make:</strong> {vehicle.make || 'N/A'}
                       </div>
                       <div className="spec-item">
-                        <strong>Color:</strong> {vehicle.color || 'N/A'}
+                        <strong>Model:</strong> {vehicle.model || 'N/A'}
                       </div>
                       <div className="spec-item">
-                        <strong>Condition:</strong> {vehicle.condition || 'N/A'}
+                        <strong>Year:</strong> {vehicle.year || 'N/A'}
                       </div>
                     </div>
                   </div>
@@ -342,7 +328,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                     </h2>
                     <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#vehicleDetailsAccordion">
                       <div className="accordion-body">
-                        {vehicle.long_description || vehicle.description || 'No detailed description available.'}
+                        {vehicle.description || 'No detailed description available.'}
                       </div>
                     </div>
                   </div>
@@ -473,8 +459,8 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
             {relatedVehicles.map((relatedVehicle) => {
               let relatedImageUrl = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=300&fit=crop';
               
-              if (relatedVehicle.featured_image && relatedVehicle.featured_image.trim() !== '') {
-                relatedImageUrl = relatedVehicle.featured_image;
+              if (relatedVehicle.images && relatedVehicle.images.length > 0) {
+                relatedImageUrl = relatedVehicle.images[0];
               }
 
               return (
@@ -485,7 +471,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                         <div className="related-vehicle-image">
                           <Image
                             src={relatedImageUrl}
-                            alt={relatedVehicle.name}
+                            alt={relatedVehicle.title}
                             width={300}
                             height={300}
                             className="img-fluid"
@@ -495,27 +481,16 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                       
                       {/* Vehicle Badges */}
                       <div className="related-vehicle-badges">
-                        {relatedVehicle.is_featured && (
-                          <span className="badge badge-featured">Featured</span>
-                        )}
-                        {relatedVehicle.sale_price && (
-                          <span className="badge badge-sale">Sale</span>
-                        )}
                       </div>
                     </div>
 
                     <div className="related-vehicle-info">
                       <h4 className="related-vehicle-title">
-                        <Link href={`/vehicles/${relatedVehicle.slug}`}>{relatedVehicle.name}</Link>
+                        <Link href={`/vehicles/${relatedVehicle.slug}`}>{relatedVehicle.title}</Link>
                       </h4>
                       
                       <div className="related-vehicle-price">
                         <span className="current-price">${relatedVehicle.price?.toLocaleString() || '25,000'}</span>
-                        {relatedVehicle.sale_price && (
-                          <span className="compare-price">
-                            <del>${relatedVehicle.sale_price.toLocaleString()}</del>
-                          </span>
-                        )}
                       </div>
 
                       {/* Rating */}

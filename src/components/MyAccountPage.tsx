@@ -3,13 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import KycDashboard from './kyc/KycDashboard';
+import { User } from '@/types';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: 'ecommerce' | 'bidder' | 'auction_seller' | 'vendor' | 'property_buyer' | 'property_seller';
+interface MyAccountUser extends User {
   joinedDate: string;
   totalOrders?: number;
   totalBids?: number;
@@ -19,7 +15,7 @@ interface User {
 }
 
 interface MyAccountPageProps {
-  user?: User;
+  user?: MyAccountUser;
 }
 
 const MyAccountPage: React.FC<MyAccountPageProps> = ({ user }) => {

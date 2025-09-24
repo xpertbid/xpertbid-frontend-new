@@ -3,6 +3,16 @@
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import MyAccountPage from '@/components/MyAccountPage';
+import { User } from '@/types';
+
+interface SampleUser extends User {
+  joinedDate: string;
+  totalOrders?: number;
+  totalBids?: number;
+  totalAuctions?: number;
+  totalProducts?: number;
+  totalProperties?: number;
+}
 
 const AccountDemoPage = () => {
   const [selectedRole, setSelectedRole] = useState('ecommerce');
@@ -52,58 +62,82 @@ const AccountDemoPage = () => {
     }
   ];
 
-  const sampleUsers = {
+  const sampleUsers: Record<string, SampleUser> = {
     ecommerce: {
-      id: '1',
+      id: 1,
       name: 'John Doe',
       email: 'john.doe@example.com',
+      tenant_id: 1,
+      status: 'active',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
       role: 'ecommerce',
+      created_at: '2024-01-15T00:00:00Z',
+      updated_at: '2024-01-15T00:00:00Z',
       joinedDate: '2024-01-15',
       totalOrders: 12
     },
     bidder: {
-      id: '2',
+      id: 2,
       name: 'Sarah Wilson',
       email: 'sarah.wilson@example.com',
+      tenant_id: 1,
+      status: 'active',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       role: 'bidder',
+      created_at: '2024-02-10T00:00:00Z',
+      updated_at: '2024-02-10T00:00:00Z',
       joinedDate: '2024-02-10',
       totalBids: 8
     },
     auction_seller: {
-      id: '3',
+      id: 3,
       name: 'Michael Chen',
       email: 'michael.chen@example.com',
+      tenant_id: 1,
+      status: 'active',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
       role: 'auction_seller',
+      created_at: '2024-01-05T00:00:00Z',
+      updated_at: '2024-01-05T00:00:00Z',
       joinedDate: '2024-01-05',
       totalAuctions: 3
     },
     vendor: {
-      id: '4',
+      id: 4,
       name: 'Emma Thompson',
       email: 'emma.thompson@example.com',
+      tenant_id: 1,
+      status: 'active',
       avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
       role: 'vendor',
+      created_at: '2023-12-20T00:00:00Z',
+      updated_at: '2023-12-20T00:00:00Z',
       joinedDate: '2023-12-20',
       totalProducts: 25
     },
     property_buyer: {
-      id: '5',
+      id: 5,
       name: 'David Rodriguez',
       email: 'david.rodriguez@example.com',
+      tenant_id: 1,
+      status: 'active',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
       role: 'property_buyer',
+      created_at: '2024-03-01T00:00:00Z',
+      updated_at: '2024-03-01T00:00:00Z',
       joinedDate: '2024-03-01',
       totalProperties: 0
     },
     property_seller: {
-      id: '6',
+      id: 6,
       name: 'Lisa Anderson',
       email: 'lisa.anderson@example.com',
+      tenant_id: 1,
+      status: 'active',
       avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
       role: 'property_seller',
+      created_at: '2024-01-25T00:00:00Z',
+      updated_at: '2024-01-25T00:00:00Z',
       joinedDate: '2024-01-25',
       totalProperties: 5
     }

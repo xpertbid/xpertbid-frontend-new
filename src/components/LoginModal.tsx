@@ -50,7 +50,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         });
       }
       
-      onLoginSuccess({});
+      onLoginSuccess();
       
       // Reset form
       setFormData({
@@ -101,13 +101,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     try {
       const response = await new Promise((resolve, reject) => {
         
-        window.google.accounts.id.callback = (response: unknown) => {
+        (window as any).google.accounts.id.callback = (response: unknown) => {
           socialAuthService['handleGoogleResponse'](response)
             .then(resolve)
             .catch(reject);
         };
         
-        window.google.accounts.id.prompt();
+        (window as any).google.accounts.id.prompt();
       });
 
       if (response) {

@@ -42,7 +42,7 @@ const ContactForm: React.FC = () => {
         </div>
         <h3 className="mb-3">Thank You!</h3>
         <p className="text-muted mb-4">
-          Your message has been sent successfully. We'll get back to you within 24 hours.
+          Your message has been sent successfully. We&apos;ll get back to you within 24 hours.
         </p>
         <button 
           className="btn btn-primary"
@@ -62,7 +62,7 @@ const ContactForm: React.FC = () => {
       <div className="form-header mb-4">
         <h3 className="form-title">Send us a Message</h3>
         <p className="form-subtitle text-muted">
-          Fill out the form below and we'll get back to you as soon as possible.
+          Fill out the form below and we&apos;ll get back to you as soon as possible.
         </p>
       </div>
 

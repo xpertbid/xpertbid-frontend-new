@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import WoodMartProductGrid from '@/components/sections/WoodMartProductGrid';
@@ -8,12 +8,13 @@ import { apiService } from '@/services/api';
 import { Product } from '@/types';
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
+  const resolvedParams = use(params);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,11 +32,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           // Filter products by category slug
           const categoryProducts = productsResponse.data.filter(product => 
             product.category_name && 
-            product.category_name.toLowerCase().replace(/\s+/g, '-') === params.slug
+            product.category_name.toLowerCase().replace(/\s+/g, '-') === resolvedParams.slug
           );
           
           setProducts(categoryProducts);
-          setCategoryName(categoryProducts[0]?.category_name || params.slug);
+          setCategoryName(categoryProducts[0]?.category_name || resolvedParams.slug);
         }
       } catch (err) {
         console.error('Error fetching category products:', err);
@@ -46,7 +47,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     };
 
     fetchCategoryProducts();
-  }, [params.slug]);
+  }, [resolvedParams.slug]);
 
   // Transform API data to match component expectations
   const displayProducts = products.map(product => {

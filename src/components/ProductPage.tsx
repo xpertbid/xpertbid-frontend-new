@@ -12,8 +12,8 @@ interface ProductPageProps {
     salePrice?: number;
     images: string[];
     description: string;
-    specifications: any;
-    variations?: any[];
+    specifications: Record<string, unknown>;
+    variations?: Record<string, unknown>[];
     inStock: boolean;
     stockQuantity?: number;
     rating: number;
@@ -28,7 +28,7 @@ interface ProductPageProps {
 const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
   const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedVariation, setSelectedVariation] = useState<any>(null);
+  const [selectedVariation, setSelectedVariation] = useState<Record<string, unknown> | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');

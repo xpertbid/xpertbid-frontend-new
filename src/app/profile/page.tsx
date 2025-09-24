@@ -199,7 +199,7 @@ export default function ProfilePage() {
                       <div className="text-center py-5">
                         <i className="fas fa-gavel fa-3x text-muted mb-3"></i>
                         <h5 className="text-muted">No Bids Yet</h5>
-                        <p className="text-muted">You haven't placed any bids yet. Start bidding on auctions!</p>
+                        <p className="text-muted">You haven&apos;t placed any bids yet. Start bidding on auctions!</p>
                         <Link href="/auctions" className="btn btn-primary">
                           Browse Auctions
                         </Link>
@@ -230,7 +230,7 @@ export default function ProfilePage() {
                                     </div>
                                     <div className="bid-meta">
                                       <small className="text-muted">
-                                        Bid placed: {formatDate(bid.bid_time)}
+                                        Bid placed: {formatDate(bid.created_at)}
                                       </small>
                                     </div>
                                     <div className="bid-status">
@@ -255,7 +255,7 @@ export default function ProfilePage() {
                     <div className="text-center py-5">
                       <i className="fas fa-trophy fa-3x text-warning mb-3"></i>
                       <h5>Won Auctions</h5>
-                      <p className="text-muted">Auctions you've won will appear here.</p>
+                      <p className="text-muted">Auctions you&apos;ve won will appear here.</p>
                     </div>
                   </div>
                 )}

@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
-import { apiService, Product } from '@/services/api';
+import { apiService } from '@/services/api';
+import { Product } from '@/types';
 
 interface FilterState {
   priceRange: [number, number];
@@ -43,7 +44,6 @@ export default function ShopPage() {
     const allBrands = new Set<string>();
     
     products.forEach(product => {
-      if (product.color) allColors.add(product.color);
       if (product.business_name) allBrands.add(product.business_name);
       // Also extract potential brands from product names
       if (product.name) {
@@ -101,15 +101,7 @@ export default function ShopPage() {
       return price >= filters.priceRange[0] && price <= filters.priceRange[1];
     });
 
-    // Filter by colors
-    if (filters.colors.length > 0) {
-      filtered = filtered.filter(product => 
-        filters.colors.some(color => 
-          product.color?.toLowerCase().includes(color.toLowerCase()) ||
-          product.name?.toLowerCase().includes(color.toLowerCase())
-        )
-      );
-    }
+    // Color filtering removed since Product interface doesn't have color field
 
     // Filter by brands
     if (filters.brands.length > 0) {
@@ -162,7 +154,7 @@ export default function ShopPage() {
     setCurrentPage(1); // Reset to first page when filters change
   }, [products, filters]);
 
-  const handleFilterChange = (filterType: keyof FilterState, value: string | boolean) => {
+  const handleFilterChange = (filterType: keyof FilterState, value: string | boolean | number[] | string[]) => {
     setFilters(prev => ({
       ...prev,
       [filterType]: value

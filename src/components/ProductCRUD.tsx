@@ -15,7 +15,7 @@ interface Product {
   category_id: number;
   vendor_id: number;
   images: string[];
-  specifications: any;
+  specifications: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }
@@ -58,7 +58,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
       if (response && response.data) {
         setProducts(response.data);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError('Failed to fetch products: ' + error.message);
     } finally {
       setLoading(false);
@@ -110,7 +110,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
 
       resetForm();
       setShowModal(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError('Failed to save product: ' + error.message);
     } finally {
       setLoading(false);
@@ -150,7 +150,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
       if (response && response.success) {
         setProducts(products.filter(p => p.id !== productId));
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError('Failed to delete product: ' + error.message);
     } finally {
       setLoading(false);

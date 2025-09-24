@@ -3,15 +3,23 @@
 import React, { useState } from 'react';
 import { useKyc } from '@/contexts/KycContext';
 import { kycService } from '@/services/kycService';
-import { KycDocument } from '@/services/kycService';
+import { KycDocument } from '@/types';
 
 interface KycDocumentCardProps {
   document: KycDocument;
 }
 
 const KycDocumentCard: React.FC<KycDocumentCardProps> = ({ document }) => {
-  const { setSelectedDocument } = useKyc();
+  const { setSelectedDocument, kycTypes } = useKyc();
   const [showDetails, setShowDetails] = useState(false);
+
+  // Helper function to get type name from kyc_type_id
+  const getTypeName = (kycTypeId: number): string => {
+    const kycType = kycTypes.find(type => type.id === kycTypeId);
+    return kycType ? kycType.name : 'Unknown';
+  };
+
+  const typeName = getTypeName(document.kyc_type_id);
 
   const handleViewDetails = () => {
     setSelectedDocument(document);
@@ -71,11 +79,11 @@ const KycDocumentCard: React.FC<KycDocumentCardProps> = ({ document }) => {
         <div className="card-body">
           <div className="row align-items-center">
             <div className="col-md-1">
-              <i className={`${getTypeIcon(document.type)} fa-2x`}></i>
+              <i className={`${getTypeIcon(typeName)} fa-2x`}></i>
             </div>
             <div className="col-md-3">
               <h6 className="card-title mb-1">
-                {kycService.getKycTypeDisplayName(document.type)}
+                {kycService.getKycTypeDisplayName(typeName)}
               </h6>
               <small className="text-muted">
                 Submitted: {formatDate(document.created_at)}
@@ -115,32 +123,16 @@ const KycDocumentCard: React.FC<KycDocumentCardProps> = ({ document }) => {
             </div>
           </div>
 
-          {/* Admin Notes (if available) */}
-          {document.admin_notes && (
-            <div className="mt-3 p-3 bg-light rounded">
-              <h6 className="text-muted mb-2">
-                <i className="fas fa-comment me-2"></i>
-                Admin Notes:
-              </h6>
-              <p className="mb-0 small">{document.admin_notes}</p>
-              {document.reviewed_at && (
-                <small className="text-muted">
-                  Reviewed: {formatDate(document.reviewed_at)}
-                  {document.reviewer && ` by ${document.reviewer.name}`}
-                </small>
-              )}
-            </div>
-          )}
 
           {/* Document Preview */}
-          {document.documents && document.documents.length > 0 && (
+          {document.documents && Object.keys(document.documents).length > 0 && (
             <div className="mt-3">
               <h6 className="text-muted mb-2">
                 <i className="fas fa-paperclip me-2"></i>
                 Attached Documents:
               </h6>
               <div className="row">
-                {document.documents.slice(0, 3).map((docPath, index) => (
+                {Object.values(document.documents).slice(0, 3).map((docPath, index) => (
                   <div key={index} className="col-md-4 mb-2">
                     <div className="document-preview p-2 border rounded">
                       <i className="fas fa-file-pdf text-danger me-2"></i>
@@ -150,11 +142,11 @@ const KycDocumentCard: React.FC<KycDocumentCardProps> = ({ document }) => {
                     </div>
                   </div>
                 ))}
-                {document.documents.length > 3 && (
+                {Object.keys(document.documents).length > 3 && (
                   <div className="col-md-4 mb-2">
                     <div className="document-preview p-2 border rounded text-center">
                       <small className="text-muted">
-                        +{document.documents.length - 3} more
+                        +{Object.keys(document.documents).length - 3} more
                       </small>
                     </div>
                   </div>
@@ -203,6 +195,16 @@ interface KycDocumentDetailsProps {
 }
 
 const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClose }) => {
+  const { kycTypes } = useKyc();
+
+  // Helper function to get type name from kyc_type_id
+  const getTypeName = (kycTypeId: number): string => {
+    const kycType = kycTypes.find(type => type.id === kycTypeId);
+    return kycType ? kycType.name : 'Unknown';
+  };
+
+  const typeName = getTypeName(document.kyc_type_id);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -218,7 +220,7 @@ const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClo
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h5 className="modal-title">
-            KYC Document Details - {kycService.getKycTypeDisplayName(document.type)}
+            KYC Document Details - {kycService.getKycTypeDisplayName(typeName)}
           </h5>
           <button type="button" className="btn-close" onClick={onClose}></button>
         </div>
@@ -232,7 +234,7 @@ const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClo
                 <tbody>
                   <tr>
                     <td><strong>Type:</strong></td>
-                    <td>{kycService.getKycTypeDisplayName(document.type)}</td>
+                    <td>{kycService.getKycTypeDisplayName(typeName)}</td>
                   </tr>
                   <tr>
                     <td><strong>Status:</strong></td>
@@ -259,16 +261,8 @@ const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClo
               <table className="table table-sm">
                 <tbody>
                   <tr>
-                    <td><strong>Reviewed At:</strong></td>
-                    <td>{document.reviewed_at ? formatDate(document.reviewed_at) : 'Not reviewed'}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Reviewed By:</strong></td>
-                    <td>{document.reviewer?.name || 'Not assigned'}</td>
-                  </tr>
-                  <tr>
                     <td><strong>Documents:</strong></td>
-                    <td>{document.documents?.length || 0} files</td>
+                    <td>{document.documents ? Object.keys(document.documents).length : 0} files</td>
                   </tr>
                 </tbody>
               </table>
@@ -276,11 +270,11 @@ const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClo
           </div>
 
           {/* Form Data */}
-          {document.data && (
+          {document.documents && Object.keys(document.documents).length > 0 && (
             <div className="mb-4">
               <h6>Submitted Information</h6>
               <div className="row">
-                {Object.entries(document.data).map(([key, value]) => (
+                {Object.entries(document.documents).map(([key, value]) => (
                   <div key={key} className="col-md-6 mb-2">
                     <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>
                     <br />
@@ -291,22 +285,13 @@ const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClo
             </div>
           )}
 
-          {/* Admin Notes */}
-          {document.admin_notes && (
-            <div className="mb-4">
-              <h6>Admin Notes</h6>
-              <div className="p-3 bg-light rounded">
-                <p className="mb-0">{document.admin_notes}</p>
-              </div>
-            </div>
-          )}
 
           {/* Documents */}
-          {document.documents && document.documents.length > 0 && (
+          {document.documents && Object.keys(document.documents).length > 0 && (
             <div>
               <h6>Attached Documents</h6>
               <div className="row">
-                {document.documents.map((docPath, index) => (
+                {Object.values(document.documents).map((docPath, index) => (
                   <div key={index} className="col-md-4 mb-3">
                     <div className="card">
                       <div className="card-body text-center">

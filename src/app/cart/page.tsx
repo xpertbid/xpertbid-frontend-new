@@ -37,7 +37,7 @@ export default function CartPage() {
                 <div className="empty-cart">
                   <i className="fas fa-shopping-cart empty-icon"></i>
                   <h2>Your cart is empty</h2>
-                  <p>Looks like you haven't added any items to your cart yet.</p>
+                  <p>Looks like you haven&apos;t added any items to your cart yet.</p>
                   <Link href="/shop" className="btn btn-primary">Start Shopping</Link>
                 </div>
               </div>

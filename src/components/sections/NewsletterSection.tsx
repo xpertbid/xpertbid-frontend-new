@@ -80,7 +80,7 @@ const NewsletterSection: React.FC = () => {
                 </div>
                 <h3 className="mb-3">Thank You for Subscribing!</h3>
                 <p className="mb-4">
-                  You've successfully subscribed to our newsletter. You'll receive our latest updates, 
+                  You&apos;ve successfully subscribed to our newsletter. You&apos;ll receive our latest updates, 
                   exclusive offers, and special promotions directly in your inbox.
                 </p>
                 <button 
