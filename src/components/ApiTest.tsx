@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { apiService } from '@/services/api';
+import { Product, Category } from '@/types';
 
 export default function ApiTest() {
   const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'error'>('checking');
-  const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     const testApi = async () => {

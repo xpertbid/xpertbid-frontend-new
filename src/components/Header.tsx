@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import LoginModal from './LoginModal';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,7 +13,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
+  const [wishlistCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { itemCount: cartCount, openDrawer } = useCart();
@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     }
   };
 
-  const handleLoginSuccess = (userData: any) => {
+  const handleLoginSuccess = () => {
     setShowLoginModal(false);
     // Auth state will be updated by AuthContext
   };

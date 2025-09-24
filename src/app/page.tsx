@@ -9,21 +9,19 @@ import WoodMartVehicles from '@/components/sections/WoodMartVehicles';
 import WoodMartProperties from '@/components/sections/WoodMartProperties';
 import WoodMartAuctions from '@/components/sections/WoodMartAuctions';
 import WoodMartNewsletter from '@/components/sections/WoodMartNewsletter';
-import { apiService, Product, Category } from '@/services/api';
+import { apiService } from '@/services/api';
+import { Product, Category, Vehicle, Property, Auction } from '@/types';
 
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [vehicles, setVehicles] = useState<any[]>([]);
-  const [properties, setProperties] = useState<any[]>([]);
-  const [auctions, setAuctions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [auctions, setAuctions] = useState<Auction[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         
         // Fetch all data in parallel
         const [
@@ -61,9 +59,6 @@ export default function Home() {
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load data. Please try again later.');
-      } finally {
-        setLoading(false);
       }
     };
 

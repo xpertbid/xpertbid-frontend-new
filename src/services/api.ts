@@ -1,63 +1,25 @@
+import { 
+  Product, 
+  Category, 
+  ApiResponse, 
+  PaymentGateway, 
+  Auction, 
+  Property, 
+  Vehicle, 
+  BlogPost, 
+  Bid, 
+  AuthResponse,
+  LoginFormData,
+  RegisterFormData,
+  BidFormData,
+  User
+} from '@/types';
+
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
-export interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  short_description: string;
-  price: number;
-  sale_price?: number;
-  sku: string;
-  stock_quantity: number;
-  stock_status: string;
-  weight?: number;
-  length?: number;
-  width?: number;
-  height?: number;
-  status: string;
-  is_featured: boolean;
-  gallery: string | string[]; // Can be either string (JSON) or array
-  business_name: string;
-  category_name: string;
-  brand_name?: string;
-  created_at: string;
-  updated_at: string;
-}
 
-export interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  image: string;
-  parent_id?: number;
-  sort_order: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-}
 
-export interface PaymentGateway {
-  id: number;
-  name: string;
-  code: string;
-  type: string;
-  description: string;
-  logo_url?: string;
-  transaction_fee: number;
-  fixed_fee: number;
-  supported_currencies: string[];
-  supported_countries: string[];
-  is_test_mode: boolean;
-  sort_order: number;
-}
 
 class ApiService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -123,37 +85,37 @@ class ApiService {
   }
 
   // Additional endpoints for XpertBid features
-  async getAuctions(): Promise<ApiResponse<any[]>> {
-    return this.request<ApiResponse<any[]>>('/auctions');
+  async getAuctions(): Promise<ApiResponse<Auction[]>> {
+    return this.request<ApiResponse<Auction[]>>('/auctions');
   }
 
-  async getProperties(): Promise<ApiResponse<any[]>> {
-    return this.request<ApiResponse<any[]>>('/properties');
+  async getProperties(): Promise<ApiResponse<Property[]>> {
+    return this.request<ApiResponse<Property[]>>('/properties');
   }
 
-  async getVehicles(): Promise<ApiResponse<any[]>> {
-    return this.request<ApiResponse<any[]>>('/vehicles');
+  async getVehicles(): Promise<ApiResponse<Vehicle[]>> {
+    return this.request<ApiResponse<Vehicle[]>>('/vehicles');
   }
 
-  async getBrands(): Promise<ApiResponse<any[]>> {
-    return this.request<ApiResponse<any[]>>('/brands');
+  async getBrands(): Promise<ApiResponse<Category[]>> {
+    return this.request<ApiResponse<Category[]>>('/brands');
   }
 
-  async getBlogPosts(): Promise<ApiResponse<any[]>> {
-    return this.request<ApiResponse<any[]>>('/blog-posts');
+  async getBlogPosts(): Promise<ApiResponse<BlogPost[]>> {
+    return this.request<ApiResponse<BlogPost[]>>('/blog-posts');
   }
 
   // Bid placement
-  async placeBid(auctionId: number, bidData: { bid_amount: number; bidder_name: string; bidder_email: string }): Promise<ApiResponse<any>> {
-    return this.request<ApiResponse<any>>(`/auctions/${auctionId}/bids`, {
+  async placeBid(auctionId: number, bidData: BidFormData): Promise<ApiResponse<Bid>> {
+    return this.request<ApiResponse<Bid>>(`/auctions/${auctionId}/bids`, {
       method: 'POST',
       body: JSON.stringify(bidData),
     });
   }
 
   // Get user bidding history
-  async getUserBids(email: string): Promise<ApiResponse<any[]>> {
-    return this.request<ApiResponse<any[]>>(`/user/${email}/bids`);
+  async getUserBids(email: string): Promise<ApiResponse<Bid[]>> {
+    return this.request<ApiResponse<Bid[]>>(`/user/${email}/bids`);
   }
 
   // Get available payment gateways
@@ -166,11 +128,11 @@ class ApiService {
     gateway_id: number;
     amount: number;
     currency: string;
-    payment_data: any;
+    payment_data: Record<string, unknown>;
     order_id?: number;
     customer_id?: number;
-  }): Promise<ApiResponse<any>> {
-    return this.request<ApiResponse<any>>('/payment/process', {
+  }): Promise<ApiResponse<{ transaction_id: string; status: string; message: string }>> {
+    return this.request<ApiResponse<{ transaction_id: string; status: string; message: string }>>('/payment/process', {
       method: 'POST',
       body: JSON.stringify({
         tenant_id: 1, // Default tenant for now
@@ -180,28 +142,28 @@ class ApiService {
   }
 
   // Authentication methods
-  async login(credentials: { email: string; password: string }): Promise<ApiResponse<{ user: any; token: string }>> {
-    return this.request<ApiResponse<{ user: any; token: string }>>('/auth/login', {
+  async login(credentials: LoginFormData): Promise<ApiResponse<AuthResponse>> {
+    return this.request<ApiResponse<AuthResponse>>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   }
 
-  async register(userData: { name: string; email: string; password: string; password_confirmation: string }): Promise<ApiResponse<{ user: any; token: string }>> {
-    return this.request<ApiResponse<{ user: any; token: string }>>('/auth/register', {
+  async register(userData: RegisterFormData): Promise<ApiResponse<AuthResponse>> {
+    return this.request<ApiResponse<AuthResponse>>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   }
 
-  async logout(): Promise<ApiResponse<any>> {
-    return this.request<ApiResponse<any>>('/auth/logout', {
+  async logout(): Promise<ApiResponse<{ message: string }>> {
+    return this.request<ApiResponse<{ message: string }>>('/auth/logout', {
       method: 'POST',
     });
   }
 
-  async getCurrentUser(): Promise<ApiResponse<any>> {
-    return this.request<ApiResponse<any>>('/auth/user');
+  async getCurrentUser(): Promise<ApiResponse<User>> {
+    return this.request<ApiResponse<User>>('/auth/user');
   }
 
   async refreshToken(): Promise<ApiResponse<{ token: string }>> {
@@ -212,7 +174,7 @@ class ApiService {
 
   // Health check
   async healthCheck(): Promise<ApiResponse<{ status: string; timestamp: string; service: string; version: string }>> {
-    return this.request<ApiResponse<any>>('/health');
+    return this.request<ApiResponse<{ status: string; timestamp: string; service: string; version: string }>>('/health');
   }
 
   // Custom request method for additional endpoints

@@ -3,7 +3,8 @@
 import React, { useEffect, useState, use } from 'react';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
-import { apiService } from '@/services/api';
+import Link from 'next/link';
+import { apiService, Auction } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuctionDetailPageProps {
@@ -15,7 +16,7 @@ interface AuctionDetailPageProps {
 export default function AuctionDetailPage({ params }: AuctionDetailPageProps) {
   const resolvedParams = use(params);
   const { user, isAuthenticated } = useAuth();
-  const [auction, setAuction] = useState<any>(null);
+  const [auction, setAuction] = useState<Auction | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -231,10 +232,10 @@ export default function AuctionDetailPage({ params }: AuctionDetailPageProps) {
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
-              <a href="/" className="text-decoration-none">Home</a>
+              <Link href="/" className="text-decoration-none">Home</Link>
             </li>
             <li className="breadcrumb-item">
-              <a href="/auctions" className="text-decoration-none">Auctions</a>
+              <Link href="/auctions" className="text-decoration-none">Auctions</Link>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
               {auction.product_name || 'Auction Item'}

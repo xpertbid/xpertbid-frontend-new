@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
+import Link from 'next/link';
 import { apiService, Product } from '@/services/api';
 
 interface FilterState {
@@ -161,7 +162,7 @@ export default function ShopPage() {
     setCurrentPage(1); // Reset to first page when filters change
   }, [products, filters]);
 
-  const handleFilterChange = (filterType: keyof FilterState, value: any) => {
+  const handleFilterChange = (filterType: keyof FilterState, value: string | boolean) => {
     setFilters(prev => ({
       ...prev,
       [filterType]: value
@@ -272,7 +273,7 @@ export default function ShopPage() {
           {/* Breadcrumb */}
           <nav aria-label="breadcrumb" className="mb-4">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><a href="/">Home</a></li>
+              <li className="breadcrumb-item"><Link href="/">Home</Link></li>
               <li className="breadcrumb-item active" aria-current="page">Shop</li>
             </ol>
           </nav>
@@ -450,7 +451,7 @@ export default function ShopPage() {
                     <div key={product.id} className={filters.viewMode === 'list' ? 'col-12' : 'col-lg-4 col-md-6 col-sm-6 col-12'}>
                       <div className="product-card">
                         <div className="product-image-wrapper">
-                          <a href={`/shop/${product.slug}`}>
+                          <Link href={`/shop/${product.slug}`}>
                             <div className="product-image">
                               <Image
                                 src={getProductImage(product)}
@@ -460,7 +461,7 @@ export default function ShopPage() {
                                 className="img-fluid"
                               />
                             </div>
-                          </a>
+                          </Link>
                           
                           {/* Product Badges */}
                           <div className="product-badges">
@@ -475,7 +476,7 @@ export default function ShopPage() {
 
                         <div className="product-info">
                           <h4 className="product-title">
-                            <a href={`/shop/${product.slug}`}>{product.name}</a>
+                            <Link href={`/shop/${product.slug}`}>{product.name}</Link>
                           </h4>
                           
                           <div className="product-price">

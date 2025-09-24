@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
 import { apiService } from '@/services/api';
+import { Vehicle } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
 interface VehicleDetailPageProps {
@@ -14,8 +16,8 @@ interface VehicleDetailPageProps {
 
 export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
   const resolvedParams = use(params);
-  const [vehicle, setVehicle] = useState<any>(null);
-  const [relatedVehicles, setRelatedVehicles] = useState<any[]>([]);
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [relatedVehicles, setRelatedVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -171,7 +173,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
-          <a href="/vehicles" className="btn btn-primary mt-3">Back to Vehicles</a>
+          <Link href="/vehicles" className="btn btn-primary mt-3">Back to Vehicles</Link>
         </div>
       </Layout>
     );
@@ -184,7 +186,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
           <div className="alert alert-warning" role="alert">
             Vehicle data could not be loaded.
           </div>
-          <a href="/vehicles" className="btn btn-primary mt-3">Back to Vehicles</a>
+          <Link href="/vehicles" className="btn btn-primary mt-3">Back to Vehicles</Link>
         </div>
       </Layout>
     );
@@ -197,8 +199,8 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
           {/* Breadcrumb */}
           <nav aria-label="breadcrumb" className="mb-4">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><a href="/">Home</a></li>
-              <li className="breadcrumb-item"><a href="/vehicles">Vehicles</a></li>
+              <li className="breadcrumb-item"><Link href="/">Home</Link></li>
+              <li className="breadcrumb-item"><Link href="/vehicles">Vehicles</Link></li>
               <li className="breadcrumb-item active" aria-current="page">{vehicle.name}</li>
             </ol>
           </nav>
@@ -479,7 +481,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                 <div key={relatedVehicle.id} className="col-lg-3 col-md-6 col-sm-6 col-12">
                   <div className="related-vehicle-card">
                     <div className="related-vehicle-image-wrapper">
-                      <a href={`/vehicles/${relatedVehicle.slug}`}>
+                      <Link href={`/vehicles/${relatedVehicle.slug}`}>
                         <div className="related-vehicle-image">
                           <Image
                             src={relatedImageUrl}
@@ -489,7 +491,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                             className="img-fluid"
                           />
                         </div>
-                      </a>
+                      </Link>
                       
                       {/* Vehicle Badges */}
                       <div className="related-vehicle-badges">
@@ -504,7 +506,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
 
                     <div className="related-vehicle-info">
                       <h4 className="related-vehicle-title">
-                        <a href={`/vehicles/${relatedVehicle.slug}`}>{relatedVehicle.name}</a>
+                        <Link href={`/vehicles/${relatedVehicle.slug}`}>{relatedVehicle.name}</Link>
                       </h4>
                       
                       <div className="related-vehicle-price">

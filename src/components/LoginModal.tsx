@@ -7,7 +7,7 @@ import { socialAuthService } from '../services/socialAuth';
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess: (userData: any) => void;
+  onLoginSuccess: () => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
@@ -59,8 +59,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         password: '',
         password_confirmation: ''
       });
-    } catch (error: any) {
-      setError(error.message || 'An error occurred. Please try again.');
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -100,9 +100,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     
     try {
       const response = await new Promise((resolve, reject) => {
-        const originalCallback = window.google?.accounts?.id?.callback;
         
-        window.google.accounts.id.callback = (response: any) => {
+        window.google.accounts.id.callback = (response: unknown) => {
           socialAuthService['handleGoogleResponse'](response)
             .then(resolve)
             .catch(reject);
@@ -114,7 +113,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       if (response) {
         onLoginSuccess(response);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message || 'Google login failed. Please try again.');
     } finally {
       setSocialLoading(prev => ({ ...prev, google: false }));
@@ -131,7 +130,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       if (response) {
         onLoginSuccess(response);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message || 'Facebook login failed. Please try again.');
     } finally {
       setSocialLoading(prev => ({ ...prev, facebook: false }));

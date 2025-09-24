@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
-import { apiService, Product } from '@/services/api';
+import { apiService } from '@/services/api';
+import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
 interface ProductDetailPageProps {
@@ -150,10 +152,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
-              <a href="/" className="text-decoration-none">Home</a>
+              <Link href="/" className="text-decoration-none">Home</Link>
             </li>
             <li className="breadcrumb-item">
-              <a href="/shop" className="text-decoration-none">Shop</a>
+              <Link href="/shop" className="text-decoration-none">Shop</Link>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
               {product.name}
@@ -396,7 +398,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 <div key={relatedProduct.id} className="col-lg-3 col-md-6 col-sm-6 col-12">
                   <div className="related-product-card">
                     <div className="related-product-image-wrapper">
-                      <a href={`/shop/${relatedProduct.slug}`}>
+                      <Link href={`/shop/${relatedProduct.slug}`}>
                         <div className="related-product-image">
                           <Image
                             src={relatedImageUrl}
@@ -406,7 +408,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                             className="img-fluid"
                           />
                         </div>
-                      </a>
+                      </Link>
                       
                       {/* Product Badges */}
                       <div className="related-product-badges">
@@ -421,7 +423,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
                     <div className="related-product-info">
                       <h4 className="related-product-title">
-                        <a href={`/shop/${relatedProduct.slug}`}>{relatedProduct.name}</a>
+                        <Link href={`/shop/${relatedProduct.slug}`}>{relatedProduct.name}</Link>
                       </h4>
                       
                       <div className="related-product-price">

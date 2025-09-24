@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import WoodMartVehicles from '@/components/sections/WoodMartVehicles';
+import { Vehicle } from '@/types';
 
 export default function VehiclesPage() {
-  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,7 +89,7 @@ export default function VehiclesPage() {
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <a href="/" className="text-decoration-none">Home</a>
+                  <Link href="/" className="text-decoration-none">Home</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">Vehicles</li>
               </ol>

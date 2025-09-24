@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 
 const CartPage: React.FC = () => {
@@ -98,11 +99,13 @@ const CartPage: React.FC = () => {
                   <div className="row align-items-center">
                     {/* Product Image */}
                     <div className="col-md-2">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.name}
+                        width={100}
+                        height={100}
                         className="img-fluid rounded"
-                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                        style={{ objectFit: 'cover' }}
                       />
                     </div>
 

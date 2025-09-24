@@ -1,15 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
 import { apiService } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { Bid } from '@/types';
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useAuth();
   const [userEmail, setUserEmail] = useState<string>('');
-  const [userBids, setUserBids] = useState<any[]>([]);
+  const [userBids, setUserBids] = useState<Bid[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'bids' | 'won' | 'settings'>('bids');
@@ -69,7 +71,7 @@ export default function ProfilePage() {
     });
   };
 
-  const getBidStatus = (bid: any) => {
+  const getBidStatus = (bid: Bid) => {
     if (bid.auction_status === 'ended') {
       // Check if this was the winning bid (simplified logic)
       return 'Won';
@@ -197,10 +199,10 @@ export default function ProfilePage() {
                       <div className="text-center py-5">
                         <i className="fas fa-gavel fa-3x text-muted mb-3"></i>
                         <h5 className="text-muted">No Bids Yet</h5>
-                        <p className="text-muted">You haven't placed any bids yet. Start bidding on auctions!</p>
-                        <a href="/auctions" className="btn btn-primary">
+                        <p className="text-muted">You haven&apos;t placed any bids yet. Start bidding on auctions!</p>
+                        <Link href="/auctions" className="btn btn-primary">
                           Browse Auctions
-                        </a>
+                        </Link>
                       </div>
                     ) : (
                       <div className="row">
@@ -253,7 +255,7 @@ export default function ProfilePage() {
                     <div className="text-center py-5">
                       <i className="fas fa-trophy fa-3x text-warning mb-3"></i>
                       <h5>Won Auctions</h5>
-                      <p className="text-muted">Auctions you've won will appear here.</p>
+                      <p className="text-muted">Auctions you&apos;ve won will appear here.</p>
                     </div>
                   </div>
                 )}

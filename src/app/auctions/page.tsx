@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 import Image from 'next/image';
-import { apiService } from '@/services/api';
+import { apiService, Auction } from '@/services/api';
 
 export default function AuctionsPage() {
-  const [auctions, setAuctions] = useState<any[]>([]);
-  const [filteredAuctions, setFilteredAuctions] = useState<any[]>([]);
+  const [auctions, setAuctions] = useState<Auction[]>([]);
+  const [filteredAuctions, setFilteredAuctions] = useState<Auction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

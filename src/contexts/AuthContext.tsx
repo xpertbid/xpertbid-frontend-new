@@ -2,19 +2,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { apiService } from '@/services/api';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  avatar?: string;
-  phone?: string;
-  user_type?: string;
-  status?: string;
-  email_verified_at?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+import { User, AuthResponse, LoginFormData, RegisterFormData } from '@/types';
 
 interface AuthState {
   user: User | null;
@@ -26,12 +14,7 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (data: {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-  }) => Promise<void>;
+  register: (data: RegisterFormData) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
   clearError: () => void;
@@ -176,19 +159,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         throw new Error(response?.message || 'Login failed');
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Login failed. Please try again.';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
       throw error;
     }
   };
 
-  const register = async (data: {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-  }) => {
+  const register = async (data: RegisterFormData) => {
     dispatch({ type: 'AUTH_START' });
 
     try {
@@ -211,8 +189,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         throw new Error(response?.message || 'Registration failed');
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Registration failed. Please try again.';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Registration failed. Please try again.';
       dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
       throw error;
     }
@@ -257,8 +235,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         throw new Error(response?.message || 'Profile update failed');
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Profile update failed. Please try again.';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Profile update failed. Please try again.';
       dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
       throw error;
     }

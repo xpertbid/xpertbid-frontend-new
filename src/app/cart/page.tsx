@@ -6,16 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 
-interface CartItem {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  image: string;
-  quantity: number;
-  vendor?: string;
-  sku?: string;
-}
 
 export default function CartPage() {
   const { items: cartItems, updateQuantity, removeItem, subtotal, total, shipping, tax, isLoaded, clearCart } = useCart();
@@ -47,7 +37,7 @@ export default function CartPage() {
                 <div className="empty-cart">
                   <i className="fas fa-shopping-cart empty-icon"></i>
                   <h2>Your cart is empty</h2>
-                  <p>Looks like you haven't added any items to your cart yet.</p>
+                  <p>Looks like you haven&apos;t added any items to your cart yet.</p>
                   <Link href="/shop" className="btn btn-primary">Start Shopping</Link>
                 </div>
               </div>
@@ -72,7 +62,7 @@ export default function CartPage() {
 
           <div className="cart-header d-flex justify-content-between align-items-center mb-4">
             <h1 className="page-title">Shopping Cart</h1>
-            <span className="cart-count">{cartItems.length} item{cartItems.length !== 1 ? 's' : ''}</span>
+            <span className="cart-count">{cartItems.length} item{cartItems.length !== 1 ? &apos;s&apos; : &apos;&apos;}</span>
           </div>
           
           <div className="row">
@@ -171,7 +161,7 @@ export default function CartPage() {
                 
                 <div className="summary-details">
                   <div className="summary-row">
-                    <span>Subtotal ({cartItems.length} item{cartItems.length !== 1 ? 's' : ''}):</span>
+                    <span>Subtotal ({cartItems.length} item{cartItems.length !== 1 ? &apos;s&apos; : &apos;&apos;}):</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="summary-row">

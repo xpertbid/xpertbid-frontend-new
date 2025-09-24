@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 
 const CheckoutPage: React.FC = () => {
@@ -624,11 +625,13 @@ const CheckoutPage: React.FC = () => {
                 <div className="order-items mb-4">
                   {items.map((item) => (
                     <div key={item.id} className="order-item d-flex align-items-center mb-3">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.name}
+                        width={50}
+                        height={50}
                         className="me-3"
-                        style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+                        style={{ objectFit: 'cover', borderRadius: '4px' }}
                       />
                       <div className="flex-grow-1">
                         <div className="item-name small fw-bold">{item.name}</div>

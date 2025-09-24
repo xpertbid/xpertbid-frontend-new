@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import WoodMartProperties from '@/components/sections/WoodMartProperties';
+import { Property } from '@/types';
 
 export default function PropertiesPage() {
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,7 +90,7 @@ export default function PropertiesPage() {
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <a href="/" className="text-decoration-none">Home</a>
+                  <Link href="/" className="text-decoration-none">Home</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">Properties</li>
               </ol>

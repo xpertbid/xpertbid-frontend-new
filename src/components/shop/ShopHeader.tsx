@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 const ShopHeader: React.FC = () => {
   const [sortBy, setSortBy] = useState('featured');
@@ -23,7 +24,7 @@ const ShopHeader: React.FC = () => {
             <div className="breadcrumb-nav">
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-0">
-                  <li className="breadcrumb-item"><a href="/">Home</a></li>
+                  <li className="breadcrumb-item"><Link href="/">Home</Link></li>
                   <li className="breadcrumb-item active">Shop</li>
                 </ol>
               </nav>

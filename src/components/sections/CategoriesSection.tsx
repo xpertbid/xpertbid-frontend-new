@@ -4,16 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { imageService } from '@/services/imageService';
 import { apiService } from '@/services/api';
+import { Category } from '@/types';
 
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  icon: string;
-  image: string;
-  product_count: number;
-  description: string;
-}
 
 const CategoriesSection: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -106,7 +98,7 @@ const CategoriesSection: React.FC = () => {
         if (apiCategories && Array.isArray(apiCategories) && apiCategories.length > 0) {
           // Add images to API data
           const categoriesWithImages = await Promise.all(
-            apiCategories.map(async (category: any, index: number) => {
+            apiCategories.map(async (category: Category, index: number) => {
               const images = await imageService.getCategoryImages(category.slug || category.name.toLowerCase());
               return {
                 ...category,

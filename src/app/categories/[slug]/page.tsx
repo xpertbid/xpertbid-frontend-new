@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import WoodMartProductGrid from '@/components/sections/WoodMartProductGrid';
-import { apiService, Product } from '@/services/api';
+import { apiService } from '@/services/api';
+import { Product } from '@/types';
 
 interface CategoryPageProps {
   params: {
@@ -120,10 +122,10 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item">
-                  <a href="/" className="text-decoration-none">Home</a>
+                  <Link href="/" className="text-decoration-none">Home</Link>
                 </li>
                 <li className="breadcrumb-item">
-                  <a href="/shop" className="text-decoration-none">Shop</a>
+                  <Link href="/shop" className="text-decoration-none">Shop</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
                   {categoryName}

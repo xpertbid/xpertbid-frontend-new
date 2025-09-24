@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
 import { apiService } from '@/services/api';
+import { Property } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 
 interface PropertyDetailPageProps {
@@ -14,8 +16,8 @@ interface PropertyDetailPageProps {
 
 export default function PropertyDetailPage({ params }: PropertyDetailPageProps) {
   const resolvedParams = use(params);
-  const [property, setProperty] = useState<any>(null);
-  const [relatedProperties, setRelatedProperties] = useState<any[]>([]);
+  const [property, setProperty] = useState<Property | null>(null);
+  const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -165,7 +167,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
-          <a href="/properties" className="btn btn-primary mt-3">Back to Properties</a>
+          <Link href="/properties" className="btn btn-primary mt-3">Back to Properties</Link>
         </div>
       </Layout>
     );
@@ -178,7 +180,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
           <div className="alert alert-warning" role="alert">
             Property data could not be loaded.
           </div>
-          <a href="/properties" className="btn btn-primary mt-3">Back to Properties</a>
+          <Link href="/properties" className="btn btn-primary mt-3">Back to Properties</Link>
         </div>
       </Layout>
     );
@@ -191,8 +193,8 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
           {/* Breadcrumb */}
           <nav aria-label="breadcrumb" className="mb-4">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><a href="/">Home</a></li>
-              <li className="breadcrumb-item"><a href="/properties">Properties</a></li>
+              <li className="breadcrumb-item"><Link href="/">Home</Link></li>
+              <li className="breadcrumb-item"><Link href="/properties">Properties</Link></li>
               <li className="breadcrumb-item active" aria-current="page">{property.name}</li>
             </ol>
           </nav>
@@ -472,7 +474,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                 <div key={relatedProperty.id} className="col-lg-3 col-md-6 col-sm-6 col-12">
                   <div className="related-property-card">
                     <div className="related-property-image-wrapper">
-                      <a href={`/properties/${relatedProperty.slug}`}>
+                      <Link href={`/properties/${relatedProperty.slug}`}>
                         <div className="related-property-image">
                           <Image
                             src={relatedImageUrl}
@@ -482,7 +484,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                             className="img-fluid"
                           />
                         </div>
-                      </a>
+                      </Link>
                       
                       {/* Property Badges */}
                       <div className="related-property-badges">
@@ -497,7 +499,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
 
                     <div className="related-property-info">
                       <h4 className="related-property-title">
-                        <a href={`/properties/${relatedProperty.slug}`}>{relatedProperty.name}</a>
+                        <Link href={`/properties/${relatedProperty.slug}`}>{relatedProperty.name}</Link>
                       </h4>
                       
                       <div className="related-property-price">
