@@ -42,9 +42,39 @@ export const CurrencyProvider = ({ children }) => {
         } else {
           // Fallback to default currencies if API fails
           const fallbackCurrencies = [
-            { id: 1, code: 'USD', name: 'US Dollar', symbol: '$', rate: 1.0 },
-            { id: 2, code: 'EUR', name: 'Euro', symbol: '€', rate: 0.85 },
-            { id: 3, code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.73 }
+            { 
+              id: 1, 
+              code: 'USD', 
+              name: 'US Dollar', 
+              symbol: '$', 
+              exchange_rate: 1.0,
+              decimal_places: 2,
+              symbol_position: 'before',
+              is_active: true,
+              is_default: true
+            },
+            { 
+              id: 2, 
+              code: 'EUR', 
+              name: 'Euro', 
+              symbol: '€', 
+              exchange_rate: 0.85,
+              decimal_places: 2,
+              symbol_position: 'after',
+              is_active: true,
+              is_default: false
+            },
+            { 
+              id: 3, 
+              code: 'GBP', 
+              name: 'British Pound', 
+              symbol: '£', 
+              exchange_rate: 0.73,
+              decimal_places: 2,
+              symbol_position: 'before',
+              is_active: true,
+              is_default: false
+            }
           ];
           setCurrencies(fallbackCurrencies);
           
@@ -57,9 +87,39 @@ export const CurrencyProvider = ({ children }) => {
         console.error('Failed to load currencies:', error);
         // Fallback currencies
         const fallbackCurrencies = [
-          { id: 1, code: 'USD', name: 'US Dollar', symbol: '$', rate: 1.0 },
-          { id: 2, code: 'EUR', name: 'Euro', symbol: '€', rate: 0.85 },
-          { id: 3, code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.73 }
+          { 
+            id: 1, 
+            code: 'USD', 
+            name: 'US Dollar', 
+            symbol: '$', 
+            exchange_rate: 1.0,
+            decimal_places: 2,
+            symbol_position: 'before',
+            is_active: true,
+            is_default: true
+          },
+          { 
+            id: 2, 
+            code: 'EUR', 
+            name: 'Euro', 
+            symbol: '€', 
+            exchange_rate: 0.85,
+            decimal_places: 2,
+            symbol_position: 'after',
+            is_active: true,
+            is_default: false
+          },
+          { 
+            id: 3, 
+            code: 'GBP', 
+            name: 'British Pound', 
+            symbol: '£', 
+            exchange_rate: 0.73,
+            decimal_places: 2,
+            symbol_position: 'before',
+            is_active: true,
+            is_default: false
+          }
         ];
         setCurrencies(fallbackCurrencies);
         
@@ -87,16 +147,43 @@ export const CurrencyProvider = ({ children }) => {
     localStorage.setItem('selectedCurrency', JSON.stringify(currency));
   };
 
+  const convertPrice = async (amount, fromCurrency = 'USD', toCurrency = currentCurrency?.code) => {
+    if (!toCurrency || fromCurrency === toCurrency) {
+      return amount; // No conversion needed
+    }
+
+    try {
+      const response = await apiService.convertPrice(amount, fromCurrency, toCurrency);
+      if (response.success) {
+        return response.data.converted_amount;
+      }
+      console.warn('Price conversion failed:', response.error);
+      return amount; // Fallback to original amount
+    } catch (error) {
+      console.error('Price conversion error:', error);
+      return amount; // Fallback to original amount
+    }
+  };
+
   const formatPrice = (price, currency = currentCurrency) => {
     if (!currency || !price) return '$0.00';
     
-    const formattedPrice = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency.code || 'USD',
-      minimumFractionDigits: 2,
+    // Use the currency's symbol and decimal places from API
+    const symbol = currency.symbol || '$';
+    const decimalPlaces = currency.decimal_places || 2;
+    const symbolPosition = currency.symbol_position || 'before';
+    
+    const formattedNumber = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
     }).format(price);
     
-    return formattedPrice;
+    // Apply symbol position
+    if (symbolPosition === 'after') {
+      return `${formattedNumber} ${symbol}`;
+    } else {
+      return `${symbol}${formattedNumber}`;
+    }
   };
 
   const value = {
@@ -104,6 +191,7 @@ export const CurrencyProvider = ({ children }) => {
     currentCurrency,
     loading,
     changeCurrency,
+    convertPrice,
     formatPrice,
   };
 

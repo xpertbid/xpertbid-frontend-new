@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { apiService } from '@/services/api';
 import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 
 const PriceDisplay = ({
@@ -14,10 +13,10 @@ const PriceDisplay = ({
 }) => {
   const [convertedPrice, setConvertedPrice] = useState('');
   const [loading, setLoading] = useState(true);
-  const { currentCurrency, formatPrice } = useCurrency();
+  const { currentCurrency, convertPrice, formatPrice } = useCurrency();
 
   useEffect(() => {
-    const convertPrice = async () => {
+    const convertPriceAmount = async () => {
       try {
         setLoading(true);
         
@@ -28,15 +27,9 @@ const PriceDisplay = ({
           return;
         }
         
-        // Call the backend conversion API
-        const response = await apiService.convertPrice(amount, fromCurrency, currentCurrency?.code);
-        
-        if (response.success) {
-          setConvertedPrice(response.data.converted_amount);
-        } else {
-          // Fallback to original amount if conversion fails
-          setConvertedPrice(amount);
-        }
+        // Call the conversion function from context
+        const converted = await convertPrice(amount, fromCurrency, currentCurrency?.code);
+        setConvertedPrice(converted);
       } catch (error) {
         console.error('Currency conversion error:', error);
         // Fallback to original amount
@@ -47,9 +40,9 @@ const PriceDisplay = ({
     };
 
     if (amount && currentCurrency) {
-      convertPrice();
+      convertPriceAmount();
     }
-  }, [amount, fromCurrency, currentCurrency]);
+  }, [amount, fromCurrency, currentCurrency, convertPrice]);
 
   return (
     <div className={`price-display ${className}`}>
