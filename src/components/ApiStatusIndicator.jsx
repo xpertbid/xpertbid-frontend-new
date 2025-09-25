@@ -41,9 +41,9 @@ const ApiStatusIndicator = () => {
   }
 
   return (
-    <div className="api-status-indicator">
-      <div className="api-status-banner">
-        <div className="container">
+    <div className="">
+      <div className="">
+        {/* <div className="container">
           <div className="row align-items-center">
             <div className="col">
               <div className="d-flex align-items-center">
@@ -62,7 +62,7 @@ const ApiStatusIndicator = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <style jsx>{`
           .api-status-indicator {

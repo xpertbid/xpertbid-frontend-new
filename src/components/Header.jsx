@@ -53,7 +53,22 @@ const Header = ({ className = '' }) => {
           <div className="container">
             <div className="row align-items-center">
               <div className="col-md-6">
-                <div className="header-top-left">
+                <div className="header-top-left d-flex align-items-center">
+                    <div className="header-top-dropdowns">
+                    <select className="form-select me-3">
+                      <option>ENGLISH</option>
+                      <option>FRANÇAIS</option>
+                      <option>DEUTSCH</option>
+                    </select>
+                    </div>
+                    <div className="header-top-dropdowns">
+                    <select className="form-select me-3">
+                      <option>COUNTRY</option>
+                      <option>USA</option>
+                      <option>CANADA</option>
+                      <option>UK</option>
+                    </select>
+                  </div>
                   <span className="welcome-text">
                     <i className="fas fa-truck me-2"></i>
                     FREE SHIPPING FOR ALL ORDERS OF $150
@@ -73,19 +88,7 @@ const Header = ({ className = '' }) => {
                     <Link href="/contact">CONTACT US</Link>
                     <Link href="/faqs">FAQS</Link>
                   </div>
-                  <div className="header-top-dropdowns">
-                    <select className="form-select me-3">
-                      <option>ENGLISH</option>
-                      <option>FRANÇAIS</option>
-                      <option>DEUTSCH</option>
-                    </select>
-                    <select className="form-select me-3">
-                      <option>COUNTRY</option>
-                      <option>USA</option>
-                      <option>CANADA</option>
-                      <option>UK</option>
-                    </select>
-                  </div>
+                
                 </div>
               </div>
             </div>
@@ -109,7 +112,7 @@ const Header = ({ className = '' }) => {
             {/* Search Bar */}
             <div className="col-lg-6 col-md-8 col-6 d-none d-md-block">
               <div className="search-form">
-                <form className="d-flex">
+                <form className="d-flex w-100 " style={{border: '2px solid #e5e7eb'}}>
                   <div className="input-group">
                     <input
                       type="text"
@@ -280,15 +283,18 @@ const Header = ({ className = '' }) => {
 
         .header-top-dropdowns .form-select {
           background-color: transparent;
-          border: 1px solid rgba(255, 255, 255, 0.3);
           color: #ffffff;
           font-size: 11px;
           padding: 4px 8px;
           min-width: 80px;
+          border: none;
+        }
+          .header-top-dropdowns option {
+          background-color: #ffffff;
+          color: #1A1A1A !important;
         }
 
         .header-top-dropdowns .form-select:focus {
-          border-color: rgba(255, 255, 255, 0.5);
           box-shadow: none;
         }
 
@@ -386,17 +392,17 @@ const Header = ({ className = '' }) => {
           background-color: #f9fafb;
           color: #374151;
           min-width: 150px;
-          order: 3;
+          order: 2;
         }
 
         .search-btn {
           border: none !important;
-          padding: 12px 16px;
-          background-color: #1A1A1A !important;
+          background-color: #83B735 !important;
+          padding: 0px 16px;
           color: white !important;
           border-radius: 0;
           font-weight: 500;
-          order: 2;
+          order: 3;
         }
 
         .search-btn:hover {
@@ -628,7 +634,7 @@ const Header = ({ className = '' }) => {
 
         /* Ensure proper spacing and alignment */
         .container {
-          max-width: 1200px;
+          max-width: 1300px;
         }
 
         /* Mobile Styles */
