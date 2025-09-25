@@ -8,11 +8,24 @@ const API_BASE =
 // Basic helper; swap with axios if you prefer
 async function fetchJson(url, init = {}) {
   try {
-    const res = await fetch(url, init);
+    // Add CORS headers for production
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      ...init.headers
+    };
+
+    const res = await fetch(url, {
+      ...init,
+      headers,
+      mode: 'cors', // Enable CORS
+      credentials: 'omit' // Don't send cookies for CORS
+    });
     
     // Check if response is HTML (error page) instead of JSON
     const contentType = res.headers.get('content-type');
     if (contentType && contentType.includes('text/html')) {
+      console.warn('Received HTML response instead of JSON:', url);
       // Return mock data instead of trying to parse HTML as JSON
       return { success: false, error: 'API endpoint not available', data: null };
     }
@@ -34,6 +47,25 @@ async function fetchJson(url, init = {}) {
     
     return await res.json();
   } catch (error) {
+    console.error('API request failed:', error);
+    
+    // Handle different types of errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      return { 
+        success: false, 
+        error: 'Network error - unable to connect to API', 
+        data: null 
+      };
+    }
+    
+    if (error.name === 'AbortError') {
+      return { 
+        success: false, 
+        error: 'Request timeout', 
+        data: null 
+      };
+    }
+    
     // Return mock data on any error
     return { success: false, error: error.message, data: null };
   }

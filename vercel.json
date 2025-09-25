@@ -1,0 +1,45 @@
+{
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://v2.xpertbid.com/api",
+    "NEXT_PUBLIC_SITE_URL": "https://xpertbid-frontend-v2.vercel.app",
+    "NEXT_PUBLIC_APP_NAME": "XpertBid",
+    "NEXT_PUBLIC_ENABLE_CURRENCY_CONVERSION": "true",
+    "NEXT_PUBLIC_ENABLE_LANGUAGE_SWITCHING": "true"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://v2.xpertbid.com/api",
+      "NEXT_PUBLIC_SITE_URL": "https://xpertbid-frontend-v2.vercel.app"
+    }
+  },
+  "functions": {
+    "app/api/**/*.js": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://v2.xpertbid.com/api/:path*"
+    }
+  ]
+}

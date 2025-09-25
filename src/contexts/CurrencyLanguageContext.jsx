@@ -26,9 +26,13 @@ export const CurrencyProvider = ({ children }) => {
           }
         }
 
+        console.log('Loading currencies from API...');
         const response = await apiService.getCurrencies();
+        console.log('Currency API response:', response);
+        
         if (response.success) {
           const currenciesData = response.data || [];
+          console.log('Currencies loaded:', currenciesData);
           setCurrencies(currenciesData);
           
           // Set default currency if none is saved or saved currency is not in the list
@@ -40,6 +44,7 @@ export const CurrencyProvider = ({ children }) => {
             }
           }
         } else {
+          console.warn('Currency API failed, using fallback currencies');
           // Fallback to default currencies if API fails
           const fallbackCurrencies = [
             { 
@@ -85,6 +90,7 @@ export const CurrencyProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Failed to load currencies:', error);
+        console.log('Using fallback currencies due to error');
         // Fallback currencies
         const fallbackCurrencies = [
           { 
