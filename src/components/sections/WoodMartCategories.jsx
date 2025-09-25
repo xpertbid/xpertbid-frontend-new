@@ -39,6 +39,7 @@ const WoodMartCategories = ({
                       width={300}
                       height={200}
                       className="img-fluid"
+                      style={{ width: 'auto', height: 'auto' }}
                     />
                   </div>
                   <div className="category-overlay">
@@ -64,38 +65,38 @@ const WoodMartCategories = ({
 
       <style jsx>{`
         .woodmart-categories {
-          background;
+          background: #ffffff;
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 3rem;
         }
 
         .section-subtitle {
           display: inline-block;
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
-          color: var(--primary-color);
-          margin-bottom;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: #83B735;
+          margin-bottom: 15px;
         }
 
         .section-title {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          color: var(--secondary-color);
-          margin-bottom;
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #1A1A1A;
+          margin-bottom: 0;
         }
 
         .category-card {
-          display;
-          text-decoration;
+          display: block;
+          text-decoration: none;
           height: 100%;
-          border-radius: var(--border-radius-lg);
-          overflow;
+          border-radius: 12px;
+          overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
@@ -103,19 +104,19 @@ const WoodMartCategories = ({
         .category-card:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-          text-decoration;
+          text-decoration: none;
         }
 
         .category-image-wrapper {
-          position;
-          overflow;
+          position: relative;
+          overflow: hidden;
           padding-top: 66.66%; /* 3:2 aspect ratio */
         }
 
         .category-image {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
         }
@@ -123,7 +124,7 @@ const WoodMartCategories = ({
         .category-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -132,70 +133,70 @@ const WoodMartCategories = ({
         }
 
         .category-overlay {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
           background: linear-gradient(
             135deg,
             rgba(0, 0, 0, 0.8) 0%,
             rgba(51, 51, 51, 0.6) 50%,
-            rgba(67, 172, 233, 0.8) 100%
+            rgba(131, 183, 53, 0.8) 100%
           );
-          display;
-          align-items;
-          justify-content;
-          opacity;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
           transition: opacity 0.3s ease;
         }
 
         .category-card:hover .category-overlay {
-          opacity;
+          opacity: 1;
         }
 
         .category-content {
-          text-align;
-          color;
-          padding;
+          text-align: center;
+          color: white;
+          padding: 2rem;
         }
 
         .category-name {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          margin-bottom;
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .category-description {
           font-family: var(--font-family);
-          font-size;
+          font-size: 1rem;
           line-height: 1.5;
-          margin-bottom;
+          margin-bottom: 1rem;
           opacity: 0.9;
         }
 
         .category-count {
           display: inline-block;
           font-family: var(--font-family);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
           background: rgba(255, 255, 255, 0.2);
-          padding;
-          border-radius: var(--border-radius-round);
-          margin-bottom;
+          padding: 8px 16px;
+          border-radius: 20px;
+          margin-bottom: 1rem;
           backdrop-filter: blur(10px);
         }
 
         .category-arrow {
           display: inline-flex;
-          align-items;
-          justify-content;
-          width;
-          height;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
           background: rgba(255, 255, 255, 0.2);
           border-radius: 50%;
           transition: all 0.3s ease;
@@ -203,73 +204,33 @@ const WoodMartCategories = ({
         }
 
         .category-card:hover .category-arrow {
-          background;
-          color: var(--primary-color);
+          background: rgba(255, 255, 255, 0.9);
+          color: #83B735;
           transform: translateX(5px);
         }
 
-        /* Alternative Style for Categories with Text Below */
-        .category-card.alternative {
-          background;
-        }
-
-        .category-card.alternative .category-image-wrapper {
-          padding-top: 75%; /* 4:3 aspect ratio */
-        }
-
-        .category-card.alternative .category-overlay {
-          background;
-          opacity;
-          position;
-          padding;
-          color: var(--secondary-color);
-        }
-
-        .category-card.alternative .category-name {
-          color: var(--secondary-color);
-          text-shadow;
-          font-size;
-          margin-bottom;
-        }
-
-        .category-card.alternative .category-description {
-          color: var(--gray-600);
-          opacity;
-          margin-bottom;
-        }
-
-        .category-card.alternative .category-count {
-          background: var(--primary-color);
-          color;
-          margin-bottom;
-        }
-
-        .category-card.alternative .category-arrow {
-          display;
-        }
-
         /* Responsive Design */
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 2rem;
           }
 
           .category-name {
-            font-size;
+            font-size: 1.25rem;
           }
 
           .category-content {
-            padding;
+            padding: 1.5rem;
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 576px) {
           .category-name {
-            font-size;
+            font-size: 1.125rem;
           }
 
           .category-description {
-            font-size;
+            font-size: 0.9rem;
           }
         }
       `}</style>

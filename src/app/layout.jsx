@@ -4,12 +4,13 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { KycProvider } from "@/contexts/KycContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { CurrencyProvider, LanguageProvider } from '@/contexts/CurrencyLanguageContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const metadata = {
-  title: "XpertBid - Multi-Vendor E-Commerce & Auction Platform",
-  description: "Professional multi-vendor marketplace with advanced auction management system",
-  keywords: "ecommerce, auction, marketplace, multi-vendor, bidding, online shopping",
-  authors: [{ name: "XpertBid Team" }],
+  title: "WoodMart - Premium Furniture & Home Decor Store",
+  description: "Discover amazing furniture and home decor items at unbeatable prices. Quality meets style in every piece.",
+  keywords: "furniture, home decor, living room, bedroom, kitchen, office, modern furniture, quality furniture",
+  authors: [{ name: "WoodMart Team" }],
 };
 
 export const viewport = {
@@ -35,7 +36,9 @@ export default function RootLayout({ children }) {
             <CartProvider>
               <LanguageProvider>
                 <CurrencyProvider>
-                  {children}
+                  <ErrorBoundary>
+                    {children}
+                  </ErrorBoundary>
                 </CurrencyProvider>
               </LanguageProvider>
             </CartProvider>

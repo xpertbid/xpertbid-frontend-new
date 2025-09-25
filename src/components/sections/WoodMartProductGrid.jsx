@@ -239,41 +239,47 @@ const WoodMartProductGrid = ({
 
       <style jsx>{`
         .woodmart-product-grid {
-          background: var(--light-color);
+          background: #ffffff;
+          padding: 80px 0;
         }
 
         .section-header {
-          margin-bottom;
+          text-align: center;
+          margin-bottom: 60px;
         }
 
         .section-subtitle {
           display: inline-block;
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
-          color: var(--primary-color);
-          margin-bottom;
+          font-family: 'Poppins', sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: #83B735;
+          margin-bottom: 20px;
+          background: rgba(131, 183, 53, 0.1);
+          padding: 10px 20px;
+          border-radius: 25px;
         }
 
         .section-title {
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          color: var(--secondary-color);
-          margin-bottom;
+          font-family: 'Poppins', sans-serif;
+          font-size: 2.8rem;
+          font-weight: 700;
+          color: #1A1A1A;
+          margin-bottom: 0;
+          line-height: 1.2;
         }
 
         .product-card {
-          background;
-          border-radius: var(--border-radius-lg);
-          overflow;
+          background: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          height;
-          display;
-          flex-direction;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
         .product-card:hover {
@@ -282,25 +288,25 @@ const WoodMartProductGrid = ({
         }
 
         .product-image-wrapper {
-          position;
-          overflow;
-          height;
-          flex-shrink;
+          position: relative;
+          overflow: hidden;
+          height: 250px;
+          flex-shrink: 0;
         }
 
         .product-image {
-          position;
+          position: relative;
           height: 100%;
-          overflow;
+          overflow: hidden;
         }
 
         .product-image img {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -309,97 +315,98 @@ const WoodMartProductGrid = ({
         }
 
         .product-badges {
-          position;
-          top;
-          left;
-          z-index;
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          z-index: 2;
         }
 
         .badge {
           display: inline-block;
-          padding;
-          font-size;
-          font-weight;
-          text-transform;
+          padding: 6px 12px;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
-          border-radius: var(--border-radius-sm);
-          margin-right;
-          margin-bottom;
+          border-radius: 4px;
+          margin-right: 8px;
+          margin-bottom: 8px;
         }
 
         .badge-new {
-          background: var(--success-color);
-          color;
+          background: #27AE60;
+          color: #ffffff;
         }
 
         .badge-sale {
-          background: var(--danger-color);
-          color;
+          background: #E74C3C;
+          color: #ffffff;
         }
 
         .badge-featured {
-          background: var(--primary-color);
-          color;
+          background: #83B735;
+          color: #ffffff;
         }
 
         .product-actions {
-          position;
-          top;
-          right;
-          display;
-          flex-direction;
-          gap;
-          opacity;
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          opacity: 0;
           transform: translateX(10px);
           transition: all 0.3s ease;
-          z-index;
+          z-index: 2;
         }
 
         .product-card:hover .product-actions {
-          opacity;
+          opacity: 1;
           transform: translateX(0);
         }
 
         .action-btn {
-          width;
-          height;
-          background;
-          border;
+          width: 40px;
+          height: 40px;
+          background: #ffffff;
+          border: none;
           border-radius: 50%;
-          display;
-          align-items;
-          justify-content;
-          cursor;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
           transition: all 0.3s ease;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          color: #374151;
         }
 
         .action-btn:hover {
-          background: var(--primary-color);
-          color;
+          background: #83B735;
+          color: #ffffff;
           transform: scale(1.1);
         }
 
         .wishlist-btn.active {
-          background: var(--danger-color);
-          color;
+          background: #E74C3C;
+          color: #ffffff;
         }
 
         .wishlist-btn.active:hover {
-          background: var(--danger-color);
-          color;
+          background: #C0392B;
+          color: #ffffff;
         }
 
         .product-add-to-cart {
-          position;
-          bottom;
-          left;
-          right;
-          background;
-          padding;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #ffffff;
+          padding: 15px;
           transform: translateY(100%);
           transition: transform 0.3s ease;
-          z-index;
+          z-index: 3;
         }
 
         .product-card:hover .product-add-to-cart {
@@ -408,47 +415,48 @@ const WoodMartProductGrid = ({
 
         .btn-add-to-cart {
           width: 100%;
-          background: var(--secondary-color);
-          color;
-          border;
-          padding;
-          border-radius: var(--border-radius);
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
+          background: #1A1A1A;
+          color: #ffffff;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 6px;
+          font-family: 'Poppins', sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
-          cursor;
+          cursor: pointer;
           transition: all 0.3s ease;
         }
 
         .btn-add-to-cart:hover {
-          background: var(--primary-color);
+          background: #83B735;
           transform: translateY(-1px);
         }
 
         .product-info {
-          padding;
-          flex;
-          display;
-          flex-direction;
+          padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
           justify-content: space-between;
         }
 
         .product-rating {
-          display;
-          align-items;
-          gap;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 10px;
         }
 
         .stars {
-          display;
-          gap;
+          display: flex;
+          gap: 2px;
         }
 
         .stars i {
           color: #ddd;
-          font-size;
+          font-size: 12px;
         }
 
         .stars i.active {
@@ -456,94 +464,108 @@ const WoodMartProductGrid = ({
         }
 
         .reviews-count {
-          font-size;
-          color: var(--gray-600);
+          font-size: 12px;
+          color: #6c757d;
         }
 
         .product-title {
-          margin-bottom;
+          margin-bottom: 10px;
         }
 
         .product-title a {
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          color: var(--secondary-color);
-          text-decoration;
+          font-family: 'Poppins', sans-serif;
+          font-size: 16px;
+          font-weight: 600;
+          color: #1A1A1A;
+          text-decoration: none;
           transition: color 0.3s ease;
         }
 
         .product-title a:hover {
-          color: var(--primary-color);
+          color: #83B735;
         }
 
         .product-price {
-          display;
-          align-items;
-          gap;
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
 
         .current-price {
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          color: var(--secondary-color);
+          font-family: 'Poppins', sans-serif;
+          font-size: 18px;
+          font-weight: 700;
+          color: #1A1A1A;
         }
 
         .compare-price {
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          color: var(--gray-600);
+          font-family: 'Poppins', sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          color: #6c757d;
           text-decoration: line-through;
         }
 
         .btn-view-all {
           display: inline-flex;
-          align-items;
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
-          color: var(--secondary-color);
-          background;
-          padding;
-          border: 2px solid var(--gray-300);
-          border-radius: var(--border-radius);
-          text-decoration;
+          align-items: center;
+          font-family: 'Poppins', sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #1A1A1A;
+          background: transparent;
+          padding: 15px 30px;
+          border: 2px solid #e5e7eb;
+          border-radius: 6px;
+          text-decoration: none;
           transition: all 0.3s ease;
         }
 
         .btn-view-all:hover {
-          background: var(--primary-color);
-          color;
-          border-color: var(--primary-color);
+          background: #83B735;
+          color: #ffffff;
+          border-color: #83B735;
           transform: translateY(-2px);
         }
 
         /* Responsive Design */
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 2.2rem;
           }
 
           .product-actions {
-            opacity;
+            opacity: 1;
             transform: translateX(0);
-            flex-direction;
-            bottom;
-            top;
+            flex-direction: row;
+            bottom: 15px;
+            top: auto;
           }
 
           .product-add-to-cart {
-            position;
-            transform;
-            margin-top;
+            position: static;
+            transform: none;
+            margin-top: 10px;
           }
 
           .product-card:hover .product-add-to-cart {
-            transform;
+            transform: none;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .woodmart-product-grid {
+            padding: 60px 0;
+          }
+
+          .section-title {
+            font-size: 1.8rem;
+          }
+
+          .product-image-wrapper {
+            height: 200px;
           }
         }
       `}</style>

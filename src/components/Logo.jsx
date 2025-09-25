@@ -20,11 +20,11 @@ const Logo = ({ className = '', size = 'medium', showText = true, href = '/' }) 
     <Link href={href} className={`logo ${className}`}>
       <div className="logo-container">
         <div className="logo-icon">
-          <i className="fas fa-gavel"></i>
+          <i className="fas fa-home"></i>
         </div>
         {showText && (
           <div className={`logo-text ${textSizes[size]}`}>
-            XpertBid
+            WoodMart
           </div>
         )}
       </div>
@@ -42,7 +42,7 @@ const Logo = ({ className = '', size = 'medium', showText = true, href = '/' }) 
         }
 
         .logo-icon {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #83B735 0%, #6B9B2A 100%);
           color: white;
           border-radius: 8px;
           display: flex;
@@ -59,7 +59,7 @@ const Logo = ({ className = '', size = 'medium', showText = true, href = '/' }) 
         }
 
         .logo:hover .logo-text {
-          color: #667eea;
+          color: #83B735;
         }
       `}</style>
     </Link>

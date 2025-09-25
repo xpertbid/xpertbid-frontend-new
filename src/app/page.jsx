@@ -1095,71 +1095,170 @@ export default function Home() {
       {/* Categories Section */}
       <WoodMartCategories 
         title="Shop by Category"
-        subtitle="Browse our collections"
-        categories={displayCategories.map(cat => ({
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-          image: cat.image,
-          productCount: Math.floor(Math.random() * 200) + 50, // Mock product count
-          description: cat.description
-        }))}
+        subtitle="Browse our furniture collections"
+        categories={[
+          {
+            id: 1,
+            name: 'Living Room',
+            slug: 'living-room',
+            image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
+            productCount: 150,
+            description: 'Comfortable sofas, chairs, and coffee tables'
+          },
+          {
+            id: 2,
+            name: 'Bedroom',
+            slug: 'bedroom',
+            image: 'https://images.unsplash.com/photo-1555041469-a586c61ea4bc?w=400&h=300&fit=crop',
+            productCount: 120,
+            description: 'Beds, dressers, and bedroom furniture'
+          },
+          {
+            id: 3,
+            name: 'Kitchen',
+            slug: 'kitchen',
+            image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
+            productCount: 80,
+            description: 'Kitchen cabinets, tables, and storage'
+          },
+          {
+            id: 4,
+            name: 'Office',
+            slug: 'office',
+            image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop',
+            productCount: 90,
+            description: 'Desks, chairs, and office furniture'
+          }
+        ]}
         columns={4}
       />
       
       {/* Featured Products */}
         <WoodMartProductGrid 
           title="Featured Products"
-          subtitle="Handpicked items just for you"
-          products={displayProducts.map(product => ({
-            id: product.id,
-            name: product.name,
-            slug: product.slug,
-            price: product.price,
-            comparePrice: 'sale_price' in product && product.sale_price && product.sale_price > product.price ? product.sale_price : null,
-            image: 'images' in product && product.images && Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : '/images/placeholder.svg',
-            badge: 'is_featured' in product && product.is_featured ? 'Featured' : null,
-            badgeColor: 'is_featured' in product && product.is_featured ? 'primary' : null,
-            rating: Math.random() * 5, // Mock rating
-            reviewsCount: Math.floor(Math.random() * 200), // Mock reviews count
-            isNew: false, // Example logic
-            isSale: 'sale_price' in product && product.sale_price !== undefined && product.sale_price < product.price,
-            isFeatured: 'is_featured' in product ? product.is_featured : false
-          }))}
+          subtitle="Handpicked furniture just for you"
+          products={[
+            {
+              id: 1,
+              name: 'Modern Sofa Set',
+              slug: 'modern-sofa-set',
+              price: 899.99,
+              comparePrice: 1099.99,
+              image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop',
+              badge: 'Sale',
+              badgeColor: 'primary',
+              rating: 4.8,
+              reviewsCount: 128,
+              isNew: false,
+              isSale: true,
+              isFeatured: true
+            },
+            {
+              id: 2,
+              name: 'Oak Dining Table',
+              slug: 'oak-dining-table',
+              price: 599.99,
+              image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop',
+              badge: 'New',
+              badgeColor: 'success',
+              rating: 4.6,
+              reviewsCount: 95,
+              isNew: true,
+              isSale: false,
+              isFeatured: true
+            },
+            {
+              id: 3,
+              name: 'Comfortable Armchair',
+              slug: 'comfortable-armchair',
+              price: 399.99,
+              comparePrice: 499.99,
+              image: 'https://images.unsplash.com/photo-1555041469-a586c61ea4bc?w=400&h=400&fit=crop',
+              badge: 'Sale',
+              badgeColor: 'primary',
+              rating: 4.7,
+              reviewsCount: 87,
+              isNew: false,
+              isSale: true,
+              isFeatured: true
+            },
+            {
+              id: 4,
+              name: 'Modern Coffee Table',
+              slug: 'modern-coffee-table',
+              price: 299.99,
+              image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop',
+              badge: 'Featured',
+              badgeColor: 'warning',
+              rating: 4.5,
+              reviewsCount: 156,
+              isNew: false,
+              isSale: false,
+              isFeatured: true
+            },
+            {
+              id: 5,
+              name: 'Executive Desk',
+              slug: 'executive-desk',
+              price: 799.99,
+              image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop',
+              badge: 'New',
+              badgeColor: 'success',
+              rating: 4.9,
+              reviewsCount: 203,
+              isNew: true,
+              isSale: false,
+              isFeatured: true
+            },
+            {
+              id: 6,
+              name: 'Luxury Bed Frame',
+              slug: 'luxury-bed-frame',
+              price: 1299.99,
+              comparePrice: 1599.99,
+              image: 'https://images.unsplash.com/photo-1555041469-a586c61ea4bc?w=400&h=400&fit=crop',
+              badge: 'Sale',
+              badgeColor: 'primary',
+              rating: 4.8,
+              reviewsCount: 142,
+              isNew: false,
+              isSale: true,
+              isFeatured: true
+            },
+            {
+              id: 7,
+              name: 'Storage Cabinet',
+              slug: 'storage-cabinet',
+              price: 449.99,
+              image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop',
+              badge: 'Featured',
+              badgeColor: 'warning',
+              rating: 4.4,
+              reviewsCount: 78,
+              isNew: false,
+              isSale: false,
+              isFeatured: true
+            },
+            {
+              id: 8,
+              name: 'Modern Bookshelf',
+              slug: 'modern-bookshelf',
+              price: 349.99,
+              comparePrice: 429.99,
+              image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop',
+              badge: 'Sale',
+              badgeColor: 'primary',
+              rating: 4.6,
+              reviewsCount: 91,
+              isNew: false,
+              isSale: true,
+              isFeatured: true
+            }
+          ]}
           columns={4}
           showViewAll={true}
           viewAllLink="/shop"
         />
-      
-      {/* Live Auctions */}
-      <WoodMartAuctions 
-        title="Live Auctions"
-        subtitle="Bid and win amazing deals"
-        auctions={displayAuctions}
-        columns={4}
-        showViewAll={true}
-        viewAllLink="/auctions"
-      />
-      
-      {/* Featured Vehicles */}
-      <WoodMartVehicles 
-        title="Featured Vehicles"
-        subtitle="Find your perfect ride"
-        vehicles={displayVehicles}
-        columns={4}
-        showViewAll={true}
-        viewAllLink="/vehicles"
-      />
-      
-      {/* Featured Properties */}
-      <WoodMartProperties 
-        title="Featured Properties"
-        subtitle="Find your dream home"
-        properties={displayProperties}
-        columns={4}
-        showViewAll={true}
-        viewAllLink="/properties"
-      />
       
       {/* Blog Section */}
       <BlogSection />
