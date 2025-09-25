@@ -2,11 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Logo = ({ className = '', size = 'medium', showText = true, href = '/' }) => {
   const sizeClasses = {
-    small: 'h-8',
-    medium: 'h-12',
     large: 'h-16'
   };
 
@@ -19,14 +18,17 @@ const Logo = ({ className = '', size = 'medium', showText = true, href = '/' }) 
   return (
     <Link href={href} className={`logo ${className}`}>
       <div className="logo-container">
-        <div className="logo-icon">
-          <i className="fas fa-home"></i>
+        <div className="logo-image">
+          <Image
+            src="/images/xpertbid-logo.png"
+            alt="XpertBid Logo"
+            width={138}
+            height={36}
+            className="logo-img"
+            priority
+          />
         </div>
-        {showText && (
-          <div className={`logo-text ${textSizes[size]}`}>
-            WoodMart
-          </div>
-        )}
+        
       </div>
 
       <style jsx>{`
@@ -41,15 +43,15 @@ const Logo = ({ className = '', size = 'medium', showText = true, href = '/' }) 
           gap: 10px;
         }
 
-        .logo-icon {
-          background: linear-gradient(135deg, #83B735 0%, #6B9B2A 100%);
-          color: white;
-          border-radius: 8px;
+        .logo-image {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 40px;
-          height: 40px;
+        }
+
+        .logo-img {
+          object-fit: contain;
+          border-radius: 4px;
         }
 
         .logo-text {

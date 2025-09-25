@@ -30,7 +30,7 @@ export const mockData = {
       excerpt: 'Discover the latest furniture trends that will transform your home.',
       content: 'Full blog post content here...',
       image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=400&fit=crop',
-      author: 'WoodMart Team',
+      author: 'XpertBid Team',
       publishedAt: '2024-01-15',
       category: 'Furniture'
     },

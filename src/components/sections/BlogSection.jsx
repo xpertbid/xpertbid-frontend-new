@@ -195,7 +195,7 @@ const BlogSection = () => {
       </div>
 
       <style jsx>{`
-        /* Blog Section - WoodMart Inspired */
+        /* Blog Section - XpertBid Inspired */
         .blog-section {
           background: #ffffff;
           position: relative;

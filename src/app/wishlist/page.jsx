@@ -83,7 +83,7 @@ export default function WishlistPage() {
         <div className="container py-5">
           <div className="text-center">
             <div className="wishlist-login-prompt">
-              <i className="f-heart fa-3x text-muted mb-4"></i>
+              <i className="fas fa-heart fa-3x text-muted mb-4"></i>
               <h2 className="mb-3">
                 <TranslatedText text="Login Required" />
               </h2>
@@ -153,7 +153,7 @@ export default function WishlistPage() {
                       className="btn btn-outline-danger"
                       onClick={clearWishlist}
                     >
-                      <i className="f-trash me-2"></i>
+                      <i className="fas fa-trash me-2"></i>
                       <TranslatedText text="Clear All" />
                     </button>
                   )}
@@ -167,7 +167,7 @@ export default function WishlistPage() {
           {wishlistItems.length === 0 ? (
             <div className="text-center py-5">
               <div className="empty-wishlist">
-                <i className="f-heart fa-3x text-muted mb-3"></i>
+                <i className="fas fa-heart fa-3x text-muted mb-3"></i>
                 <h4 className="text-muted mb-3">
                   <TranslatedText text="Your wishlist is empty" />
                 </h4>
@@ -233,7 +233,7 @@ export default function WishlistPage() {
                           onClick={() => removeFromWishlist(item.product.id)}
                           title="Remove from wishlist"
                         >
-                          <i className="f-heart-broken"></i>
+                          <i className="fas fa-heart-broken"></i>
                         </button>
                       </div>
 
@@ -245,12 +245,12 @@ export default function WishlistPage() {
                         </h5>
                         
                         <p className="wishlist-item-category text-muted">
-                          <i className="f-tag me-1"></i>
+                          <i className="fas fa-tag me-1"></i>
                           {item.product.category_name}
                         </p>
 
                         <p className="wishlist-item-vendor text-muted">
-                          <i className="f-store me-1"></i>
+                          <i className="fas fa-store me-1"></i>
                           {item.product.vendor_name}
                         </p>
                         
@@ -278,7 +278,7 @@ export default function WishlistPage() {
                             {[...Array(5)].map((_, i) => (
                               <i 
                                 key={i} 
-                                className={`f-star ${i < (item.product.rating || 0) ? 'text-warning' : 'text-muted'}`}
+                                className={`fas fa-star ${i < (item.product.rating || 0) ? 'text-warning' : 'text-muted'}`}
                               ></i>
                             ))}
                           </div>
@@ -320,7 +320,7 @@ export default function WishlistPage() {
         
         .page-title {
           font-family: 'Poppins', sans-serif;
-          font-weight;
+          font-weight: 600;
           color: #000;
           font-size: 2.5rem;
         }
@@ -332,8 +332,8 @@ export default function WishlistPage() {
         .wishlist-item-card {
           background: #fff;
           border: 1px solid #e9ecef;
-          border-radius;
-          overflow;
+          border-radius: 8px;
+          overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -344,14 +344,14 @@ export default function WishlistPage() {
         }
 
         .wishlist-item-image {
-          position;
-          overflow;
+          position: relative;
+          overflow: hidden;
         }
 
         .wishlist-item-image img {
           width: 100%;
-          height;
-          object-fit;
+          height: 250px;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -360,51 +360,51 @@ export default function WishlistPage() {
         }
 
         .product-badges {
-          position;
-          top;
-          left;
-          z-index;
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          z-index: 2;
         }
 
         .badge {
           display: inline-block;
           padding: 0.25rem 0.5rem;
           font-size: 0.75rem;
-          font-weight;
-          border-radius;
+          font-weight: 600;
+          border-radius: 4px;
           margin-right: 0.25rem;
         }
 
         .badge-featured {
-          background-color: var(--success-color);
-          color;
+          background-color: #28a745;
+          color: white;
         }
 
         .badge-sale {
-          background-color: var(--danger-color);
-          color;
+          background-color: #dc3545;
+          color: white;
         }
 
         .remove-from-wishlist {
-          position;
-          top;
-          right;
+          position: absolute;
+          top: 10px;
+          right: 10px;
           background: rgba(255, 255, 255, 0.9);
-          border;
+          border: none;
           border-radius: 50%;
-          width;
-          height;
-          display;
-          align-items;
-          justify-content;
+          width: 35px;
+          height: 35px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           color: #dc3545;
           transition: all 0.3s ease;
-          z-index;
+          z-index: 3;
         }
 
         .remove-from-wishlist:hover {
           background: #dc3545;
-          color;
+          color: white;
           transform: scale(1.1);
         }
 
@@ -414,17 +414,17 @@ export default function WishlistPage() {
 
         .wishlist-item-title {
           font-size: 1.1rem;
-          font-weight;
+          font-weight: 600;
           margin-bottom: 0.5rem;
         }
 
         .wishlist-item-title a {
-          color: var(--secondary-color);
-          text-decoration;
+          color: #333;
+          text-decoration: none;
         }
 
         .wishlist-item-title a:hover {
-          color: var(--primary-color);
+          color: #007bff;
         }
 
         .wishlist-item-category,
@@ -439,66 +439,66 @@ export default function WishlistPage() {
 
         .current-price {
           font-size: 1.2rem;
-          font-weight;
-          color: var(--primary-color);
+          font-weight: 600;
+          color: #007bff;
         }
 
         .compare-price {
-          font-size;
-          color: var(--third-color);
+          font-size: 0.9rem;
+          color: #6c757d;
           margin-left: 0.5rem;
         }
 
         .wishlist-item-rating {
-          display;
-          align-items;
+          display: flex;
+          align-items: center;
           gap: 0.5rem;
           margin-bottom: 0.5rem;
         }
 
         .stars {
-          display;
+          display: flex;
           gap: 0.1rem;
         }
 
         .rating-count {
           font-size: 0.8rem;
-          color: var(--third-color);
+          color: #6c757d;
         }
 
         .wishlist-item-meta {
-          margin-bottom;
+          margin-bottom: 1rem;
           padding-top: 0.5rem;
           border-top: 1px solid #eee;
         }
 
         .wishlist-item-actions {
-          display;
+          display: flex;
           gap: 0.5rem;
         }
 
         .empty-wishlist {
-          padding;
+          padding: 2rem;
         }
 
         .wishlist-login-prompt {
-          padding;
+          padding: 2rem;
         }
 
         .wishlist-header {
           background: #fff;
-          padding;
-          border-radius;
+          padding: 1.5rem;
+          border-radius: 8px;
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        @media (max-width) {
+        @media (max-width: 768px) {
           .page-title {
-            font-size;
+            font-size: 2rem;
           }
           
           .wishlist-actions {
-            margin-top;
+            margin-top: 1rem;
           }
         }
       `}</style>

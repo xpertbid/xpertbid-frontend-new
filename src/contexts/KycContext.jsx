@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { apiService } from '@/services/api';
 
 const KycContext = createContext(undefined);
@@ -67,11 +67,11 @@ const initialState = {
 export const KycProvider = ({ children }) => {
   const [state, dispatch] = useReducer(kycReducer, initialState);
 
-  const loadKycDocuments = async (userId) => {
+  const loadKycDocuments = useCallback(async () => {
     dispatch({ type: 'KYC_START' });
     
     try {
-      const response = await apiService.get(`/kyc/documents/${userId}`);
+      const response = await apiService.get('/kyc-documents');
       
       if (response.success) {
         dispatch({
@@ -90,11 +90,11 @@ export const KycProvider = ({ children }) => {
         payload: error.message || 'Failed to load KYC documents',
       });
     }
-  };
+  }, []);
 
   const loadKycTypes = async () => {
     try {
-      const response = await apiService.get('/kyc/types');
+      const response = await apiService.get('/kyc-types');
       
       if (response.success) {
         dispatch({
@@ -111,7 +111,7 @@ export const KycProvider = ({ children }) => {
     dispatch({ type: 'KYC_START' });
     
     try {
-      const response = await apiService.post('/kyc/documents', documentData);
+      const response = await apiService.postJson('/kyc-documents', documentData);
       
       if (response.success) {
         dispatch({
@@ -140,7 +140,7 @@ export const KycProvider = ({ children }) => {
     dispatch({ type: 'KYC_START' });
     
     try {
-      const response = await apiService.put(`/kyc/documents/${documentId}`, documentData);
+      const response = await apiService.postJson(`/kyc-documents/${documentId}`, documentData);
       
       if (response.success) {
         dispatch({

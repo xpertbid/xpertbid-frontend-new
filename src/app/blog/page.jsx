@@ -293,7 +293,7 @@ export default function BlogPage() {
       </div>
 
       <style jsx>{`
-        /* Blog Styles - WoodMart Inspired (No Sidebar) */
+        /* Blog Styles - XpertBid Inspired (No Sidebar) */
         .breadcrumb-section {
           border-bottom: 1px solid #e9ecef;
         }

@@ -14,7 +14,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     password_confirmation: ''
   });
   const [loading, setLoading] = useState(false);
-  const [errors, setError] = useState('');
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
  const [socialLoading, setSocialLoading] = useState({ google: false, facebook: false });
 
@@ -33,10 +33,13 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     clearError();
 
     try {
+      let result;
       if (isLoginMode) {
-        await login(formData.email, formData.password);
+        console.log('Attempting login with:', formData.email);
+        result = await login(formData.email, formData.password);
+        console.log('Login result:', result);
       } else {
-        await register({
+        result = await register({
           name: formData.name,
           email: formData.email,
           password: formData.password,
@@ -44,16 +47,27 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
         });
       }
       
-      onLoginSuccess();
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: ''
-      });
+      // Check if login/register was successful
+      if (result && result.success) {
+        console.log('Login successful, closing modal and redirecting');
+        // Only close modal and redirect on successful login
+        onLoginSuccess();
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          password_confirmation: ''
+        });
+      } else {
+        console.log('Login failed, showing error:', result?.error);
+        // Login failed, show error and keep modal open
+        const errorMessage = result?.error || 'Login failed. Please try again.';
+        setError(errorMessage);
+      }
     } catch (error) {
+      console.log('Login error caught:', error);
       setError(error instanceof Error ? error.message : 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -266,6 +280,11 @@ const handleGoogleLogin = async () => {
                 {error}
               </div>
             )}
+            {authError && !error && (
+              <div className="alert alert-danger" role="alert">
+                {authError}
+              </div>
+            )}
 
             <button
               type="submit"
@@ -341,54 +360,54 @@ const handleGoogleLogin = async () => {
 
       <style jsx>{`
         .modal-overlay {
-          position;
-          top;
-          left;
-          right;
-          bottom;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
           background-color: rgba(0, 0, 0, 0.5);
-          display;
-          align-items;
-          justify-content;
-          z-index;
-          padding;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1050;
+          padding: 20px;
         }
 
         .login-modal {
-          background;
-          border-radius;
+          background: white;
+          border-radius: 8px;
           width: 100%;
-          max-width;
-          max-height;
-          overflow-y;
+          max-width: 450px;
+          max-height: 90vh;
+          overflow-y: auto;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .modal-header {
-          display;
+          display: flex;
           justify-content: space-between;
-          align-items;
-          padding;
+          align-items: center;
+          padding: 20px 30px;
           border-bottom: 1px solid #e9ecef;
         }
 
         .modal-title {
           font-family: 'Poppins', sans-serif;
-          font-size;
-          font-weight;
-          margin;
+          font-size: 24px;
+          font-weight: 600;
+          margin: 0;
           color: #000;
-          text-transform;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .modal-close {
-          background;
-          border;
-          font-size;
+          background: none;
+          border: none;
+          font-size: 24px;
           color: #606060;
-          cursor;
-          padding;
+          cursor: pointer;
+          padding: 0;
         }
 
         .modal-close:hover {
@@ -396,54 +415,54 @@ const handleGoogleLogin = async () => {
         }
 
         .modal-body {
-          padding;
+          padding: 30px;
         }
 
         .form-group {
-          margin-bottom;
+          margin-bottom: 20px;
         }
 
         .form-group label {
-          display;
-          margin-bottom;
+          display: block;
+          margin-bottom: 8px;
           font-family: 'Poppins', sans-serif;
-          font-size;
-          font-weight;
+          font-size: 14px;
+          font-weight: 500;
           color: #000;
-          text-transform;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .form-control {
           width: 100%;
-          padding;
+          padding: 12px 16px;
           border: 1px solid #606060;
-          border-radius;
-          font-size;
+          border-radius: 4px;
+          font-size: 14px;
           font-family: 'Inter', sans-serif;
           transition: border-color 0.3s ease;
         }
 
         .form-control:focus {
-          outline;
+          outline: none;
           border-color: #43ACE9;
           box-shadow: 0 0 0 3px rgba(67, 172, 233, 0.1);
         }
 
         .password-input {
-          position;
+          position: relative;
         }
 
         .password-toggle {
-          position;
-          right;
+          position: absolute;
+          right: 12px;
           top: 50%;
           transform: translateY(-50%);
-          background;
-          border;
+          background: none;
+          border: none;
           color: #606060;
-          cursor;
-          padding;
+          cursor: pointer;
+          padding: 0;
         }
 
         .password-toggle:hover {
@@ -451,50 +470,50 @@ const handleGoogleLogin = async () => {
         }
 
         .form-options {
-          display;
+          display: flex;
           justify-content: space-between;
-          align-items;
-          margin-bottom;
+          align-items: center;
+          margin-bottom: 20px;
         }
 
         .checkbox-label {
-          display;
-          align-items;
-          font-size;
+          display: flex;
+          align-items: center;
+          font-size: 14px;
           color: #606060;
-          cursor;
+          cursor: pointer;
         }
 
         .checkbox-label input {
-          margin-right;
+          margin-right: 8px;
         }
 
         .forgot-password {
           color: #43ACE9;
-          text-decoration;
-          font-size;
+          text-decoration: none;
+          font-size: 14px;
         }
 
         .forgot-password:hover {
-          text-decoration;
+          text-decoration: underline;
         }
 
         .btn-block {
           width: 100%;
-          padding;
+          padding: 12px 20px;
           font-family: 'Poppins', sans-serif;
-          font-size;
-          font-weight;
-          text-transform;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
-          border-radius;
-          margin-bottom;
+          border-radius: 4px;
+          margin-bottom: 20px;
         }
 
         .btn-primary {
           background-color: #43ACE9;
           border-color: #43ACE9;
-          color;
+          color: white;
         }
 
         .btn-primary:hover {
@@ -503,95 +522,95 @@ const handleGoogleLogin = async () => {
         }
 
         .divider {
-          text-align;
-          margin;
-          position;
+          text-align: center;
+          margin: 20px 0;
+          position: relative;
         }
 
         .divider::before {
           content: '';
-          position;
+          position: absolute;
           top: 50%;
-          left;
-          right;
-          height;
+          left: 0;
+          right: 0;
+          height: 1px;
           background-color: #e9ecef;
         }
 
         .divider span {
-          background;
-          padding;
+          background: white;
+          padding: 0 20px;
           color: #606060;
-          font-size;
-          text-transform;
+          font-size: 12px;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .social-login {
-          display;
-          gap;
-          margin-bottom;
+          display: flex;
+          gap: 12px;
+          margin-bottom: 20px;
         }
 
         .btn-facebook, .btn-google {
-          flex;
-          padding;
-          border;
-          border-radius;
+          flex: 1;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 4px;
           font-family: 'Poppins', sans-serif;
-          font-size;
-          font-weight;
-          text-transform;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
-          cursor;
+          cursor: pointer;
           transition: all 0.3s ease;
         }
 
         .btn-facebook {
           background-color: #1877f2;
-          color;
+          color: white;
         }
 
         .btn-google {
           background-color: #db4437;
-          color;
+          color: white;
         }
 
-        .btn-facebook, .btn-google:hover {
+        .btn-facebook:hover, .btn-google:hover {
           opacity: 0.9;
         }
 
         .modal-footer {
-          text-align;
-          padding-top;
+          text-align: center;
+          padding-top: 20px;
           border-top: 1px solid #e9ecef;
         }
 
         .modal-footer p {
-          margin;
+          margin: 0;
           color: #606060;
-          font-size;
+          font-size: 14px;
         }
 
         .btn-link {
-          background;
-          border;
+          background: none;
+          border: none;
           color: #43ACE9;
-          text-decoration;
-          font-weight;
-          cursor;
-          margin-left;
+          text-decoration: none;
+          font-weight: 600;
+          cursor: pointer;
+          margin-left: 8px;
         }
 
         .btn-link:hover {
-          text-decoration;
+          text-decoration: underline;
         }
 
         .alert {
-          padding;
-          margin-bottom;
-          border-radius;
-          font-size;
+          padding: 12px 16px;
+          margin-bottom: 20px;
+          border-radius: 4px;
+          font-size: 14px;
         }
 
         .alert-danger {

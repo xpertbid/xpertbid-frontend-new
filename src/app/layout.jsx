@@ -7,10 +7,10 @@ import { CurrencyProvider, LanguageProvider } from '@/contexts/CurrencyLanguageC
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const metadata = {
-  title: "WoodMart - Premium Furniture & Home Decor Store",
-  description: "Discover amazing furniture and home decor items at unbeatable prices. Quality meets style in every piece.",
-  keywords: "furniture, home decor, living room, bedroom, kitchen, office, modern furniture, quality furniture",
-  authors: [{ name: "WoodMart Team" }],
+  title: "XpertBid - Premium Auctions, Vehicles, Properties & Products",
+  description: "Discover amazing deals on auctions, vehicles, properties, and quality products. Participate in live auctions and find your perfect match.",
+  keywords: "auctions, vehicles, properties, products, bidding, live auctions, cars, real estate, electronics, fashion",
+  authors: [{ name: "XpertBid Team" }],
 };
 
 export const viewport = {

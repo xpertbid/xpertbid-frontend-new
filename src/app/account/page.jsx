@@ -1,14 +1,16 @@
+﻿'use client';
+
+import React from 'react';
 import Layout from '@/components/Layout';
 import MyAccountPage from '@/components/MyAccountPage';
-import ProtectedRoute from '@/components/ProtectedRoute';
 
-export default function Account() {
+const AccountPage = () => {
   return (
     <Layout>
-      <ProtectedRoute>
-        <MyAccountPage />
-      </ProtectedRoute>
+      <MyAccountPage />
     </Layout>
   );
-}
+};
+
+export default AccountPage;
 

@@ -1,34 +1,77 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import KycDashboard from './kyc/KycDashboard';
+import ProfileImageUpload from './ProfileImageUpload';
+import ProfileDetailsTab from './account/ProfileDetailsTab';
+import OrdersTab from './account/OrdersTab';
+import MyBidsTab from './account/MyBidsTab';
+import MyAuctionsTab from './account/MyAuctionsTab';
+import MyProductsTab from './account/MyProductsTab';
+import MyPropertiesTab from './account/MyPropertiesTab';
+import SettingsTab from './account/SettingsTab';
+import { useAuth } from '@/contexts/AuthContext';
+import { apiService } from '@/services/api';
 
 const MyAccountPage = ({ user }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
-
-  const currentUser = user || {
-    id: 1,
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    tenant_id: 1,
-    phone: '+1234567890',
-    status: 'active',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-    role: 'ecommerce',
-    created_at: '2024-01-15T00:00:00Z',
-    updated_at: '2024-01-15T00:00:00Z',
-    joinedDate: '2024-01-15',
-    totalOrders: 12,
-    totalBids: 5,
-    totalAuctions: 2,
+  const [userStats, setUserStats] = useState({
+    totalOrders: 0,
+    totalBids: 0,
+    totalAuctions: 0,
     totalProducts: 0,
     totalProperties: 0
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const { user: authUser, updateUser } = useAuth();
+
+  const currentUser = user || authUser;
+
+  // Load user statistics
+  useEffect(() => {
+    const loadUserStats = async () => {
+      if (!currentUser?.id) return;
+      
+      setIsLoadingStats(true);
+      try {
+        // Load all statistics in parallel
+        const [ordersResponse, bidsResponse, auctionsResponse, productsResponse, propertiesResponse] = await Promise.all([
+          apiService.getUserOrders(),
+          apiService.getUserBids(),
+          apiService.getUserAuctions(),
+          apiService.getUserProducts(),
+          apiService.getUserProperties()
+        ]);
+
+        setUserStats({
+          totalOrders: ordersResponse.success ? (ordersResponse.data?.length || 0) : 0,
+          totalBids: bidsResponse.success ? (bidsResponse.data?.length || 0) : 0,
+          totalAuctions: auctionsResponse.success ? (auctionsResponse.data?.length || 0) : 0,
+          totalProducts: productsResponse.success ? (productsResponse.data?.length || 0) : 0,
+          totalProperties: propertiesResponse.success ? (propertiesResponse.data?.length || 0) : 0
+        });
+      } catch (error) {
+        console.error('Error loading user statistics:', error);
+      } finally {
+        setIsLoadingStats(false);
+      }
+    };
+
+    loadUserStats();
+  }, [currentUser?.id]);
+
+  const handleImageChange = (newAvatarUrl) => {
+    // Update the user's avatar in the auth context
+    if (updateUser) {
+      updateUser({ avatar: newAvatarUrl });
+    }
   };
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-tachometer-alt' },
     { id: 'profile', label: 'Profile', icon: 'fas fa-user' },
+    { id: 'profile-details', label: 'Profile Details', icon: 'fas fa-user-edit' },
     { id: 'orders', label: 'Orders', icon: 'fas fa-shopping-bag' },
     { id: 'bids', label: 'My Bids', icon: 'fas fa-gavel' },
     { id: 'auctions', label: 'My Auctions', icon: 'fas fa-hammer' },
@@ -43,48 +86,129 @@ const MyAccountPage = ({ user }) => {
       case 'dashboard':
         return (
           <div className="dashboard-content">
+            {isLoadingStats ? (
+              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+                <div className="text-center">
+                  <div className="spinner-border text-primary mb-3" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="text-muted">Loading your statistics...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="row">
+                <div className="col-md-3 mb-4">
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <i className="fas fa-shopping-bag"></i>
+                    </div>
+                    <div className="stat-info">
+                      <h3>{userStats.totalOrders}</h3>
+                      <p>Total Orders</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 mb-4">
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <i className="fas fa-gavel"></i>
+                    </div>
+                    <div className="stat-info">
+                      <h3>{userStats.totalBids}</h3>
+                      <p>Total Bids</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 mb-4">
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <i className="fas fa-hammer"></i>
+                    </div>
+                    <div className="stat-info">
+                      <h3>{userStats.totalAuctions}</h3>
+                      <p>My Auctions</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3 mb-4">
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <i className="fas fa-box"></i>
+                    </div>
+                    <div className="stat-info">
+                      <h3>{userStats.totalProducts}</h3>
+                      <p>My Products</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'profile':
+        if (!currentUser) {
+          return (
+            <div className="profile-content">
+              <div className="alert alert-warning" role="alert">
+                <i className="fas fa-exclamation-triangle me-2"></i>
+                Please log in to view your profile information.
+              </div>
+            </div>
+          );
+        }
+        
+        return (
+          <div className="profile-content">
             <div className="row">
-              <div className="col-md-3 mb-4">
-                <div className="stat-card">
-                  <div className="stat-icon">
-                    <i className="fas fa-shopping-bag"></i>
-                  </div>
-                  <div className="stat-info">
-                    <h3>{currentUser.totalOrders || 0}</h3>
-                    <p>Total Orders</p>
-                  </div>
+              <div className="col-md-4">
+                <div className="profile-card">
+                  <ProfileImageUpload 
+                    currentAvatar={currentUser.avatar}
+                    onImageChange={handleImageChange}
+                    userId={currentUser.id}
+                  />
+                  <h4 className="mt-3">{currentUser.name}</h4>
+                  <p className="text-muted">{currentUser.email}</p>
+                  <p className="text-muted">
+                    Member since {currentUser.created_at ? 
+                      new Date(currentUser.created_at).toLocaleDateString() : 
+                      'Unknown'
+                    }
+                  </p>
                 </div>
               </div>
-              <div className="col-md-3 mb-4">
-                <div className="stat-card">
-                  <div className="stat-icon">
-                    <i className="fas fa-gavel"></i>
-                  </div>
-                  <div className="stat-info">
-                    <h3>{currentUser.totalBids || 0}</h3>
-                    <p>Total Bids</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3 mb-4">
-                <div className="stat-card">
-                  <div className="stat-icon">
-                    <i className="fas fa-hammer"></i>
-                  </div>
-                  <div className="stat-info">
-                    <h3>{currentUser.totalAuctions || 0}</h3>
-                    <p>My Auctions</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3 mb-4">
-                <div className="stat-card">
-                  <div className="stat-icon">
-                    <i className="fas fa-box"></i>
-                  </div>
-                  <div className="stat-info">
-                    <h3>{currentUser.totalProducts || 0}</h3>
-                    <p>My Products</p>
+              <div className="col-md-8">
+                <div className="profile-form">
+                  <h5>Quick Profile Info</h5>
+                  <div className="profile-summary">
+                    <div className="row">
+                      <div className="col-sm-6 mb-3">
+                        <strong>Full Name:</strong>
+                        <p className="text-muted">{currentUser.name || 'Not provided'}</p>
+                      </div>
+                      <div className="col-sm-6 mb-3">
+                        <strong>Email:</strong>
+                        <p className="text-muted">{currentUser.email || 'Not provided'}</p>
+                      </div>
+                      <div className="col-sm-6 mb-3">
+                        <strong>Phone:</strong>
+                        <p className="text-muted">{currentUser.phone || 'Not provided'}</p>
+                      </div>
+                      <div className="col-sm-6 mb-3">
+                        <strong>Role:</strong>
+                        <p className="text-muted">{currentUser.role?.toUpperCase() || 'USER'}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <button 
+                        className="btn btn-primary" 
+                        onClick={() => setActiveTab('profile-details')}
+                      >
+                        <i className="fas fa-edit me-2"></i>
+                        Edit Profile Details
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -92,49 +216,26 @@ const MyAccountPage = ({ user }) => {
           </div>
         );
 
-      case 'profile':
-        return (
-          <div className="profile-content">
-            <div className="row">
-              <div className="col-md-4">
-                <div className="profile-card">
-                  <div className="profile-avatar">
-                    <img src={currentUser.avatar} alt={currentUser.name} />
-                  </div>
-                  <h4>{currentUser.name}</h4>
-                  <p className="text-muted">{currentUser.email}</p>
-                  <p className="text-muted">Member since {currentUser.joinedDate}</p>
-                </div>
-              </div>
-              <div className="col-md-8">
-                <div className="profile-form">
-                  <h5>Edit Profile</h5>
-                  <form>
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="name">Full Name</label>
-                        <input type="text" className="form-control" id="name" defaultValue={currentUser.name} />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" className="form-control" id="email" defaultValue={currentUser.email} />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="phone">Phone</label>
-                        <input type="tel" className="form-control" id="phone" defaultValue={currentUser.phone} />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="role">Role</label>
-                        <input type="text" className="form-control" id="role" defaultValue={currentUser.role} readOnly />
-                      </div>
-                    </div>
-                    <button type="submit" className="btn btn-primary">Update Profile</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+      case 'profile-details':
+        return <ProfileDetailsTab user={currentUser} />;
+
+      case 'orders':
+        return <OrdersTab userId={currentUser.id} />;
+
+      case 'bids':
+        return <MyBidsTab userId={currentUser.id} />;
+
+      case 'auctions':
+        return <MyAuctionsTab userId={currentUser?.id} />;
+
+      case 'products':
+        return <MyProductsTab userId={currentUser?.id} />;
+
+      case 'properties':
+        return <MyPropertiesTab userId={currentUser?.id} />;
+
+      case 'settings':
+        return <SettingsTab userId={currentUser?.id} />;
 
       case 'kyc':
         return <KycDashboard />;
@@ -158,10 +259,16 @@ const MyAccountPage = ({ user }) => {
             <div className="account-sidebar">
               <div className="user-info">
                 <div className="user-avatar">
-                  <img src={currentUser.avatar} alt={currentUser.name} />
+                  {currentUser?.avatar ? (
+                    <img src={currentUser.avatar} alt={currentUser.name || 'User'} />
+                  ) : (
+                    <div className="avatar-placeholder">
+                      <i className="fas fa-user fa-2x"></i>
+                    </div>
+                  )}
                 </div>
-                <h5>{currentUser.name}</h5>
-                <p className="text-muted">{currentUser.email}</p>
+                <h5>{currentUser?.name || 'Guest User'}</h5>
+                <p className="text-muted">{currentUser?.email || 'Not logged in'}</p>
               </div>
 
               <nav className="account-nav">
@@ -221,6 +328,18 @@ const MyAccountPage = ({ user }) => {
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+
+        .avatar-placeholder {
+          width: 100%;
+          height: 100%;
+          background: #f8f9fa;
+          border: 2px dashed #dee2e6;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6c757d;
         }
 
         .account-nav {

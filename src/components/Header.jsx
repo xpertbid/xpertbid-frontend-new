@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import LoginModal from './LoginModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -10,7 +11,8 @@ import LanguageSwitcher from './LanguageSwitcher';
 import CurrencySwitcher from './CurrencySwitcher';
 
 const Header = ({ className = '' }) => {
-   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,8 +75,10 @@ const Header = ({ className = '' }) => {
   };
 
   const handleLoginSuccess = (userData) => {
+    console.log('handleLoginSuccess called, closing modal and redirecting to dashboard');
     setShowLoginModal(false);
-    // Auth state will be updated by AuthContext
+    // Redirect to dashboard after successful login
+    router.push('/dashboard');
   };
 
   const handleCloseLoginModal = () => {
@@ -145,19 +149,9 @@ const Header = ({ className = '' }) => {
       <div className="header-main bg-light border-bottom">
         <div className="container">
           <div className="row align-items-center py-3">
-            {/* Logo - WoodMart Style */}
+            {/* Logo - XpertBid */}
             <div className="col-lg-2 col-md-3 col-6">
-              <Link href="/" className="logo">
-                <h2 className="text-primary mb-0 fw-bold" style={{
-                  fontFamily: 'Poppins, sans-serif', 
-                  fontSize: '32px', 
-                  fontWeight: '700', 
-                  letterSpacing: '-0.02em',
-                  WebkitFontSmoothing: 'antialiased',
-                  MozOsxFontSmoothing: 'grayscale',
-                  color: 'var(--primary-color)'
-                }}>WoodMart</h2>
-              </Link>
+              <Logo size="medium" showText={true} />
             </div>
 
             {/* Search Bar - Woodmart Style */}
@@ -217,7 +211,7 @@ const Header = ({ className = '' }) => {
                         {user?.name || 'Account'}
                       </button>
                       <ul className="dropdown-menu dropdown-menu-end">
-                        <li><Link className="dropdown-item" href="/profile">My Profile</Link></li>
+                        <li><Link className="dropdown-item" href="/account">My Account</Link></li>
                         <li><Link className="dropdown-item" href="/account">My Account</Link></li>
                         <li><Link className="dropdown-item" href="/orders">My Orders</Link></li>
                         <li><Link className="dropdown-item" href="/wishlist">Wishlist</Link></li>
@@ -238,7 +232,7 @@ const Header = ({ className = '' }) => {
                       </button>
                       <ul className="dropdown-menu dropdown-menu-end">
                         <li><button className="dropdown-item" onClick={handleLogin}>Login / Register</button></li>
-                        <li><Link className="dropdown-item" href="/profile">My Profile</Link></li>
+                        <li><Link className="dropdown-item" href="/account">My Account</Link></li>
                       </ul>
                     </div>
                   )}

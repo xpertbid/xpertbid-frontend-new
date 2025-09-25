@@ -1,7 +1,7 @@
 /* Bootstrap CSS */
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
-/* WoodMart Design System - Exact Match */
+/* XpertBid Design System - Premium Auction Platform */
 
 /* Custom CSS Variables - XpertBid Colors */
 :root {
@@ -16,7 +16,7 @@
   --secondary-light: #333333;
   --secondary-dark: #000000;
   
-  /* Third Colors - WoodMart Gray */
+  /* Third Colors - XpertBid Gray */
   --third-color: #999999;
   --third-light: #CCCCCC;
   --third-dark: #666666;
@@ -29,7 +29,7 @@
   --success-color: #27AE60;
   --info-color: #3498DB;
   
-  /* Neutral Colors - WoodMart Palette */
+  /* Neutral Colors - XpertBid Palette */
   --light-color: #F8F9FA;
   --dark-color: #1A1A1A;
   --gray-100: #F8F9FA;
@@ -49,7 +49,7 @@
   --xpertbid-dark: #000000;
   --xpertbid-light: #F8F9FA;
   
-  /* Typography - WoodMart Exact */
+  /* Typography - XpertBid Exact */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-family-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-size-base: 14px;
@@ -64,7 +64,7 @@
   --font-size-h5: 18px;
   --font-size-h6: 16px;
   
-  /* Spacing - WoodMart Grid */
+  /* Spacing - XpertBid Grid */
   --spacing-xs: 5px;
   --spacing-sm: 10px;
   --spacing-md: 15px;
@@ -73,7 +73,7 @@
   --spacing-xxl: 40px;
   --spacing-xxxl: 60px;
   
-  /* Border Radius - WoodMart Style */
+  /* Border Radius - XpertBid Style */
   --border-radius: 0px;
   --border-radius-sm: 2px;
   --border-radius-lg: 4px;

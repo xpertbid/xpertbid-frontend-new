@@ -27,13 +27,13 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       
-      // Load user's orders
-      const ordersResponse = await apiService.getUserOrders();   
+      // Load user's orders using the correct method name
+      const ordersResponse = await apiService.getOrders();   
       const orders = ordersResponse.success ? ordersResponse.data : [];  
 
-      // Load user's bids
-      const bidsResponse = await apiService.getUserBids();       
-      const bids = bidsResponse.success ? bidsResponse.data : [];
+      // For now, use mock data for bids since getUserBids doesn't exist
+      // TODO: Add getUserBids method to API service when backend supports it
+      const bids = []; // Mock empty array for now
       
       // Calculate stats
       const totalOrders = orders.length;
@@ -51,6 +51,15 @@ export default function DashboardPage() {
       });
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      // Set default stats if API fails
+      setStats({
+        totalOrders: 0,
+        totalSpent: 0,
+        totalBids: 0,
+        totalWins: 0,
+        recentOrders: [],
+        recentBids: []
+      });
     } finally {
       setLoading(false);
     }

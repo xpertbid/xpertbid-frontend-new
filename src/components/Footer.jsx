@@ -10,15 +10,15 @@ const Footer = ({ className = '' }) => {
   const footerLinks = {
     shop: [
       { name: 'All Products', href: '/shop' },
-      { name: 'Living Room', href: '/shop?category=living-room' },
-      { name: 'Bedroom', href: '/shop?category=bedroom' },
-      { name: 'Kitchen', href: '/shop?category=kitchen' }
+      { name: 'Electronics', href: '/categories/electronics' },
+      { name: 'Fashion', href: '/categories/fashion' },
+      { name: 'Sports & Outdoors', href: '/categories/sports' }
     ],
-    categories: [
-      { name: 'Furniture', href: '/shop?category=furniture' },
-      { name: 'Lighting', href: '/shop?category=lighting' },
-      { name: 'Decor', href: '/shop?category=decor' },
-      { name: 'Outdoor', href: '/shop?category=outdoor' }
+    auctions: [
+      { name: 'Live Auctions', href: '/auctions/live' },
+      { name: 'Upcoming Auctions', href: '/auctions/upcoming' },
+      { name: 'Ended Auctions', href: '/auctions/ended' },
+      { name: 'How to Bid', href: '/help/bidding' }
     ],
     support: [
       { name: 'Help Center', href: '/help' },
@@ -45,8 +45,8 @@ const Footer = ({ className = '' }) => {
               <div className="footer-widget">
                 <Logo showText={true} className="mb-4" />
                 <p className="footer-description">
-                  WoodMart is your premier destination for quality furniture and home decor. 
-                  Discover amazing furniture pieces, modern designs, and transform your living space with style.
+                  XpertBid is your premier destination for auctions, vehicles, properties, and quality products. 
+                  Discover amazing deals, participate in live auctions, and find your perfect match with style.
                 </p>
                 <div className="footer-social">
                   <h5 className="social-title">Follow Us</h5>
@@ -85,12 +85,12 @@ const Footer = ({ className = '' }) => {
               </div>
             </div>
 
-            {/* Categories Links */}
+            {/* Auctions Links */}
             <div className="col-lg-2 col-md-6 col-sm-6">
               <div className="footer-widget">
-                <h5 className="widget-title">Categories</h5>
+                <h5 className="widget-title">Auctions</h5>
                 <ul className="footer-links">
-                  {footerLinks.categories.map((link, index) => (
+                  {footerLinks.auctions.map((link, index) => (
                     <li key={index}>
                       <Link href={link.href}>{link.name}</Link>
                     </li>
@@ -137,7 +137,7 @@ const Footer = ({ className = '' }) => {
             <div className="col-lg-6 col-md-12">
               <div className="footer-newsletter">
                 <h5 className="newsletter-title">Stay Updated</h5>
-                <p className="newsletter-text">Subscribe to get updates on new products and auctions</p>
+                <p className="newsletter-text">Subscribe to get updates on new products, auctions, and exclusive deals</p>
               </div>
             </div>
             <div className="col-lg-6 col-md-12">
@@ -165,7 +165,7 @@ const Footer = ({ className = '' }) => {
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-12">
               <div className="footer-copyright">
-                <p>&copy; {currentYear} WoodMart. All rights reserved.</p>
+                <p>&copy; {currentYear} XpertBid. All rights reserved.</p>
               </div>
             </div>
             <div className="col-lg-6 col-md-12">

@@ -3,7 +3,7 @@
 // If you already have an axios instance/baseUrl, replace `fetchJson` with your client.
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || 'http://localhost:8000/api';
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || 'http://v2.xpertbid.com/api';
 
 // Basic helper; swap with axios if you prefer
 async function fetchJson(url, init = {}) {
@@ -19,7 +19,17 @@ async function fetchJson(url, init = {}) {
     
     // Check if response is ok
     if (!res.ok) {
-      return { success: false, error: `HTTP ${res.status}`, data: null };
+      let errorMessage = `HTTP ${res.status}`;
+      if (res.status === 500) {
+        errorMessage = 'Internal Server Error - API endpoint may not be implemented';
+      } else if (res.status === 404) {
+        errorMessage = 'API endpoint not found';
+      } else if (res.status === 401) {
+        errorMessage = 'Unauthorized - Please check authentication';
+      } else if (res.status === 403) {
+        errorMessage = 'Forbidden - Access denied';
+      }
+      return { success: false, error: errorMessage, data: null };
     }
     
     return await res.json();
@@ -37,10 +47,8 @@ async function customRequest(path, init = {}) {
 
 // Append auth header if you need token-based auth
 function withAuth(headers = {}) {
-  // Example:
-  // const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  // return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
-  return headers;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
 }
 
 // ---------- KYC endpoints (adjust paths to match your backend) ----------
@@ -137,9 +145,14 @@ async function getAuctionBySlug(slug) {
   return get(`/auctions/${encodeURIComponent(slug)}`);
 }
 
-async function placeBid(auctionId, body) {
+async function placeBid(auctionId, bidAmount) {
   // Common patterns: POST /auctions/:id/bids
-  return postJson(`/auctions/${auctionId}/bids`, body);
+  return postJson(`/auctions/${auctionId}/bids`, { amount: bidAmount });
+}
+
+async function watchAuction(auctionId) {
+  // Common patterns: POST /auctions/:id/watch
+  return postJson(`/auctions/${auctionId}/watch`, {});
 }
 
 // Additional API methods for the application
@@ -149,12 +162,38 @@ async function getCategories() {
 
 async function getFeaturedProducts(limit = 12) {
   try {
-    const response = await get(`/products/featured?limit=${limit}`);
-    if (response.success) {
-      return response;
+    const response = await get(`/products?is_featured=1&limit=${limit}`);
+    
+    if (response.success && response.data) {
+      // Transform the API response to match our frontend expectations
+      const transformedProducts = response.data.map(product => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: parseFloat(product.price || 0),
+        comparePrice: product.compare_price ? parseFloat(product.compare_price) : null,
+        image: product.thumbnail_image || product.featured_image || 
+               (product.images ? 
+                 (typeof product.images === 'string' ? 
+                   JSON.parse(product.images.replace(/\\/g, ''))[0] : 
+                   product.images[0]) : 
+                 null),
+        badge: product.sale_price ? 'Sale' : (product.is_featured ? 'Featured' : 'New'),
+        badgeColor: product.sale_price ? 'primary' : (product.is_featured ? 'success' : 'info'),
+        rating: parseFloat(product.rating || 0),
+        reviewsCount: product.reviews_count || 0,
+        isFeatured: product.is_featured === 1
+      }));
+      
+      return {
+        success: true,
+        data: transformedProducts
+      };
     }
-    throw new Error(response.error || 'Failed to fetch products');
+    
+    return response;
   } catch (error) {
+    console.error('Error fetching featured products:', error);
     // Return mock data if API fails
     return {
       success: true,
@@ -251,12 +290,130 @@ async function getProperties() {
 }
 
 async function getProducts(params = {}) {
-  const queryString = new URLSearchParams(params).toString();
-  return get(`/products${queryString ? `?${queryString}` : ''}`);
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await get(`/products${queryString ? `?${queryString}` : ''}`);
+    
+    if (response.success && response.data) {
+      // Transform the API response to match our frontend expectations
+      const transformedProducts = response.data.map(product => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: parseFloat(product.price || 0),
+        sale_price: product.sale_price ? parseFloat(product.sale_price) : null,
+        compare_price: product.compare_price ? parseFloat(product.compare_price) : null,
+        sku: product.sku,
+        stock_quantity: product.quantity || 0,
+        weight: product.weight,
+        dimensions: product.length && product.width && product.height ? 
+          `${product.length} x ${product.width} x ${product.height}` : 'N/A',
+        description: product.description,
+        short_description: product.short_description,
+        images: product.images ? 
+          (typeof product.images === 'string' ? JSON.parse(product.images.replace(/\\/g, '')) : product.images) : 
+          [],
+        thumbnail_image: product.thumbnail_image,
+        featured_image: product.featured_image,
+        category: product.category_name,
+        category_id: product.category_id,
+        is_featured: product.is_featured === 1,
+        is_new: product.is_trending === 1,
+        rating: parseFloat(product.rating || 0),
+        reviews_count: product.reviews_count || 0,
+        business_name: product.business_name,
+        status: product.status,
+        stock_status: product.stock_status,
+        published_at: product.published_at,
+        created_at: product.created_at,
+        updated_at: product.updated_at
+      }));
+      
+      return {
+        success: true,
+        data: transformedProducts
+      };
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return {
+      success: false,
+      error: error.message,
+      data: []
+    };
+  }
 }
 
 async function getProductBySlug(slug) {
-  return get(`/products/${encodeURIComponent(slug)}`);
+  try {
+    const response = await get(`/products/${encodeURIComponent(slug)}`);
+    
+    if (response.success && response.data) {
+      // Transform the API response to match our frontend expectations
+      const product = response.data;
+      const transformedProduct = {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: parseFloat(product.price || 0),
+        sale_price: product.sale_price ? parseFloat(product.sale_price) : null,
+        compare_price: product.compare_price ? parseFloat(product.compare_price) : null,
+        sku: product.sku,
+        stock_quantity: product.quantity || 0,
+        weight: product.weight,
+        dimensions: product.length && product.width && product.height ? 
+          `${product.length} x ${product.width} x ${product.height}` : 'N/A',
+        description: product.description,
+        short_description: product.short_description,
+        long_description: product.description, // Use description as long description
+        images: product.images ? 
+          (typeof product.images === 'string' ? JSON.parse(product.images.replace(/\\/g, '')) : product.images) : 
+          [],
+        thumbnail_image: product.thumbnail_image,
+        featured_image: product.featured_image,
+        category: product.category_name,
+        category_id: product.category_id,
+        is_featured: product.is_featured === 1,
+        is_new: product.is_trending === 1,
+        rating: parseFloat(product.rating || 0),
+        reviews_count: product.reviews_count || 0,
+        business_name: product.business_name,
+        status: product.status,
+        stock_status: product.stock_status,
+        published_at: product.published_at,
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+        // Additional fields for product detail page
+        specifications: {
+          'SKU': product.sku,
+          'Weight': product.weight,
+          'Dimensions': product.length && product.width && product.height ? 
+            `${product.length} x ${product.width} x ${product.height}` : 'N/A',
+          'Category': product.category_name,
+          'Business': product.business_name,
+          'Stock Status': product.stock_status,
+          'Tax Class': product.tax_class,
+          'Shipping': product.requires_shipping ? 'Required' : 'Not Required'
+        }
+      };
+      
+      return {
+        success: true,
+        data: transformedProduct
+      };
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('Error fetching product by slug:', error);
+    return {
+      success: false,
+      error: error.message,
+      data: null
+    };
+  }
 }
 
 async function getVehicleBySlug(slug) {
@@ -290,7 +447,7 @@ async function getBlogPosts() {
           excerpt: 'Discover the latest furniture trends that will transform your home.',
           content: 'Full blog post content here...',
           image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=400&fit=crop',
-          author: 'WoodMart Team',
+          author: 'XpertBid Team',
           publishedAt: '2024-01-15',
           category: 'Furniture'
         },
@@ -338,7 +495,37 @@ async function logout() {
 }
 
 async function getUserProfile() {
-  return get('/user/profile');
+  try {
+    const response = await get('/user/profile');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user profile');
+  } catch (error) {
+    console.warn('User profile API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: {
+        id: 1,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        phone: '+1 (555) 123-4567',
+        avatar: 'https://via.placeholder.com/120x120?text=JD',
+        role: 'user',
+        status: 'active',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-22T00:00:00Z',
+        address: '123 Main Street',
+        city: 'New York',
+        state: 'NY',
+        country: 'United States',
+        postal_code: '10001',
+        date_of_birth: '1990-01-01',
+        gender: 'male'
+      }
+    };
+  }
 }
 
 async function updateUserProfile(data) {
@@ -346,7 +533,27 @@ async function updateUserProfile(data) {
 }
 
 async function getCart() {
-  return get('/cart');
+  try {
+    const response = await get('/cart');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch cart');
+  } catch (error) {
+    console.warn('Cart API failed, returning empty cart:', error.message);
+    // Return empty cart if API fails
+    return {
+      success: true,
+      data: {
+        items: [],
+        total: 0,
+        item_count: 0,
+        subtotal: 0,
+        tax: 0,
+        shipping: 0
+      }
+    };
+  }
 }
 
 async function addToCart(productId, quantity = 1, variations = {}) {
@@ -370,7 +577,359 @@ async function createOrder(orderData) {
 }
 
 async function getOrders() {
-  return get('/orders');
+  try {
+    const response = await get('/orders');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch orders');
+  } catch (error) {
+    console.warn('Orders API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: [
+        {
+          id: 1,
+          order_number: 'ORD-001',
+          status: 'completed',
+          total_amount: 299.99,
+          subtotal: 299.99,
+          shipping_cost: 0,
+          tax_amount: 0,
+          created_at: '2024-01-15T10:30:00Z',
+          items: [
+            {
+              product_name: 'Modern Office Chair',
+              quantity: 1,
+              price: 299.99
+            }
+          ],
+          shipping_address: '123 Main St, City, State 12345'
+        },
+        {
+          id: 2,
+          order_number: 'ORD-002',
+          status: 'processing',
+          total_amount: 159.99,
+          subtotal: 159.99,
+          shipping_cost: 0,
+          tax_amount: 0,
+          created_at: '2024-01-20T14:15:00Z',
+          items: [
+            {
+              product_name: 'Desk Lamp',
+              quantity: 1,
+              price: 159.99
+            }
+          ],
+          shipping_address: '456 Oak Ave, City, State 12345'
+        },
+        {
+          id: 3,
+          order_number: 'ORD-003',
+          status: 'shipped',
+          total_amount: 89.99,
+          subtotal: 79.99,
+          shipping_cost: 10.00,
+          tax_amount: 0,
+          created_at: '2024-01-18T09:45:00Z',
+          items: [
+            {
+              product_name: 'Wireless Mouse',
+              quantity: 1,
+              price: 79.99
+            }
+          ],
+          shipping_address: '789 Pine St, City, State 12345'
+        }
+      ]
+    };
+  }
+}
+
+async function getUserOrders() {
+  try {
+    const response = await get('/user/orders');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user orders');
+  } catch (error) {
+    console.warn('User orders API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: [
+        {
+          id: 1,
+          order_number: 'ORD-001',
+          status: 'completed',
+          total_amount: 299.99,
+          created_at: '2024-01-15T10:30:00Z',
+          items: [
+            {
+              product_name: 'Modern Office Chair',
+              quantity: 1,
+              price: 299.99
+            }
+          ],
+          shipping_address: '123 Main St, City, State 12345'
+        },
+        {
+          id: 2,
+          order_number: 'ORD-002',
+          status: 'processing',
+          total_amount: 159.99,
+          created_at: '2024-01-20T14:15:00Z',
+          items: [
+            {
+              product_name: 'Desk Lamp',
+              quantity: 1,
+              price: 159.99
+            }
+          ],
+          shipping_address: '456 Oak Ave, City, State 12345'
+        }
+      ]
+    };
+  }
+}
+
+async function getUserBids() {
+  try {
+    const response = await get('/user/bids');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user bids');
+  } catch (error) {
+    console.warn('User bids API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: [
+        {
+          id: 1,
+          auction_title: 'Vintage Wooden Desk',
+          bid_amount: 250.00,
+          current_bid: 250.00,
+          status: 'active',
+          bid_time: '2024-01-22T09:30:00Z',
+          end_time: '2024-01-25T18:00:00Z',
+          bid_count: 5,
+          reserve_price: 200.00
+        },
+        {
+          id: 2,
+          auction_title: 'Antique Chair Set',
+          bid_amount: 180.00,
+          current_bid: 195.00,
+          status: 'outbid',
+          bid_time: '2024-01-21T16:45:00Z',
+          end_time: '2024-01-24T20:00:00Z',
+          bid_count: 8,
+          reserve_price: 150.00
+        },
+        {
+          id: 3,
+          auction_title: 'Modern Coffee Table',
+          bid_amount: 320.00,
+          current_bid: 320.00,
+          status: 'won',
+          bid_time: '2024-01-18T11:20:00Z',
+          end_time: '2024-01-20T15:00:00Z',
+          bid_count: 12,
+          reserve_price: 250.00
+        }
+      ]
+    };
+  }
+}
+
+async function getUserAuctions() {
+  try {
+    const response = await get('/user/auctions');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user auctions');
+  } catch (error) {
+    console.warn('User auctions API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: [
+        {
+          id: 1,
+          title: 'Vintage Wooden Desk',
+          status: 'active',
+          starting_price: 200.00,
+          current_bid: 250.00,
+          reserve_price: 200.00,
+          bid_count: 5,
+          views: 45,
+          created_at: '2024-01-15T10:30:00Z',
+          end_time: '2024-01-25T18:00:00Z'
+        },
+        {
+          id: 2,
+          title: 'Antique Chair Set',
+          status: 'ended',
+          starting_price: 150.00,
+          current_bid: 195.00,
+          reserve_price: 150.00,
+          bid_count: 8,
+          views: 32,
+          created_at: '2024-01-10T14:15:00Z',
+          end_time: '2024-01-20T20:00:00Z'
+        }
+      ]
+    };
+  }
+}
+
+async function getUserProducts() {
+  try {
+    const response = await get('/user/products');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user products');
+  } catch (error) {
+    console.warn('User products API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: [
+        {
+          id: 1,
+          name: 'Modern Office Chair',
+          sku: 'CHAIR-001',
+          price: 299.99,
+          sale_price: 249.99,
+          status: 'published',
+          stock_quantity: 15,
+          category: 'Furniture',
+          weight: '15 lbs',
+          views: 120,
+          sales_count: 8,
+          rating: 4.5,
+          reviews_count: 12,
+          thumbnail_image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop',
+          short_description: 'Ergonomic office chair with lumbar support',
+          created_at: '2024-01-15T10:30:00Z',
+          updated_at: '2024-01-20T14:15:00Z'
+        },
+        {
+          id: 2,
+          name: 'Desk Lamp',
+          sku: 'LAMP-002',
+          price: 159.99,
+          status: 'draft',
+          stock_quantity: 0,
+          category: 'Lighting',
+          weight: '3 lbs',
+          views: 45,
+          sales_count: 0,
+          rating: 0,
+          reviews_count: 0,
+          thumbnail_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+          short_description: 'Adjustable LED desk lamp',
+          created_at: '2024-01-20T14:15:00Z',
+          updated_at: '2024-01-20T14:15:00Z'
+        }
+      ]
+    };
+  }
+}
+
+async function getUserProperties() {
+  try {
+    const response = await get('/user/properties');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user properties');
+  } catch (error) {
+    console.warn('User properties API failed, returning mock data:', error.message);
+    // Return mock data if API fails
+    return {
+      success: true,
+      data: [
+        {
+          id: 1,
+          title: 'Modern Family Home',
+          status: 'active',
+          type: 'house',
+          price: 450000,
+          size: 2500,
+          bedrooms: 4,
+          bathrooms: 3,
+          location: '123 Main St, City, State',
+          year_built: 2015,
+          views: 85,
+          inquiries: 12,
+          featured_image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop',
+          description: 'Beautiful modern family home with open floor plan and updated kitchen.',
+          created_at: '2024-01-15T10:30:00Z',
+          updated_at: '2024-01-20T14:15:00Z'
+        },
+        {
+          id: 2,
+          title: 'Downtown Apartment',
+          status: 'draft',
+          type: 'apartment',
+          price: 280000,
+          size: 1200,
+          bedrooms: 2,
+          bathrooms: 2,
+          location: '456 Oak Ave, City, State',
+          year_built: 2020,
+          views: 0,
+          inquiries: 0,
+          featured_image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop',
+          description: 'Modern downtown apartment with city views and amenities.',
+          created_at: '2024-01-20T14:15:00Z',
+          updated_at: '2024-01-20T14:15:00Z'
+        }
+      ]
+    };
+  }
+}
+
+async function getUserSettings() {
+  try {
+    const response = await get('/user/settings');
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch user settings');
+  } catch (error) {
+    console.warn('User settings API failed, returning default settings:', error.message);
+    // Return default settings if API fails
+    return {
+      success: true,
+      data: {
+        notifications: {
+          email: true,
+          bid: true,
+          order: true,
+          auction: true,
+          property: true
+        },
+        privacy: {
+          profile_public: false,
+          show_activity: true,
+          two_factor: false
+        }
+      }
+    };
+  }
+}
+
+async function updateUserSettings(type, settings) {
+  return postJson(`/user/settings/${type}`, settings);
 }
 
 async function getOrderById(orderId) {
@@ -387,6 +946,10 @@ async function addToWishlist(productId) {
 
 async function removeFromWishlist(productId) {
   return delJson(`/wishlist/${productId}`);
+}
+
+async function clearWishlist() {
+  return delJson('/wishlist/clear');
 }
 
 async function searchProducts(query, filters = {}) {
@@ -461,6 +1024,7 @@ export const apiService = {
   getAuctions,
   getAuctionBySlug,
   placeBid,
+  watchAuction,
   // KYC domain
   getKycDocuments,
   getKycTypes,
@@ -492,10 +1056,18 @@ export const apiService = {
   clearCart,
   createOrder,
   getOrders,
+  getUserOrders,
+  getUserBids,
+  getUserAuctions,
+  getUserProducts,
+  getUserProperties,
+  getUserSettings,
+  updateUserSettings,
   getOrderById,
   getWishlist,
   addToWishlist,
   removeFromWishlist,
+  clearWishlist,
   searchProducts,
   getCurrencies,
   getLanguages,

@@ -89,24 +89,37 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
     
     try {
-      const response = await apiService.post('/auth/login', {
+      const response = await apiService.login({
         email,
         password,
       });
 
-      const { user, token } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
-      dispatch({
-        type: 'AUTH_SUCCESS',
-        payload: { user, token },
-      });
-      
-      return { success: true };
+      console.log('Login API response:', response);
+
+      // Handle the API response structure
+      if (response.success && response.data) {
+        const { user, token } = response.data;
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        dispatch({
+          type: 'AUTH_SUCCESS',
+          payload: { user, token },
+        });
+        
+        return { success: true };
+      } else {
+        const errorMessage = response.message || 'Login failed';
+        dispatch({
+          type: 'AUTH_FAILURE',
+          payload: errorMessage,
+        });
+        return { success: false, error: errorMessage };
+      }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      console.log('Login error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       dispatch({
         type: 'AUTH_FAILURE',
         payload: errorMessage,
@@ -119,21 +132,31 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
     
     try {
-      const response = await apiService.post('/auth/register', formData);
+      const response = await apiService.register(formData);
       
-      const { user, token } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
-      dispatch({
-        type: 'AUTH_SUCCESS',
-        payload: { user, token },
-      });
-      
-      return { success: true };
+      // Handle the API response structure
+      if (response.success && response.data) {
+        const { user, token } = response.data;
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        dispatch({
+          type: 'AUTH_SUCCESS',
+          payload: { user, token },
+        });
+        
+        return { success: true };
+      } else {
+        const errorMessage = response.message || 'Registration failed';
+        dispatch({
+          type: 'AUTH_FAILURE',
+          payload: errorMessage,
+        });
+        return { success: false, error: errorMessage };
+      }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+      const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
       dispatch({
         type: 'AUTH_FAILURE',
         payload: errorMessage,

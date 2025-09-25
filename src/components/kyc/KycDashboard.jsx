@@ -10,7 +10,7 @@ import KycDocumentCard from './KycDocumentCard';
 
 
 const KycDashboard = ({ user }) => {
-  const { documents, kycTypes, isLoading, error, loadKycDocuments } = useKyc();
+  const { documents, kycTypes, isLoading, error, loadKycDocuments, loadKycTypes } = useKyc();
   const { user: authUser } = useAuth();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedType, setSelectedType] = useState('');
@@ -18,10 +18,11 @@ const KycDashboard = ({ user }) => {
   const currentUser = user || authUser;
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser?.id) {
       loadKycDocuments();
+      loadKycTypes();
     }
-  }, [currentUser, loadKycDocuments]);
+  }, [currentUser?.id, loadKycDocuments, loadKycTypes]);
 
   const handleCreateKyc = () => {
     setShowCreateForm(true);
@@ -35,7 +36,9 @@ const KycDashboard = ({ user }) => {
   const handleFormSubmit = () => {
     setShowCreateForm(false);
     setSelectedType('');
-    loadKycDocuments();
+    if (currentUser?.id) {
+      loadKycDocuments();
+    }
   };
 
   const handleFormCancel = () => {

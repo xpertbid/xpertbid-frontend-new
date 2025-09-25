@@ -76,7 +76,7 @@ const WoodMartProductGrid = ({
       price: product.price,
       quantity,
       image: product.image,
-      vendor: 'WoodMart',
+      vendor: 'XpertBid',
       sku: `WM-${product.id}`,
       slug: product.slug || '',
     });
