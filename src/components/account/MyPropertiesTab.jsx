@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { apiService } from '@/services/api';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 
 const MyPropertiesTab = ({ userId }) => {
   const [properties, setProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     loadProperties();
@@ -76,15 +78,6 @@ const MyPropertiesTab = ({ userId }) => {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
   };
 
   if (isLoading) {

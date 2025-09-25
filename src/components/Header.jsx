@@ -93,27 +93,11 @@ const Header = ({ className = '' }) => {
           <div className="row align-items-center">
             <div className="col-md-6">
               <div className="d-flex align-items-center">
-                <div className="dropdown me-4">
-                  <button className="btn btn-link text-white p-0 border-0" type="button" data-bs-toggle="dropdown" style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-                    ENGLISH
-                    <i className="fas fa-chevron-down ms-1" style={{fontSize: '10px'}}></i>
-                  </button>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">English</a></li>
-                    <li><a className="dropdown-item" href="#">Spanish</a></li>
-                    <li><a className="dropdown-item" href="#">French</a></li>
-                  </ul>
+                <div className="me-4">
+                  <LanguageSwitcher showLabel={true} variant="header" />
                 </div>
-                <div className="dropdown me-4">
-                  <button className="btn btn-link text-white p-0 border-0" type="button" data-bs-toggle="dropdown" style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-                    COUNTRY
-                    <i className="fas fa-chevron-down ms-1" style={{fontSize: '10px'}}></i>
-                  </button>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">USA</a></li>
-                    <li><a className="dropdown-item" href="#">Canada</a></li>
-                    <li><a className="dropdown-item" href="#">UK</a></li>
-                  </ul>
+                <div className="me-4">
+                  <CurrencySwitcher showLabel={true} variant="header" />
                 </div>
                 <span style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
                   FREE SHIPPING FOR ALL ORDERS OF $150

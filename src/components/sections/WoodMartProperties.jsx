@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 import PriceDisplay from '@/components/PriceDisplay';
 import TranslatedText from '@/components/TranslatedText';
 
@@ -18,6 +19,7 @@ const WoodMartProperties = ({
   showViewAll = true,
   viewAllLink = "/properties"
 }) => {
+  const { formatPrice } = useCurrency();
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
 
   return (
@@ -126,9 +128,9 @@ const WoodMartProperties = ({
 
                     {/* Price */}
                     <div className="property-price">
-                      <span className="current-price">${property.price.toLocaleString()}</span>
+                      <span className="current-price">{formatPrice(property.price || 0)}</span>
                       {property.comparePrice && (
-                        <span className="compare-price">${property.comparePrice.toLocaleString()}</span>
+                        <span className="compare-price">{formatPrice(property.comparePrice)}</span>
                       )}
                     </div>
 

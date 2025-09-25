@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Layout from '@/components/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
 import { useCurrency } from '@/contexts/CurrencyLanguageContext';
-import PriceDisplay from '@/components/PriceDisplay';
-import TranslatedText from '@/components/TranslatedText';
+import TranslatedText, { TranslatedOption } from '@/components/TranslatedText';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -22,9 +21,9 @@ function SearchContent() {
   const [sortBy, setSortBy] = useState('relevance');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  // const { formatPrice } = useCurrency();
+  const { formatPrice } = useCurrency();
 
-  const performSearch = async () => {
+  const performSearch = useCallback(async () => {
     if (!query.trim()) {
       setProducts([]);
       setLoading(false);
@@ -54,9 +53,9 @@ function SearchContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [query, filters, sortBy, sortOrder]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await apiService.getCategories();
       if (response.success) {
@@ -65,7 +64,7 @@ function SearchContent() {
     } catch (err) {
       console.error('Error fetching categories:', err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (query) {
@@ -75,7 +74,7 @@ function SearchContent() {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
@@ -125,16 +124,16 @@ function SearchContent() {
                       onChange={(e) => handleSortChange(e.target.value)}
                     >
                       <option value="relevance">
-                        <TranslatedText text="Relevance" />
+                        <TranslatedOption text="Relevance" />
                       </option>
                       <option value="price">
-                        <TranslatedText text="Price" />
+                        <TranslatedOption text="Price" />
                       </option>
                       <option value="name">
-                        <TranslatedText text="Name" />
+                        <TranslatedOption text="Name" />
                       </option>
                       <option value="created_at">
-                        <TranslatedText text="Newest" />
+                        <TranslatedOption text="Newest" />
                       </option>
                     </select>
                   </div>
@@ -145,10 +144,10 @@ function SearchContent() {
                       onChange={(e) => setSortOrder(e.target.value)}
                     >
                       <option value="desc">
-                        <TranslatedText text="Descending" />
+                        <TranslatedOption text="Descending" />
                       </option>
                       <option value="asc">
-                        <TranslatedText text="Ascending" />
+                        <TranslatedOption text="Ascending" />
                       </option>
                     </select>
                   </div>
@@ -177,7 +176,7 @@ function SearchContent() {
                       onChange={(e) => handleFilterChange('category', e.target.value || undefined)}
                     >
                       <option value="">
-                        <TranslatedText text="All Categories" />
+                        <TranslatedOption text="All Categories" />
                       </option>
                       {categories.map((category) => (
                         <option key={category.id} value={category.id.toString()}>
@@ -316,18 +315,13 @@ function SearchContent() {
                             </h4>
                             
                             <div className="product-price">
-                              <PriceDisplay 
-                                amount={parseFloat(product.price?.toString() || '0')} 
-                                className="current-price"
-                                fromCurrency="USD"
-                              />
+                              <span className="current-price">
+                                {formatPrice(parseFloat(product.price?.toString() || '0'))}
+                              </span>
                               {product.sale_price && (
                                 <span className="compare-price">
                                   <del>
-                                    <PriceDisplay 
-                                      amount={parseFloat(product.sale_price.toString())} 
-                                      fromCurrency="USD"
-                                    />
+                                    {formatPrice(parseFloat(product.sale_price.toString()))}
                                   </del>
                                 </span>
                               )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 import { apiService } from '@/services/api';
 import PriceDisplay from '@/components/PriceDisplay';
 import TranslatedText from '@/components/TranslatedText';
@@ -23,6 +24,7 @@ const WoodMartProductGrid = ({
 }) => {
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const { formatPrice } = useCurrency();
   const [wishlistItems, setWishlistItems] = useState(new Set());
   const [loading, setLoading] = useState(false);
   const [imageErrors, setImageErrors] = useState(new Set());
@@ -242,9 +244,9 @@ const WoodMartProductGrid = ({
                   {/* Product Price */}
                   <div className="product-price">
                     <div className="price-main">
-                      <span className="current-price">${product.price?.toLocaleString() || '0'}</span>
+                      <span className="current-price">{formatPrice(product.price || 0)}</span>
                       {product.comparePrice && (
-                        <span className="compare-price">${product.comparePrice.toLocaleString()}</span>
+                        <span className="compare-price">{formatPrice(product.comparePrice)}</span>
                       )}
                     </div>
                     {product.rating && (

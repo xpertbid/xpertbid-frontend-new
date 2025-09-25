@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 
 const WoodMartVehicles = ({
   title = "Featured Vehicles",
@@ -13,6 +14,7 @@ const WoodMartVehicles = ({
   viewAllLink = "/vehicles"
 }) => {
   const [imageErrors, setImageErrors] = useState(new Set());
+  const { formatPrice } = useCurrency();
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
 
   const handleImageError = (vehicleId) => {
@@ -101,9 +103,9 @@ const WoodMartVehicles = ({
                     {/* Price Section */}
                     <div className="vehicle-price">
                       <div className="price-main">
-                        <span className="current-price">${vehicle.price?.toLocaleString() || '0'}</span>
+                        <span className="current-price">{formatPrice(vehicle.price || 0)}</span>
                         {vehicle.comparePrice && (
-                          <span className="compare-price">${vehicle.comparePrice.toLocaleString()}</span>
+                          <span className="compare-price">{formatPrice(vehicle.comparePrice)}</span>
                         )}
                       </div>
                       {vehicle.rating && (

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 
 const WoodMartAuctions = ({
   title = "Live Auctions",
@@ -13,6 +14,7 @@ const WoodMartAuctions = ({
   viewAllLink = "/auctions"
 }) => {
   const [imageErrors, setImageErrors] = useState(new Set());
+  const { formatPrice } = useCurrency();
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
 
   const handleImageError = (auctionId) => {
@@ -60,7 +62,7 @@ const WoodMartAuctions = ({
                         <span className="detail-item">
                           <i className="fas fa-gavel"></i>
                           <span className="detail-label">Current Bid</span>
-                          <span className="detail-value">${auction.currentBid?.toLocaleString() || '0'}</span>
+                          <span className="detail-value">{formatPrice(auction.currentBid || 0)}</span>
                         </span>
                         <span className="detail-item">
                           <i className="fas fa-users"></i>
@@ -72,7 +74,7 @@ const WoodMartAuctions = ({
                         <span className="detail-item">
                           <i className="fas fa-shield-alt"></i>
                           <span className="detail-label">Reserve</span>
-                          <span className="detail-value">${auction.reservePrice?.toLocaleString() || 'N/A'}</span>
+                          <span className="detail-value">{auction.reservePrice ? formatPrice(auction.reservePrice) : 'N/A'}</span>
                         </span>
                         <span className="detail-item">
                           <i className="fas fa-clock"></i>

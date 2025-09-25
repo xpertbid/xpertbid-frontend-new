@@ -11,7 +11,7 @@ import PriceDisplay from '@/components/PriceDisplay';
 
 
 export default function ShopPage() {
-  // const { formatPrice } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -512,8 +512,8 @@ export default function ShopPage() {
                       onChange={(e) => handleFilterChange('priceRange', [filters.priceRange[0], parseInt(e.target.value)])}
                     />
                     <div className="price-values d-flex justify-content-between">
-                      <span>${filters.priceRange[0]}</span>
-                      <span>${filters.priceRange[1]}</span>
+                      <span>{formatPrice(filters.priceRange[0])}</span>
+                      <span>{formatPrice(filters.priceRange[1])}</span>
                     </div>
                   </div>
                 </div>

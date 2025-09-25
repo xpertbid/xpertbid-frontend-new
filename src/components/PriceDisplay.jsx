@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { apiService } from '@/services/api';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 
 const PriceDisplay = ({
   amount,
@@ -12,38 +14,48 @@ const PriceDisplay = ({
 }) => {
   const [convertedPrice, setConvertedPrice] = useState('');
   const [loading, setLoading] = useState(true);
+  const { currentCurrency, formatPrice } = useCurrency();
 
   useEffect(() => {
     const convertPrice = async () => {
       try {
         setLoading(true);
-        // Simulate API call for currency conversion
-        // In a real app, you would call your currency conversion API
-        const converted = amount * 1.1; // Mock conversion rate
-        setConvertedPrice(converted.toFixed(2));
+        
+        // If currencies are the same, no conversion needed
+        if (fromCurrency === currentCurrency?.code) {
+          setConvertedPrice(amount);
+          setLoading(false);
+          return;
+        }
+        
+        // Call the backend conversion API
+        const response = await apiService.convertPrice(amount, fromCurrency, currentCurrency?.code);
+        
+        if (response.success) {
+          setConvertedPrice(response.data.converted_amount);
+        } else {
+          // Fallback to original amount if conversion fails
+          setConvertedPrice(amount);
+        }
       } catch (error) {
         console.error('Currency conversion error:', error);
-        setConvertedPrice(amount.toFixed(2));
+        // Fallback to original amount
+        setConvertedPrice(amount);
       } finally {
         setLoading(false);
       }
     };
 
-    convertPrice();
-  }, [amount, fromCurrency]);
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
-  };
+    if (amount && currentCurrency) {
+      convertPrice();
+    }
+  }, [amount, fromCurrency, currentCurrency]);
 
   return (
     <div className={`price-display ${className}`}>
       {showOriginal && (
         <div className={`original-price ${originalClassName}`}>
-          {formatPrice(amount)}
+          {formatPrice(amount, { code: fromCurrency })}
         </div>
       )}
       

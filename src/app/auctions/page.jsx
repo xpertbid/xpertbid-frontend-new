@@ -5,9 +5,11 @@ import Layout from '@/components/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 import PriceDisplay from '@/components/PriceDisplay';
 
 export default function AuctionsPage() {
+  const { formatPrice } = useCurrency();
   const [auctions, setAuctions] = useState([]);
   const [filteredAuctions, setFilteredAuctions] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -28,7 +28,7 @@ const getImagesArray = (images)=> {
 
 
 export default function PropertiesPage() {
-  // const { formatPrice } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,20 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLanguage } from '@/contexts/CurrencyLanguageContext';
 
-
+// Create a context to track if we're inside an option element
+const OptionContext = React.createContext(false);
 
 const TranslatedText = ({
   text,
   fromLanguage = 'en',
   className = '',
   fallback,
-  loadingClassName = ''
+  loadingClassName = '',
+  asOption = false // New prop to indicate if this is being used inside an option
 }) => {
   const { currentLanguage, translateText, t } = useLanguage();
   const [translatedText, setTranslatedText] = useState(text);
   const [loading, setLoading] = useState(true);
+  const isInsideOption = useContext(OptionContext);
 
   useEffect(() => {
     const translate = async () => {
@@ -49,6 +52,11 @@ const TranslatedText = ({
     translate();
   }, [text, fromLanguage, currentLanguage, translateText, t, fallback]);
 
+  // If this is being used inside an option element (either via prop or context), render plain text
+  if (asOption || isInsideOption) {
+    return loading ? text : translatedText;
+  }
+
   if (loading) {
     return (
       <span className={`translation-loading ${loadingClassName}`}>
@@ -62,6 +70,15 @@ const TranslatedText = ({
     <span className={`translated-text ${className}`}>
       {translatedText}
     </span>
+  );
+};
+
+// Export a wrapper component for option elements
+export const TranslatedOption = ({ text, fromLanguage = 'en', fallback }) => {
+  return (
+    <OptionContext.Provider value={true}>
+      <TranslatedText text={text} fromLanguage={fromLanguage} fallback={fallback} />
+    </OptionContext.Provider>
   );
 };
 

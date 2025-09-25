@@ -1,28 +1,45 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLanguage } from '@/contexts/CurrencyLanguageContext';
 
-const LanguageSwitcher = ({ className = '', showLabel = true }) => {
+const LanguageSwitcher = ({ className = '', showLabel = true, variant = 'default' }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const { languages, currentLanguage, changeLanguage, loading } = useLanguage();
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
-  ];
+  const handleLanguageChange = (language) => {
+    changeLanguage(language);
+    setIsOpen(false);
+  };
 
-  const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
+  if (loading) {
+    return (
+      <div className={`language-switcher ${className}`}>
+        <div className="spinner-border spinner-border-sm" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const buttonClass = variant === 'header' 
+    ? "btn btn-link text-white p-0 border-0" 
+    : "btn btn-outline-secondary dropdown-toggle";
+
+  const buttonStyle = variant === 'header' 
+    ? {fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}
+    : {};
 
   return (
     <div className={`language-switcher dropdown ${className}`}>
       <button
-        className="btn btn-outline-secondary dropdown-toggle"
+        className={buttonClass}
         onClick={() => setIsOpen(!isOpen)}
+        style={buttonStyle}
       >
-        <span className="flag">{currentLang.flag}</span>
-        {showLabel && <span className="ms-1">{currentLang.code.toUpperCase()}</span>}
+        <span className="flag">{currentLanguage?.flag || '🇺🇸'}</span>
+        {showLabel && <span className="ms-1">{(currentLanguage?.code || 'EN').toUpperCase()}</span>}
+        {variant === 'header' && <i className="fas fa-chevron-down ms-1" style={{fontSize: '10px'}}></i>}
       </button>
 
       {isOpen && (
@@ -30,17 +47,23 @@ const LanguageSwitcher = ({ className = '', showLabel = true }) => {
           {languages.map((language) => (
             <button
               key={language.code}
-              className={`dropdown-item ${currentLanguage === language.code ? 'active' : ''}`}
-              onClick={() => {
-                setCurrentLanguage(language.code);
-                setIsOpen(false);
-              }}
+              className={`dropdown-item ${currentLanguage?.code === language.code ? 'active' : ''}`}
+              onClick={() => handleLanguageChange(language)}
             >
               <span className="flag me-2">{language.flag}</span>
               {language.name}
             </button>
           ))}
         </div>
+      )}
+
+      {/* Click outside to close */}
+      {isOpen && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100" 
+          style={{ zIndex: 1040 }}
+          onClick={() => setIsOpen(false)}
+        />
       )}
 
       <style jsx>{`

@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { apiService } from '@/services/api';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 
 const MyAuctionsTab = ({ userId }) => {
   const [auctions, setAuctions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     loadAuctions();
@@ -57,13 +59,6 @@ const MyAuctionsTab = ({ userId }) => {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
   };
 
   const getTimeRemaining = (endTime) => {
