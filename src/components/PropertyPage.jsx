@@ -115,374 +115,363 @@ const PropertyPage = ({ property }) => {
   return (
     <div className="property-page">
       <div className="container py-4">
+        {/* Breadcrumb */}
+        <nav aria-label="breadcrumb" className="mb-4">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <Link href="/">Home</Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link href="/properties">Properties</Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link href={`/properties/${property.emirate.toLowerCase()}`}>
+                {property.emirate}
+              </Link>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              {property.title}
+            </li>
+          </ol>
+        </nav>
+
         <div className="row">
           {/* Property Images */}
-          <div className="col-lg-7">
+          <div className="col-lg-8">
             <div className="property-images">
-              <div className="main-image">
-                <img 
-                  src={images[selectedImage]} 
-                  alt={property?.title || 'Property'}
-                  className="img-fluid"
+              {/* Main Image */}
+              <div className="main-image mb-3 position-relative">
+                <img
+                  src={property.images[selectedImage]}
+                  alt={property.title}
+                  className="img-fluid w-100"
+                  style={{ borderRadius: '8px', aspectRatio: '16/9', objectFit: 'cover' }}
                 />
-                {property?.is_featured && (
-                  <div className="featured-badge">Featured</div>
-                )}
+                
+                {/* Image Counter */}
+                <div className="position-absolute bottom-0 end-0 m-3">
+                  <span className="badge bg-dark bg-opacity-75">
+                    {selectedImage + 1} / {property.images.length}
+                  </span>
+                </div>
+
+                {/* View All Images Button */}
+                <div className="position-absolute top-0 end-0 m-3">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setShowAllImages(!showAllImages)}
+                  >
+                    <i className="fas fa-images me-2"></i>
+                    View All ({property.images.length})
+                  </button>
+                </div>
               </div>
-              <div className="thumbnail-images">
-                {images.map((image, index) => (
+
+              {/* Thumbnail Images */}
+              <div className="thumbnail-images d-flex gap-2 flex-wrap">
+                {property.images.slice(0, showAllImages ? property.images.length : 6).map((image, index) => (
                   <img
                     key={index}
                     src={image}
-                    alt={`${property?.title || 'Property'} ${index + 1}`}
-                    className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    alt={`${property.title} ${index + 1}`}
+                    className={`img-thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    style={{ 
+                      width: '120px', 
+                      height: '80px', 
+                      objectFit: 'cover',
+                      cursor: 'pointer',
+                      border: selectedImage === index ? '2px solid #43ACE9' : '1px solid #dee2e6'
+                    }}
                     onClick={() => setSelectedImage(index)}
                   />
                 ))}
+                {!showAllImages && property.images.length > 6 && (
+                  <div
+                    className="img-thumbnail d-flex align-items-center justify-content-center"
+                    style={{ 
+                      width: '120px', 
+                      height: '80px',
+                      backgroundColor: '#f8f9fa',
+                      border: '1px solid #dee2e6',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => setShowAllImages(true)}
+                  >
+                    <span className="text-muted">+{property.images.length - 6}</span>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* Property Details */}
-          <div className="col-lg-5">
-            <div className="property-details">
-              <h1 className="property-title">{property?.title || 'Property'}</h1>
-              
-              <div className="property-meta">
-                <div className="property-type">
-                  <span className="label">Type:</span>
-                  <span className="value">{property?.property_type || 'N/A'}</span>
-                </div>
-                <div className="listing-type">
-                  <span className="label">Listing:</span>
-                  <span className="value">{property?.listing_type || 'N/A'}</span>
-                </div>
-                <div className="status">
-                  <span className="label">Status:</span>
-                  <span className={`status-badge ${property?.property_status}`}>
-                    {property?.property_status || 'Unknown'}
-                  </span>
-                </div>
-              </div>
+            {/* Property Details */}
+            <div className="property-details mt-4">
+              <div className="row">
+                <div className="col-lg-8">
+                  {/* Title */}
+                  <h1 className="property-title mb-3" style={{ 
+                    fontFamily: 'Poppins, sans-serif', 
+                    fontSize: '28px', 
+                    fontWeight: '600',
+                    color: '#000'
+                  }}>
+                    {property.title}
+                  </h1>
 
-              <div className="property-price">
-                <div className="price-section">
-                  <span className="price">${property?.price?.toLocaleString() || 'N/A'}</span>
-                  {property?.rent_price && (
-                    <span className="rent-price">Rent: ${property.rent_price}/month</span>
-                  )}
-                </div>
-                <div className="price-details">
-                  {property?.show_price ? (
-                    <p className="price-info">Price is negotiable</p>
-                  ) : (
-                    <p className="price-info">Contact for price</p>
-                  )}
-                </div>
-              </div>
+                  {/* Location */}
+                  <div className="location mb-3">
+                    <i className="fas fa-map-marker-alt text-primary me-2"></i>
+                    <span style={{ color: '#606060' }}>
+                      {property.location}, {property.community}, {property.emirate}
+                    </span>
+                  </div>
 
-              <div className="property-actions">
-                <button className="btn btn-primary btn-lg w-100 mb-2">
-                  <i className="fas fa-phone me-2"></i>
-                  Contact Agent
-                </button>
-                <button className="btn btn-outline-primary w-100 mb-2">
-                  <i className="fas fa-heart me-2"></i>
-                  Add to Favorites
-                </button>
-                <button className="btn btn-outline-secondary w-100">
-                  <i className="fas fa-share me-2"></i>
-                  Share Property
-                </button>
-              </div>
+                  {/* Key Features */}
+                  <div className="key-features mb-4">
+                    <div className="row">
+                      <div className="col-3 col-md-2">
+                        <div className="feature-item text-center p-3 bg-light rounded">
+                          <i className="fas fa-bed text-primary mb-2" style={{ fontSize: '24px' }}></i>
+                          <div className="feature-value fw-bold">{property.bedrooms}</div>
+                          <div className="feature-label text-muted small">Bedrooms</div>
+                        </div>
+                      </div>
+                      <div className="col-3 col-md-2">
+                        <div className="feature-item text-center p-3 bg-light rounded">
+                          <i className="fas fa-bath text-primary mb-2" style={{ fontSize: '24px' }}></i>
+                          <div className="feature-value fw-bold">{property.bathrooms}</div>
+                          <div className="feature-label text-muted small">Bathrooms</div>
+                        </div>
+                      </div>
+                      <div className="col-3 col-md-2">
+                        <div className="feature-item text-center p-3 bg-light rounded">
+                          <i className="fas fa-ruler-combined text-primary mb-2" style={{ fontSize: '24px' }}></i>
+                          <div className="feature-value fw-bold">{property.area}</div>
+                          <div className="feature-label text-muted small">Sq Ft</div>
+                        </div>
+                      </div>
+                      <div className="col-3 col-md-2">
+                        <div className="feature-item text-center p-3 bg-light rounded">
+                          <i className="fas fa-car text-primary mb-2" style={{ fontSize: '24px' }}></i>
+                          <div className="feature-value fw-bold">{property.parking}</div>
+                          <div className="feature-label text-muted small">Parking</div>
+                        </div>
+                      </div>
+                      <div className="col-6 col-md-2">
+                        <div className="feature-item text-center p-3 bg-light rounded">
+                          <i className="fas fa-home text-primary mb-2" style={{ fontSize: '24px' }}></i>
+                          <div className="feature-value fw-bold">{property.yearBuilt}</div>
+                          <div className="feature-label text-muted small">Year Built</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="property-info">
-                <div className="info-item">
-                  <span className="label">Agent:</span>
-                  <span className="value">{property?.agent_name || 'N/A'}</span>
+                  {/* Description */}
+                  <div className="description mb-4">
+                    <h5 className="mb-3">Description</h5>
+                    <p style={{ color: '#606060', lineHeight: '1.6' }}>
+                      {property.description}
+                    </p>
+                  </div>
+
+                  {/* Features */}
+                  <div className="features mb-4">
+                    <h5 className="mb-3">Features</h5>
+                    <div className="row">
+                      {property.features.map((feature, index) => (
+                        <div key={index} className="col-md-6">
+                          <div className="d-flex align-items-center mb-2">
+                            <i className="fas fa-check text-success me-2"></i>
+                            <span>{feature}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Amenities */}
+                  <div className="amenities mb-4">
+                    <h5 className="mb-3">Amenities</h5>
+                    <div className="row">
+                      {property.amenities.map((amenity, index) => (
+                        <div key={index} className="col-md-4">
+                          <div className="d-flex align-items-center mb-2">
+                            <i className="fas fa-check-circle text-primary me-2"></i>
+                            <span>{amenity}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Nearby Amenities */}
+                  <div className="nearby-amenities mb-4">
+                    <h5 className="mb-3">Nearby Amenities</h5>
+                    <div className="row">
+                      {property.nearbyAmenities.map((amenity, index) => (
+                        <div key={index} className="col-md-6 mb-3">
+                          <div className="d-flex justify-content-between align-items-center p-3 border rounded">
+                            <div>
+                              <div className="fw-bold">{amenity.name}</div>
+                              <div className="text-muted small">{amenity.type}</div>
+                            </div>
+                            <div className="text-primary fw-bold">{amenity.distance}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="info-item">
-                  <span className="label">Vendor:</span>
-                  <span className="value">{property?.vendor_name || 'N/A'}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Commission:</span>
-                  <span className="value">{property?.commission_rate || 0}%</span>
+
+                {/* Sidebar */}
+                <div className="col-lg-4">
+                  <div className="property-sidebar">
+                    {/* Price Card */}
+                    <div className="price-card bg-light p-4 rounded mb-4">
+                      <div className="price mb-3">
+                        <div className="main-price" style={{ 
+                          fontSize: '32px', 
+                          fontWeight: '700', 
+                          color: '#43ACE9',
+                          fontFamily: 'Poppins, sans-serif'
+                        }}>
+                          AED {property.price.toLocaleString()}
+                        </div>
+                        <div className="price-per-sqft text-muted">
+                          AED {property.pricePerSqft.toLocaleString()} per sq ft
+                        </div>
+                      </div>
+
+                      <div className="property-info mb-4">
+                        <div className="row">
+                          <div className="col-6">
+                            <div className="info-item">
+                              <div className="info-label text-muted small">Property Type</div>
+                              <div className="info-value fw-bold">{property.propertyType}</div>
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="info-item">
+                              <div className="info-label text-muted small">Purpose</div>
+                              <div className="info-value fw-bold">{property.purpose}</div>
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="info-item">
+                              <div className="info-label text-muted small">Furnished</div>
+                              <div className="info-value fw-bold">{property.furnished}</div>
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="info-item">
+                              <div className="info-label text-muted small">Area</div>
+                              <div className="info-value fw-bold">{property.area} sq ft</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="action-buttons d-grid gap-2">
+                        <button
+                          className="btn btn-primary"
+                          onClick={handleContactAgent}
+                          style={{
+                            padding: '12px',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}
+                        >
+                          <i className="fas fa-phone me-2"></i>
+                          Contact Agent
+                        </button>
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={handleScheduleViewing}
+                          style={{
+                            padding: '12px',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}
+                        >
+                          <i className="fas fa-calendar me-2"></i>
+                          Schedule Viewing
+                        </button>
+                        <button
+                          className="btn btn-outline-secondary"
+                          style={{
+                            padding: '12px',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}
+                        >
+                          <i className="fas fa-share me-2"></i>
+                          Share Property
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Agent Card */}
+                    <div className="agent-card border p-4 rounded mb-4">
+                      <h6 className="mb-3">Listed by</h6>
+                      <div className="agent-info d-flex align-items-center mb-3">
+                        <img
+                          src={property.agent.avatar}
+                          alt={property.agent.name}
+                          className="rounded-circle me-3"
+                          style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                        />
+                        <div>
+                          <div className="agent-name fw-bold">{property.agent.name}</div>
+                          <div className="agent-agency text-muted small">{property.agent.agency}</div>
+                        </div>
+                      </div>
+                      <div className="agent-contact">
+                        <a href={`tel:${property.agent.phone}`} className="btn btn-outline-primary w-100 mb-2">
+                          <i className="fas fa-phone me-2"></i>
+                          {property.agent.phone}
+                        </a>
+                        <a href={`mailto:${property.agent.email}`} className="btn btn-outline-secondary w-100">
+                          <i className="fas fa-envelope me-2"></i>
+                          Send Email
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="quick-stats border p-4 rounded">
+                      <h6 className="mb-3">Quick Stats</h6>
+                      <div className="stats-list">
+                        <div className="stat-item d-flex justify-content-between mb-2">
+                          <span>Property ID</span>
+                          <span className="fw-bold">#{property.id}</span>
+                        </div>
+                        <div className="stat-item d-flex justify-content-between mb-2">
+                          <span>Listed</span>
+                          <span className="fw-bold">2 days ago</span>
+                        </div>
+                        <div className="stat-item d-flex justify-content-between mb-2">
+                          <span>Views</span>
+                          <span className="fw-bold">1,234</span>
+                        </div>
+                        <div className="stat-item d-flex justify-content-between">
+                          <span>Favorites</span>
+                          <span className="fw-bold">45</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Property Details Tabs */}
-        <div className="property-tabs mt-5">
-          <div className="tab-navigation">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="tab-content">
-            {renderTabContent()}
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .property-page {
-          min-height: 100vh;
-        }
-
-        .property-images {
-          margin-bottom: 30px;
-        }
-
-        .main-image {
-          position: relative;
-          margin-bottom: 15px;
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .main-image img {
-          width: 100%;
-          height: 400px;
-          object-fit: cover;
-        }
-
-        .featured-badge {
-          position: absolute;
-          top: 15px;
-          left: 15px;
-          background: #28a745;
-          color: white;
-          padding: 5px 10px;
-          border-radius: 4px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .thumbnail-images {
-          display: flex;
-          gap: 10px;
-          overflow-x: auto;
-        }
-
-        .thumbnail {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          border-radius: 4px;
-          cursor: pointer;
-          border: 2px solid transparent;
-          transition: border-color 0.2s;
-        }
-
-        .thumbnail.active {
-          border-color: #007bff;
-        }
-
-        .property-title {
-          font-size: 2rem;
-          font-weight: 700;
-          margin-bottom: 15px;
-          color: #333;
-        }
-
-        .property-meta {
-          margin-bottom: 20px;
-        }
-
-        .property-meta > div {
-          margin-bottom: 8px;
-        }
-
-        .label {
-          font-weight: 600;
-          color: #666;
-          margin-right: 8px;
-        }
-
-        .value {
-          color: #333;
-        }
-
-        .status-badge {
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .status-badge.active {
-          background: #28a745;
-          color: white;
-        }
-
-        .status-badge.pending {
-          background: #ffc107;
-          color: #333;
-        }
-
-        .status-badge.sold {
-          background: #dc3545;
-          color: white;
-        }
-
-        .property-price {
-          margin-bottom: 30px;
-          padding: 20px;
-          background: #f8f9fa;
-          border-radius: 8px;
-        }
-
-        .price {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #28a745;
-          display: block;
-        }
-
-        .rent-price {
-          font-size: 1rem;
-          color: #666;
-        }
-
-        .price-info {
-          margin: 10px 0 0 0;
-          color: #666;
-          font-style: italic;
-        }
-
-        .property-actions {
-          margin-bottom: 30px;
-        }
-
-        .property-info {
-          background: #f8f9fa;
-          padding: 20px;
-          border-radius: 8px;
-        }
-
-        .info-item {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 10px;
-        }
-
-        .info-item:last-child {
-          margin-bottom: 0;
-        }
-
-        .tab-navigation {
-          display: flex;
-          border-bottom: 2px solid #eee;
-          margin-bottom: 30px;
-        }
-
-        .tab-button {
-          padding: 15px 25px;
-          border: none;
-          background: none;
-          cursor: pointer;
-          border-bottom: 2px solid transparent;
-          transition: all 0.2s;
-          font-weight: 600;
-        }
-
-        .tab-button:hover {
-          color: #007bff;
-        }
-
-        .tab-button.active {
-          color: #007bff;
-          border-bottom-color: #007bff;
-        }
-
-        .tab-content {
-          min-height: 300px;
-        }
-
-        .highlight-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 15px;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .highlight-item i {
-          color: #007bff;
-          font-size: 1.2rem;
-        }
-
-        .spec-item {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px 0;
-          border-bottom: 1px solid #eee;
-        }
-
-        .spec-item:last-child {
-          border-bottom: none;
-        }
-
-        .amenity-item {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          padding: 15px;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .amenity-item i {
-          color: #007bff;
-          font-size: 1.2rem;
-        }
-
-        .map-placeholder {
-          text-align: center;
-          padding: 60px 20px;
-          background: #f8f9fa;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-
-        .map-placeholder i {
-          color: #007bff;
-          margin-bottom: 15px;
-        }
-
-        @media (max-width: 768px) {
-          .property-title {
-            font-size: 1.5rem;
-          }
-
-          .price {
-            font-size: 1.5rem;
-          }
-
-          .tab-navigation {
-            overflow-x: auto;
-          }
-
-          .tab-button {
-            white-space: nowrap;
-            min-width: 120px;
-          }
-        }
-      `}</style>
     </div>
   );
 };

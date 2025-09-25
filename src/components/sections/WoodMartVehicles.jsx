@@ -49,8 +49,8 @@ const WoodMartVehicles = ({
 
         {/* Vehicles Grid */}
         <div className="row g-4">
-          {vehicles.map((vehicle) => (
-            <div key={vehicle.id} className={gridClass}>
+          {vehicles.map((vehicle, index) => (
+            <div key={`vehicle-${index}`} className={gridClass}>
               <div className="vehicle-card" onClick={() => window.location.href = `/vehicles/${vehicle.slug}`} style={{ cursor: 'pointer' }}>
                 <div className="vehicle-link">
                   <div className="vehicle-image-wrapper">

@@ -1,21 +1,18 @@
 /* Bootstrap CSS */
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
-/* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 /* WoodMart Design System - Exact Match */
 
-/* Custom CSS Variables - WoodMart Exact Colors */
+/* Custom CSS Variables - XpertBid Colors */
 :root {
-  /* Primary Colors - WoodMart Green */
-  --primary-color: #83B735;
-  --primary-hover: #6B9B2A;
-  --primary-light: #9BCB4A;
-  --primary-dark: #5A7F25;
+  /* Primary Colors - XpertBid Blue */
+  --primary-color: #43ACE9;
+  --primary-hover: #3A9BD1;
+  --primary-light: #5BB5EC;
+  --primary-dark: #2B7BA3;
   
-  /* Secondary Colors - WoodMart Dark */
-  --secondary-color: #1A1A1A;
+  /* Secondary Colors - XpertBid Black */
+  --secondary-color: #000000;
   --secondary-light: #333333;
   --secondary-dark: #000000;
   
@@ -45,12 +42,12 @@
   --gray-800: #343A40;
   --gray-900: #212529;
   
-  /* WoodMart Brand Colors */
-  --woodmart-primary: #83B735;
-  --woodmart-secondary: #1A1A1A;
-  --woodmart-accent: #E74C3C;
-  --woodmart-dark: #000000;
-  --woodmart-light: #F8F9FA;
+  /* XpertBid Brand Colors */
+  --xpertbid-primary: #43ACE9;
+  --xpertbid-secondary: #000000;
+  --xpertbid-accent: #E74C3C;
+  --xpertbid-dark: #000000;
+  --xpertbid-light: #F8F9FA;
   
   /* Typography - WoodMart Exact */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -674,57 +671,4 @@ html:not(.fonts-loaded) {
 @font-face {
   font-family: 'Inter';
   font-display: swap;
-}
-
-/* Woodmart Header Overrides */
-.header {
-  background-color: #ffffff !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1030;
-}
-
-.header-top {
-  background-color: #83B735 !important;
-  color: #ffffff !important;
-}
-
-.header-top * {
-  color: #ffffff !important;
-}
-
-.header-main {
-  background-color: #ffffff !important;
-}
-
-.navbar {
-  background-color: #ffffff !important;
-}
-
-/* Button Overrides */
-.btn-primary {
-  background-color: #83B735 !important;
-  border-color: #83B735 !important;
-}
-
-.btn-primary:hover {
-  background-color: #6B9B2A !important;
-  border-color: #6B9B2A !important;
-}
-
-/* Form Overrides */
-.form-control:focus {
-  border-color: #83B735 !important;
-  box-shadow: 0 0 0 0.2rem rgba(131, 183, 53, 0.25) !important;
-}
-
-/* Link Overrides */
-a {
-  color: #83B735;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #6B9B2A;
 }

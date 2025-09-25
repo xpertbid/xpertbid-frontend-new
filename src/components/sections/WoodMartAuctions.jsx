@@ -71,12 +71,8 @@ const WoodMartAuctions = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">
-            <TranslatedText text={subtitle} />
-          </span>
-          <h2 className="section-title">
-            <TranslatedText text={title} />
-          </h2>
+          <span className="section-subtitle">{subtitle}</span>
+          <h2 className="section-title">{title}</h2>
         </div>
 
         {/* Auctions Grid */}
@@ -88,7 +84,7 @@ const WoodMartAuctions = ({
                   <div className="auction-image-wrapper">
                     <div className="auction-image">
                       <Image
-                        src={getFirstImage(auction.image)}
+                        src={auction.image}
                         alt={auction.name}
                         width={300}
                         height={200}
@@ -114,7 +110,7 @@ const WoodMartAuctions = ({
                           <i className="far fa-eye"></i>
                         </button>
                         <button className="btn-action btn-quick-view" title="Quick View">
-                          <i className="f-gavel"></i>
+                          <i className="fas fa-gavel"></i>
                         </button>
                       </div>
                     </div>
@@ -134,7 +130,7 @@ const WoodMartAuctions = ({
                     {/* Seller Info */}
                     {auction.sellerName && (
                       <div className="auction-seller">
-                        <i className="f-user"></i>
+                        <i className="fas fa-user"></i>
                         <span>By {auction.sellerName}</span>
                       </div>
                     )}
@@ -142,20 +138,12 @@ const WoodMartAuctions = ({
                     {/* Bid Info */}
                     <div className="auction-bid-info">
                       <div className="current-bid">
-                        <span className="bid-label">
-                          <TranslatedText text="Current Bid" />:
-                        </span>
-                        <PriceDisplay 
-                          amount={auction.currentBid} 
-                          className="bid-amount"
-                          fromCurrency="USD"
-                        />
+                        <span className="bid-label">Current Bid:</span>
+                        <span className="bid-amount">${auction.currentBid.toLocaleString()}</span>
                       </div>
                       {auction.bidCount && (
                         <div className="bid-count">
-                          <span className="count-label">
-                            <TranslatedText text="Bids" />:
-                          </span>
+                          <span className="count-label">Bids:</span>
                           <span className="count-number">{auction.bidCount}</span>
                         </div>
                       )}
@@ -164,23 +152,15 @@ const WoodMartAuctions = ({
                     {/* Reserve Price */}
                     {auction.reservePrice && (
                       <div className="reserve-price">
-                        <i className="f-shield-alt"></i>
-                        <span>
-                          <TranslatedText text="Reserve" />: 
-                        </span>
-                        <PriceDisplay 
-                          amount={auction.reservePrice} 
-                          fromCurrency="USD"
-                        />
+                        <i className="fas fa-shield-alt"></i>
+                        <span>Reserve: ${auction.reservePrice.toLocaleString()}</span>
                       </div>
                     )}
 
                     {/* Time Left */}
                     {auction.endTime && (
                       <div className="auction-timer">
-                        <div className="timer-label">
-                          <TranslatedText text="Time Left" />:
-                        </div>
+                        <div className="timer-label">Time Left:</div>
                         <div className="timer-countdown">
                           {calculateTimeLeft(auction.endTime)}
                         </div>
@@ -193,7 +173,7 @@ const WoodMartAuctions = ({
                         {[...Array(5)].map((_, i) => (
                           <i
                             key={i}
-                            className={`f-star ${i < Math.floor(auction.rating) ? 'active' : ''}`}
+                            className={`fas fa-star ${i < Math.floor(auction.rating) ? 'active' : ''}`}
                           />
                         ))}
                       </div>
@@ -220,7 +200,7 @@ const WoodMartAuctions = ({
           <div className="text-center mt-5">
             <Link href={viewAllLink} className="btn btn-outline-primary btn-lg">
               View All Auctions
-              <i className="f-arrow-right ms-2"></i>
+              <i className="fas fa-arrow-right ms-2"></i>
             </Link>
           </div>
         )}
@@ -232,36 +212,36 @@ const WoodMartAuctions = ({
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 60px;
         }
 
         .section-subtitle {
           display: inline-block;
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 2px;
           color: var(--primary-color);
-          margin-bottom;
+          margin-bottom: 15px;
         }
 
         .section-title {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 36px;
+          font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 0;
         }
 
         .auction-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-lg);
-          overflow;
+          overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
           height: 100%;
-          border;
+          border: 2px solid transparent;
         }
 
         .auction-card:hover {
@@ -271,27 +251,27 @@ const WoodMartAuctions = ({
         }
 
         .auction-link {
-          display;
-          text-decoration;
-          color;
+          display: block;
+          text-decoration: none;
+          color: inherit;
           height: 100%;
         }
 
         .auction-link:hover {
-          text-decoration;
-          color;
+          text-decoration: none;
+          color: inherit;
         }
 
         .auction-image-wrapper {
-          position;
-          overflow;
+          position: relative;
+          overflow: hidden;
           padding-top: 66.66%; /* 3:2 aspect ratio */
         }
 
         .auction-image {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
         }
@@ -299,7 +279,7 @@ const WoodMartAuctions = ({
         .auction-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -308,130 +288,130 @@ const WoodMartAuctions = ({
         }
 
         .auction-badges {
-          position;
-          top;
-          left;
-          z-index;
-          display;
-          flex-direction;
-          gap;
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          z-index: 3;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .badge {
-          font-size;
-          font-weight;
-          text-transform;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
-          padding;
+          padding: 4px 8px;
           border-radius: var(--border-radius-sm);
         }
 
         .badge-new {
           background: var(--success-color);
-          color;
+          color: white;
         }
 
         .badge-featured {
           background: var(--primary-color);
-          color;
+          color: white;
         }
 
         .badge-live {
           background: var(--accent-color);
-          color;
-          animation;
+          color: white;
+          animation: pulse 2s infinite;
         }
 
         .badge-custom {
           background: var(--warning-color);
-          color;
+          color: white;
         }
 
         @keyframes pulse {
-          0% { opacity; }
+          0% { opacity: 1; }
           50% { opacity: 0.7; }
-          100% { opacity; }
+          100% { opacity: 1; }
         }
 
         .auction-overlay {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
           background: rgba(0, 0, 0, 0.7);
-          display;
-          align-items;
-          justify-content;
-          opacity;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
           transition: opacity 0.3s ease;
-          z-index;
+          z-index: 2;
         }
 
         .auction-card:hover .auction-overlay {
-          opacity;
+          opacity: 1;
         }
 
         .auction-actions {
-          display;
-          gap;
+          display: flex;
+          gap: 15px;
         }
 
         .btn-action {
-          width;
-          height;
+          width: 45px;
+          height: 45px;
           border-radius: 50%;
-          border;
-          background;
+          border: none;
+          background: white;
           color: var(--secondary-color);
-          display;
-          align-items;
-          justify-content;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           transition: all 0.3s ease;
-          cursor;
+          cursor: pointer;
         }
 
         .btn-action:hover {
           background: var(--primary-color);
-          color;
+          color: white;
           transform: scale(1.1);
         }
 
         .auction-content {
-          padding;
+          padding: 20px;
         }
 
         .auction-name {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 18px;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 10px;
           line-height: 1.3;
         }
 
         .auction-product {
-          margin-bottom;
-          font-size;
+          margin-bottom: 10px;
+          font-size: 14px;
         }
 
         .product-label {
           color: var(--gray-600);
-          margin-right;
+          margin-right: 5px;
         }
 
         .product-name {
           color: var(--primary-color);
-          font-weight;
+          font-weight: 500;
         }
 
         .auction-seller {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 15px;
           color: var(--gray-600);
-          font-size;
+          font-size: 14px;
         }
 
         .auction-seller i {
@@ -439,58 +419,58 @@ const WoodMartAuctions = ({
         }
 
         .auction-bid-info {
-          display;
+          display: flex;
           justify-content: space-between;
-          margin-bottom;
-          padding;
+          margin-bottom: 10px;
+          padding: 10px;
           background: var(--gray-100);
           border-radius: var(--border-radius-sm);
         }
 
         .current-bid {
-          display;
-          flex-direction;
-          align-items;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .bid-label {
-          font-size;
+          font-size: 12px;
           color: var(--gray-600);
-          margin-bottom;
+          margin-bottom: 2px;
         }
 
         .bid-amount {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 18px;
+          font-weight: 700;
           color: var(--primary-color);
         }
 
         .bid-count {
-          display;
-          flex-direction;
-          align-items;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .count-label {
-          font-size;
+          font-size: 12px;
           color: var(--gray-600);
-          margin-bottom;
+          margin-bottom: 2px;
         }
 
         .count-number {
-          font-size;
-          font-weight;
+          font-size: 16px;
+          font-weight: 600;
           color: var(--secondary-color);
         }
 
         .reserve-price {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 15px;
           color: var(--gray-600);
-          font-size;
+          font-size: 12px;
         }
 
         .reserve-price i {
@@ -499,38 +479,38 @@ const WoodMartAuctions = ({
 
         .auction-timer {
           background: var(--accent-color);
-          color;
-          padding;
+          color: white;
+          padding: 10px;
           border-radius: var(--border-radius-sm);
-          text-align;
-          margin-bottom;
+          text-align: center;
+          margin-bottom: 15px;
         }
 
         .timer-label {
-          font-size;
-          margin-bottom;
+          font-size: 12px;
+          margin-bottom: 5px;
         }
 
         .timer-countdown {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 16px;
+          font-weight: 700;
         }
 
         .auction-rating {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 15px;
         }
 
         .stars {
-          display;
-          gap;
+          display: flex;
+          gap: 2px;
         }
 
         .stars i {
-          font-size;
+          font-size: 12px;
           color: var(--gray-300);
         }
 
@@ -539,15 +519,15 @@ const WoodMartAuctions = ({
         }
 
         .rating-text {
-          font-size;
+          font-size: 12px;
           color: var(--gray-600);
         }
 
         .auction-actions-bottom .btn {
           width: 100%;
-          font-size;
-          font-weight;
-          padding;
+          font-size: 14px;
+          font-weight: 600;
+          padding: 12px 20px;
           background: var(--accent-color);
           border-color: var(--accent-color);
         }
@@ -558,36 +538,36 @@ const WoodMartAuctions = ({
         }
 
         /* Responsive Design */
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 28px;
           }
 
           .auction-name {
-            font-size;
+            font-size: 16px;
           }
 
           .auction-content {
-            padding;
+            padding: 15px;
           }
 
           .auction-bid-info {
-            flex-direction;
-            gap;
+            flex-direction: column;
+            gap: 10px;
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 480px) {
           .auction-bid-info {
-            padding;
+            padding: 8px;
           }
 
           .bid-amount {
-            font-size;
+            font-size: 16px;
           }
 
           .timer-countdown {
-            font-size;
+            font-size: 14px;
           }
         }
       `}</style>

@@ -1,8 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import React from 'react';
 
-const ContactInfo: React.FC = () => {
+const ContactInfo = () => {
   const contactMethods = [
     {
       icon: 'f-map-marker-alt',
@@ -67,7 +68,7 @@ const ContactInfo: React.FC = () => {
       <div className="business-hours mt-4">
         <div className="business-hours-card">
           <h5 className="business-hours-title">
-            <i className="f-clock me-2"></i>
+            <i className="fas fa-clock me-2"></i>
             Business Hours
           </h5>
           <div className="business-hours-list">
@@ -90,7 +91,7 @@ const ContactInfo: React.FC = () => {
       <div className="social-links mt-4">
         <div className="social-links-card">
           <h5 className="social-links-title">
-            <i className="f-share-alt me-2"></i>
+            <i className="fas fa-share-alt me-2"></i>
             Follow Us
           </h5>
           <div className="social-links-list">
@@ -99,7 +100,7 @@ const ContactInfo: React.FC = () => {
                 key={index}
                 href={social.url} 
                 className="social-link"
-                style={{ '--social-color': social.color } .CSSProperties}
+                style={{ '--social-color': social.color }}
                 title={social.name}
               >
                 <i className={social.icon}></i>
@@ -113,7 +114,7 @@ const ContactInfo: React.FC = () => {
       <div className="quick-links mt-4">
         <div className="quick-links-card">
           <h5 className="quick-links-title">
-            <i className="f-link me-2"></i>
+            <i className="fas fa-link me-2"></i>
             Quick Links
           </h5>
           <div className="quick-links-list">
@@ -128,19 +129,19 @@ const ContactInfo: React.FC = () => {
 
       <style jsx>{`
         .contact-info {
-          position;
-          top;
+          position: sticky;
+          top: 100px;
         }
 
         .contact-method {
-          display;
+          display: flex;
           align-items: flex-start;
-          gap;
+          gap: 1rem;
           padding: 1.5rem;
-          background;
+          background: white;
           box-shadow: var(--shadow-sm);
-          border-radius;
-          margin-bottom;
+          border-radius: 0;
+          margin-bottom: 1rem;
           border-left: 4px solid var(--primary-color);
         }
 
@@ -157,14 +158,14 @@ const ContactInfo: React.FC = () => {
         }
 
         .contact-method-icon {
-          flex-shrink;
-          width;
-          height;
+          flex-shrink: 0;
+          width: 50px;
+          height: 50px;
           background: var(--gray-100);
-          border-radius;
-          display;
-          align-items;
-          justify-content;
+          border-radius: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .contact-method-primary .contact-method-icon {
@@ -187,12 +188,12 @@ const ContactInfo: React.FC = () => {
         }
 
         .contact-method-content {
-          flex;
+          flex: 1;
         }
 
         .contact-method-title {
           font-size: 1.1rem;
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
           margin-bottom: 0.5rem;
         }
@@ -206,35 +207,35 @@ const ContactInfo: React.FC = () => {
         .business-hours-card,
         .social-links-card,
         .quick-links-card {
-          background;
+          background: white;
           padding: 1.5rem;
           box-shadow: var(--shadow-sm);
-          border-radius;
+          border-radius: 0;
         }
 
         .business-hours-title,
         .social-links-title,
         .quick-links-title {
           font-size: 1.1rem;
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .business-hours-item {
-          display;
+          display: flex;
           justify-content: space-between;
-          align-items;
+          align-items: center;
           padding: 0.5rem 0;
           border-bottom: 1px solid var(--gray-200);
         }
 
         .business-hours-item:last-child {
-          border-bottom;
+          border-bottom: none;
         }
 
         .day {
-          font-weight;
+          font-weight: 500;
           color: var(--secondary-color);
         }
 
@@ -244,43 +245,43 @@ const ContactInfo: React.FC = () => {
         }
 
         .social-links-list {
-          display;
-          flex-direction;
+          display: flex;
+          flex-direction: column;
           gap: 0.5rem;
         }
 
         .social-link {
-          display;
-          align-items;
+          display: flex;
+          align-items: center;
           gap: 0.75rem;
           padding: 0.75rem;
           color: var(--gray-700);
-          text-decoration;
-          border-radius;
+          text-decoration: none;
+          border-radius: 0;
           transition: var(--transition-fast);
           border: 1px solid var(--gray-200);
         }
 
         .social-link:hover {
           background-color: var(--social-color);
-          color;
+          color: white;
           border-color: var(--social-color);
         }
 
         .social-link i {
-          width;
-          text-align;
+          width: 20px;
+          text-align: center;
         }
 
         .quick-links-list {
-          display;
-          flex-direction;
+          display: flex;
+          flex-direction: column;
           gap: 0.5rem;
         }
 
         .quick-link {
           color: var(--gray-700);
-          text-decoration;
+          text-decoration: none;
           padding: 0.5rem 0;
           border-bottom: 1px solid var(--gray-200);
           transition: var(--transition-fast);
@@ -292,30 +293,30 @@ const ContactInfo: React.FC = () => {
         }
 
         .quick-link:last-child {
-          border-bottom;
+          border-bottom: none;
         }
 
-        @media (max-width) {
+        @media (max-width: 991px) {
           .contact-info {
-            position;
-            margin-top;
+            position: static;
+            margin-top: 2rem;
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 768px) {
           .contact-method {
-            padding;
+            padding: 1rem;
           }
 
           .contact-method-icon {
-            width;
-            height;
+            width: 40px;
+            height: 40px;
           }
 
           .business-hours-card,
           .social-links-card,
           .quick-links-card {
-            padding;
+            padding: 1rem;
           }
         }
       `}</style>

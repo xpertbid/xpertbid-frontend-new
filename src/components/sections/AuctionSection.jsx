@@ -201,7 +201,7 @@ const AuctionSection = () => {
 
   if (loading) {
     return (
-      <section className="auction-section py-5 bg-light">
+     <section className="auction-section py-5 bg-light">
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -251,25 +251,27 @@ const AuctionSection = () => {
                 <div className="auction-card">
                   <div className="auction-image">
                     <img 
-                      src={auction.product_image} 
-                      alt={auction.product_name}
+                      src={auction.image} 
+                      alt={auction.title}
                       onError={(e) => {
-                        const target = e.target ;
-                        target.src = '/images/placeholder-auction.jpg';
+                        const target = e.target;
+                        if (target && target.tagName === 'IMG') {
+                          target.src = '/images/placeholder-auction.jpg';
+                        }
                       }}
                     />
                     
                     {/* Featured Badge */}
-                    {true && (
+                    {auction.featured && (
                       <div className="auction-badge">
-                        <i className="f-star me-1"></i>
+                        <i className="fas fa-star me-1"></i>
                         Featured
                       </div>
                     )}
 
                     {/* Category */}
                     <div className="auction-category">
-                      {auction.category_name || 'General'}
+                      {auction.category}
                     </div>
 
                     {/* Quick Actions */}
@@ -278,7 +280,7 @@ const AuctionSection = () => {
                         <i className="far fa-heart"></i>
                       </button>
                       <button className="auction-action-btn" title="Share">
-                        <i className="f-share"></i>
+                        <i className="fas fa-share"></i>
                       </button>
                     </div>
                   </div>
@@ -288,13 +290,13 @@ const AuctionSection = () => {
                       <span className="vendor-name" onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        window.location.href = `/vendors/${auction.seller_name.toLowerCase().replace(/\s+/g, '-')}`;
+                        window.location.href = `/vendors/${auction.vendor.slug}`;
                       }}>
-                        {auction.seller_name}
+                        {auction.vendor.name}
                       </span>
                     </div>
                     
-                    <h4 className="auction-title">{auction.product_name}</h4>
+                    <h4 className="auction-title">{auction.title}</h4>
                     
                     <div className="auction-bid-info">
                       <div className="current-bid">
@@ -303,21 +305,27 @@ const AuctionSection = () => {
                       </div>
                       
                       <div className="bid-count">
-                        <i className="f-gavel me-1"></i>
+                        <i className="fas fa-gavel me-1"></i>
                         {auction.bid_count} bids
                       </div>
                     </div>
 
                     <div className="auction-timer">
                       <div className={`timer-display ${getTimeClass(auction.id)}`}>
-                        <i className="f-clock me-2"></i>
+                        <i className="fas fa-clock me-2"></i>
                         {timeLeft[auction.id] || 'Loading...'}
                       </div>
                     </div>
 
+                    {auction.buy_now_price && (
+                      <div className="buy-now-price">
+                        <span className="buy-now-label">Buy Now:</span>
+                        <span className="buy-now-amount">{formatCurrency(auction.buy_now_price)}</span>
+                      </div>
+                    )}
 
                     <button className="btn btn-primary btn-bid w-100">
-                      <i className="f-gavel me-2"></i>
+                      <i className="fas fa-gavel me-2"></i>
                       Place Bid
                     </button>
                   </div>
@@ -333,7 +341,7 @@ const AuctionSection = () => {
               View All Auctions
             </Link>
             <Link href="/auctions/live" className="btn btn-accent btn-lg">
-              <i className="f-broadcast-tower me-2"></i>
+              <i className="fas fa-broadcast-tower me-2"></i>
               Live Auctions
             </Link>
           </div>
@@ -346,39 +354,39 @@ const AuctionSection = () => {
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 3rem;
         }
 
         .section-title {
           font-size: 2.5rem;
-          font-weight;
+          font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .section-subtitle {
           font-size: 1.1rem;
           color: var(--gray-600);
-          margin-bottom;
+          margin-bottom: 0;
         }
 
         .auction-link {
-          text-decoration;
-          color;
-          display;
+          text-decoration: none;
+          color: inherit;
+          display: block;
           height: 100%;
         }
 
         .auction-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-xl);
-          overflow;
+          overflow: hidden;
           box-shadow: var(--shadow-sm);
           transition: var(--transition);
           height: 100%;
-          display;
-          flex-direction;
-          border;
+          display: flex;
+          flex-direction: column;
+          border: 2px solid transparent;
         }
 
         .auction-card:hover {
@@ -388,15 +396,15 @@ const AuctionSection = () => {
         }
 
         .auction-image {
-          position;
-          height;
-          overflow;
+          position: relative;
+          height: 200px;
+          overflow: hidden;
         }
 
         .auction-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: var(--transition);
         }
 
@@ -405,73 +413,73 @@ const AuctionSection = () => {
         }
 
         .auction-badge {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 10px;
+          left: 10px;
           background: var(--warning-color);
-          color;
-          padding;
-          border-radius;
-          font-size;
-          font-weight;
-          text-transform;
-          z-index;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          z-index: 2;
         }
 
         .auction-category {
-          position;
-          bottom;
-          left;
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
           background: rgba(0, 0, 0, 0.7);
-          color;
-          padding;
-          border-radius;
-          font-size;
-          font-weight;
-          z-index;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 500;
+          z-index: 2;
         }
 
         .auction-actions {
-          position;
-          top;
-          right;
-          display;
-          flex-direction;
-          gap;
-          opacity;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          opacity: 0;
           transition: var(--transition);
-          z-index;
+          z-index: 2;
         }
 
         .auction-card:hover .auction-actions {
-          opacity;
+          opacity: 1;
         }
 
         .auction-action-btn {
-          width;
-          height;
+          width: 30px;
+          height: 30px;
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.9);
-          border;
-          display;
-          align-items;
-          justify-content;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           color: var(--secondary-color);
           transition: var(--transition);
-          cursor;
+          cursor: pointer;
         }
 
         .auction-action-btn:hover {
           background: var(--primary-color);
-          color;
+          color: white;
           transform: scale(1.1);
         }
 
         .auction-content {
           padding: 1.5rem;
-          flex;
-          display;
-          flex-direction;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .auction-vendor {
@@ -481,8 +489,8 @@ const AuctionSection = () => {
         .vendor-name {
           font-size: 0.85rem;
           color: var(--gray-600);
-          text-decoration;
-          cursor;
+          text-decoration: none;
+          cursor: pointer;
           transition: var(--transition-fast);
         }
 
@@ -492,24 +500,24 @@ const AuctionSection = () => {
 
         .auction-title {
           font-size: 1.1rem;
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 1rem;
           line-height: 1.4;
           display: -webkit-box;
-          -webkit-line-clamp;
-          -webkit-box-orient;
-          overflow;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .auction-bid-info {
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .current-bid {
-          display;
+          display: flex;
           justify-content: space-between;
-          align-items;
+          align-items: center;
           margin-bottom: 0.5rem;
         }
 
@@ -520,56 +528,56 @@ const AuctionSection = () => {
 
         .bid-amount {
           font-size: 1.25rem;
-          font-weight;
+          font-weight: 700;
           color: var(--primary-color);
         }
 
         .bid-count {
           font-size: 0.85rem;
           color: var(--gray-600);
-          display;
-          align-items;
+          display: flex;
+          align-items: center;
         }
 
         .auction-timer {
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .timer-display {
-          padding;
-          border-radius;
+          padding: 8px 12px;
+          border-radius: 20px;
           font-size: 0.9rem;
-          font-weight;
-          text-align;
-          display;
-          align-items;
-          justify-content;
+          font-weight: 600;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .time-normal {
           background: var(--primary-color);
-          color;
+          color: white;
         }
 
         .time-critical {
           background: var(--danger-color);
-          color;
-          animation;
+          color: white;
+          animation: pulse 1s infinite;
         }
 
         .time-ended {
           background: var(--gray-500);
-          color;
+          color: white;
         }
 
         .buy-now-price {
-          display;
+          display: flex;
           justify-content: space-between;
-          align-items;
-          margin-bottom;
-          padding;
+          align-items: center;
+          margin-bottom: 1rem;
+          padding: 8px 12px;
           background: var(--gray-100);
-          border-radius;
+          border-radius: 8px;
         }
 
         .buy-now-label {
@@ -578,38 +586,38 @@ const AuctionSection = () => {
         }
 
         .buy-now-amount {
-          font-size;
-          font-weight;
+          font-size: 1rem;
+          font-weight: 600;
           color: var(--secondary-color);
         }
 
         .btn-bid {
-          padding;
+          padding: 10px;
           font-size: 0.9rem;
-          font-weight;
-          border-radius;
-          margin-top;
+          font-weight: 500;
+          border-radius: 25px;
+          margin-top: auto;
         }
 
         .btn-accent {
           background-color: var(--accent-color);
-          color;
-          border;
-          padding;
-          border-radius;
-          font-weight;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 25px;
+          font-weight: 500;
           transition: var(--transition);
         }
 
         .btn-accent:hover {
           background-color: var(--accent-hover);
           transform: translateY(-2px);
-          color;
+          color: white;
         }
 
         @keyframes pulse {
           0%, 100% {
-            opacity;
+            opacity: 1;
           }
           50% {
             opacity: 0.7;
@@ -621,7 +629,7 @@ const AuctionSection = () => {
           background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
           background-size: 200% 100%;
           animation: shimmer 1.5s infinite;
-          border-radius;
+          border-radius: 4px;
         }
 
         .auction-card.loading .auction-image {
@@ -630,26 +638,26 @@ const AuctionSection = () => {
 
         .auction-card.loading .auction-title {
           width: 90%;
-          height;
-          margin-bottom;
+          height: 20px;
+          margin-bottom: 1rem;
         }
 
         .auction-card.loading .auction-bid {
           width: 70%;
-          height;
-          margin-bottom;
+          height: 24px;
+          margin-bottom: 1rem;
         }
 
         .auction-card.loading .auction-timer {
           width: 80%;
-          height;
-          margin-bottom;
+          height: 32px;
+          margin-bottom: 1rem;
         }
 
         .auction-card.loading .auction-bid-count {
           width: 50%;
-          height;
-          margin-bottom;
+          height: 16px;
+          margin-bottom: 1rem;
         }
 
         @keyframes shimmer {
@@ -661,21 +669,21 @@ const AuctionSection = () => {
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 2rem;
           }
 
           .auction-image {
-            height;
+            height: 180px;
           }
 
           .auction-content {
-            padding;
+            padding: 1rem;
           }
 
           .auction-title {
-            font-size;
+            font-size: 1rem;
           }
 
           .bid-amount {

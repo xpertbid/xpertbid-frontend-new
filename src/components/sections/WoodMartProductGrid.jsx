@@ -107,12 +107,8 @@ const WoodMartProductGrid = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">
-            <TranslatedText text={subtitle} />
-          </span>
-          <h2 className="section-title">
-            <TranslatedText text={title} />
-          </h2>
+          <span className="section-subtitle">{subtitle}</span>
+          <h2 className="section-title">{title}</h2>
         </div>
 
         {/* Product Grid */}
@@ -153,19 +149,14 @@ const WoodMartProductGrid = ({
 
                   {/* Quick Actions */}
                   <div className="product-actions">
-                    <button 
-                      className={`action-btn wishlist-btn ${wishlistItems.has(product.id) ? 'active' : ''}`}
-                      title={wishlistItems.has(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
-                      onClick={() => handleWishlistToggle(product)}
-                      disabled={loading}
-                    >
-                      <i className={`${wishlistItems.has(product.id) ? 'fas' : 'far'} fa-heart`}></i>
+                    <button className="action-btn wishlist-btn" title="Add to Wishlist">
+                      <i className="far fa-heart"></i>
                     </button>
                     <button className="action-btn quick-view-btn" title="Quick View">
-                      <i className="f-eye"></i>
+                      <i className="fas fa-eye"></i>
                     </button>
                     <button className="action-btn compare-btn" title="Compare">
-                      <i className="f-balance-scale"></i>
+                      <i className="fas fa-balance-scale"></i>
                     </button>
                   </div>
 
@@ -175,8 +166,8 @@ const WoodMartProductGrid = ({
                       className="btn-add-to-cart"
                       onClick={() => handleAddToCart(product)}
                     >
-                      <i className="f-shopping-cart me-2"></i>
-                      <TranslatedText text="Add to Cart" />
+                      <i className="fas fa-shopping-cart me-2"></i>
+                      Add to Cart
                     </button>
                   </div>
                 </div>
@@ -189,7 +180,7 @@ const WoodMartProductGrid = ({
                         {[...Array(5)].map((_, index) => (
                           <i
                             key={index}
-                            className={`f-star ${product.rating && index < product.rating ? 'active' : ''}`}
+                            className={`fas fa-star ${index < (product.rating || 0) ? 'active' : ''}`}
                           />
                         ))}
                       </div>
@@ -206,18 +197,9 @@ const WoodMartProductGrid = ({
 
                   {/* Product Price */}
                   <div className="product-price">
-                    <PriceDisplay 
-                      amount={product.price} 
-                      className="current-price"
-                      fromCurrency="USD"
-                    />
+                    <span className="current-price">${product.price}</span>
                     {product.comparePrice && (
-                      <span className="compare-price">
-                        <PriceDisplay 
-                          amount={product.comparePrice} 
-                          fromCurrency="USD"
-                        />
-                      </span>
+                      <span className="compare-price">${product.comparePrice}</span>
                     )}
                   </div>
                 </div>
@@ -230,8 +212,8 @@ const WoodMartProductGrid = ({
         {showViewAll && (
           <div className="text-center mt-5">
             <Link href={viewAllLink} className="btn-view-all">
-              <TranslatedText text="View All" />
-              <i className="f-arrow-right ms-2"></i>
+              View All Products
+              <i className="fas fa-arrow-right ms-2"></i>
             </Link>
           </div>
         )}
@@ -239,47 +221,39 @@ const WoodMartProductGrid = ({
 
       <style jsx>{`
         .woodmart-product-grid {
-          background: #ffffff;
-          padding: 80px 0;
+          background: var(--light-color);
         }
 
         .section-header {
-          text-align: center;
           margin-bottom: 60px;
         }
 
         .section-subtitle {
           display: inline-block;
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-family-heading);
           font-size: 14px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 2px;
-          color: #83B735;
-          margin-bottom: 20px;
-          background: rgba(131, 183, 53, 0.1);
-          padding: 10px 20px;
-          border-radius: 25px;
+          color: var(--primary-color);
+          margin-bottom: 15px;
         }
 
         .section-title {
-          font-family: 'Poppins', sans-serif;
-          font-size: 2.8rem;
+          font-family: var(--font-family-heading);
+          font-size: 36px;
           font-weight: 700;
-          color: #1A1A1A;
+          color: var(--secondary-color);
           margin-bottom: 0;
-          line-height: 1.2;
         }
 
         .product-card {
-          background: #ffffff;
-          border-radius: 12px;
+          background: white;
+          border-radius: var(--border-radius-lg);
           overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
           height: 100%;
-          display: flex;
-          flex-direction: column;
         }
 
         .product-card:hover {
@@ -290,13 +264,11 @@ const WoodMartProductGrid = ({
         .product-image-wrapper {
           position: relative;
           overflow: hidden;
-          height: 250px;
-          flex-shrink: 0;
         }
 
         .product-image {
           position: relative;
-          height: 100%;
+          padding-top: 100%;
           overflow: hidden;
         }
 
@@ -318,34 +290,34 @@ const WoodMartProductGrid = ({
           position: absolute;
           top: 15px;
           left: 15px;
-          z-index: 2;
+          z-index: 3;
         }
 
         .badge {
           display: inline-block;
-          padding: 6px 12px;
+          padding: 4px 8px;
           font-size: 11px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          border-radius: 4px;
-          margin-right: 8px;
-          margin-bottom: 8px;
+          border-radius: var(--border-radius-sm);
+          margin-right: 5px;
+          margin-bottom: 5px;
         }
 
         .badge-new {
-          background: #27AE60;
-          color: #ffffff;
+          background: var(--success-color);
+          color: white;
         }
 
         .badge-sale {
-          background: #E74C3C;
-          color: #ffffff;
+          background: var(--danger-color);
+          color: white;
         }
 
         .badge-featured {
-          background: #83B735;
-          color: #ffffff;
+          background: var(--primary-color);
+          color: white;
         }
 
         .product-actions {
@@ -358,7 +330,7 @@ const WoodMartProductGrid = ({
           opacity: 0;
           transform: translateX(10px);
           transition: all 0.3s ease;
-          z-index: 2;
+          z-index: 3;
         }
 
         .product-card:hover .product-actions {
@@ -369,7 +341,7 @@ const WoodMartProductGrid = ({
         .action-btn {
           width: 40px;
           height: 40px;
-          background: #ffffff;
+          background: white;
           border: none;
           border-radius: 50%;
           display: flex;
@@ -378,23 +350,12 @@ const WoodMartProductGrid = ({
           cursor: pointer;
           transition: all 0.3s ease;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          color: #374151;
         }
 
         .action-btn:hover {
-          background: #83B735;
-          color: #ffffff;
+          background: var(--primary-color);
+          color: white;
           transform: scale(1.1);
-        }
-
-        .wishlist-btn.active {
-          background: #E74C3C;
-          color: #ffffff;
-        }
-
-        .wishlist-btn.active:hover {
-          background: #C0392B;
-          color: #ffffff;
         }
 
         .product-add-to-cart {
@@ -402,7 +363,7 @@ const WoodMartProductGrid = ({
           bottom: 0;
           left: 0;
           right: 0;
-          background: #ffffff;
+          background: white;
           padding: 15px;
           transform: translateY(100%);
           transition: transform 0.3s ease;
@@ -415,12 +376,12 @@ const WoodMartProductGrid = ({
 
         .btn-add-to-cart {
           width: 100%;
-          background: #1A1A1A;
-          color: #ffffff;
+          background: var(--secondary-color);
+          color: white;
           border: none;
-          padding: 12px 20px;
-          border-radius: 6px;
-          font-family: 'Poppins', sans-serif;
+          padding: 12px;
+          border-radius: var(--border-radius);
+          font-family: var(--font-family-heading);
           font-size: 14px;
           font-weight: 600;
           text-transform: uppercase;
@@ -430,23 +391,18 @@ const WoodMartProductGrid = ({
         }
 
         .btn-add-to-cart:hover {
-          background: #83B735;
+          background: var(--primary-color);
           transform: translateY(-1px);
         }
 
         .product-info {
           padding: 20px;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
         }
 
         .product-rating {
           display: flex;
           align-items: center;
           gap: 8px;
-          margin-bottom: 10px;
         }
 
         .stars {
@@ -465,7 +421,7 @@ const WoodMartProductGrid = ({
 
         .reviews-count {
           font-size: 12px;
-          color: #6c757d;
+          color: var(--gray-600);
         }
 
         .product-title {
@@ -473,16 +429,16 @@ const WoodMartProductGrid = ({
         }
 
         .product-title a {
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-family-heading);
           font-size: 16px;
           font-weight: 600;
-          color: #1A1A1A;
+          color: var(--secondary-color);
           text-decoration: none;
           transition: color 0.3s ease;
         }
 
         .product-title a:hover {
-          color: #83B735;
+          color: var(--primary-color);
         }
 
         .product-price {
@@ -492,48 +448,48 @@ const WoodMartProductGrid = ({
         }
 
         .current-price {
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-family-heading);
           font-size: 18px;
           font-weight: 700;
-          color: #1A1A1A;
+          color: var(--secondary-color);
         }
 
         .compare-price {
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-family-heading);
           font-size: 14px;
           font-weight: 500;
-          color: #6c757d;
+          color: var(--gray-600);
           text-decoration: line-through;
         }
 
         .btn-view-all {
           display: inline-flex;
           align-items: center;
-          font-family: 'Poppins', sans-serif;
+          font-family: var(--font-family-heading);
           font-size: 14px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 1px;
-          color: #1A1A1A;
-          background: transparent;
+          color: var(--secondary-color);
+          background: white;
           padding: 15px 30px;
-          border: 2px solid #e5e7eb;
-          border-radius: 6px;
+          border: 2px solid var(--gray-300);
+          border-radius: var(--border-radius);
           text-decoration: none;
           transition: all 0.3s ease;
         }
 
         .btn-view-all:hover {
-          background: #83B735;
-          color: #ffffff;
-          border-color: #83B735;
+          background: var(--primary-color);
+          color: white;
+          border-color: var(--primary-color);
           transform: translateY(-2px);
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
           .section-title {
-            font-size: 2.2rem;
+            font-size: 28px;
           }
 
           .product-actions {
@@ -547,25 +503,11 @@ const WoodMartProductGrid = ({
           .product-add-to-cart {
             position: static;
             transform: none;
-            margin-top: 10px;
+            margin-top: 15px;
           }
 
           .product-card:hover .product-add-to-cart {
             transform: none;
-          }
-        }
-
-        @media (max-width: 576px) {
-          .woodmart-product-grid {
-            padding: 60px 0;
-          }
-
-          .section-title {
-            font-size: 1.8rem;
-          }
-
-          .product-image-wrapper {
-            height: 200px;
           }
         }
       `}</style>

@@ -90,8 +90,8 @@ const BlogSection = () => {
 
         {/* Blog Posts Grid */}
         <div className="row g-4">
-          {blogPosts.map((post, _index) => (
-            <div key={post.id} className="col-lg-4 col-md-6">
+          {blogPosts.map((post, index) => (
+            <div key={`blog-${index}`} className="col-lg-4 col-md-6">
               <article className="blog-post-card">
                 <div className="post-image-container">
                   <Link href={`/blog/${post.slug}`}>
@@ -106,8 +106,8 @@ const BlogSection = () => {
                   </div>
                   <div className="post-date-overlay">
                     <div className="date-badge">
-                      <span className="date-day">{new Date(post.published_at).getDate()}</span>
-                      <span className="date-month">{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short' })}</span>
+                      <span className="date-day">{post.published_at ? new Date(post.published_at).getDate() : new Date().getDate()}</span>
+                      <span className="date-month">{post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short' }) : new Date().toLocaleDateString('en-US', { month: 'short' })}</span>
                     </div>
                   </div>
                 </div>

@@ -18,7 +18,7 @@ const WoodMartCategories = ({
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
 
   return (
-    <section className="woodmart-categories py-5">
+   <section className="woodmart-categories py-5">
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
@@ -39,7 +39,6 @@ const WoodMartCategories = ({
                       width={300}
                       height={200}
                       className="img-fluid"
-                      style={{ width: 'auto', height: 'auto' }}
                     />
                   </div>
                   <div className="category-overlay">
@@ -52,7 +51,7 @@ const WoodMartCategories = ({
                         <span className="category-count">{category.productCount} Products</span>
                       )}
                       <div className="category-arrow">
-                        <i className="f-arrow-right"></i>
+                        <i className="fas fa-arrow-right"></i>
                       </div>
                     </div>
                   </div>
@@ -65,11 +64,11 @@ const WoodMartCategories = ({
 
       <style jsx>{`
         .woodmart-categories {
-          background: #ffffff;
+          background: white;
         }
 
         .section-header {
-          margin-bottom: 3rem;
+          margin-bottom: 60px;
         }
 
         .section-subtitle {
@@ -79,15 +78,15 @@ const WoodMartCategories = ({
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 2px;
-          color: #83B735;
+          color: var(--primary-color);
           margin-bottom: 15px;
         }
 
         .section-title {
           font-family: var(--font-family-heading);
-          font-size: 2.5rem;
+          font-size: 36px;
           font-weight: 700;
-          color: #1A1A1A;
+          color: var(--secondary-color);
           margin-bottom: 0;
         }
 
@@ -95,7 +94,7 @@ const WoodMartCategories = ({
           display: block;
           text-decoration: none;
           height: 100%;
-          border-radius: 12px;
+          border-radius: var(--border-radius-lg);
           overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -142,7 +141,7 @@ const WoodMartCategories = ({
             135deg,
             rgba(0, 0, 0, 0.8) 0%,
             rgba(51, 51, 51, 0.6) 50%,
-            rgba(131, 183, 53, 0.8) 100%
+            rgba(67, 172, 233, 0.8) 100%
           );
           display: flex;
           align-items: center;
@@ -158,22 +157,22 @@ const WoodMartCategories = ({
         .category-content {
           text-align: center;
           color: white;
-          padding: 2rem;
+          padding: 20px;
         }
 
         .category-name {
           font-family: var(--font-family-heading);
-          font-size: 1.5rem;
+          font-size: 24px;
           font-weight: 700;
-          margin-bottom: 1rem;
+          margin-bottom: 10px;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .category-description {
           font-family: var(--font-family);
-          font-size: 1rem;
+          font-size: 14px;
           line-height: 1.5;
-          margin-bottom: 1rem;
+          margin-bottom: 15px;
           opacity: 0.9;
         }
 
@@ -185,9 +184,9 @@ const WoodMartCategories = ({
           text-transform: uppercase;
           letter-spacing: 1px;
           background: rgba(255, 255, 255, 0.2);
-          padding: 8px 16px;
-          border-radius: 20px;
-          margin-bottom: 1rem;
+          padding: 6px 12px;
+          border-radius: var(--border-radius-round);
+          margin-bottom: 15px;
           backdrop-filter: blur(10px);
         }
 
@@ -204,33 +203,73 @@ const WoodMartCategories = ({
         }
 
         .category-card:hover .category-arrow {
-          background: rgba(255, 255, 255, 0.9);
-          color: #83B735;
+          background: white;
+          color: var(--primary-color);
           transform: translateX(5px);
+        }
+
+        /* Alternative Style for Categories with Text Below */
+        .category-card.alternative {
+          background: white;
+        }
+
+        .category-card.alternative .category-image-wrapper {
+          padding-top: 75%; /* 4:3 aspect ratio */
+        }
+
+        .category-card.alternative .category-overlay {
+          background: transparent;
+          opacity: 1;
+          position: static;
+          padding: 20px;
+          color: var(--secondary-color);
+        }
+
+        .category-card.alternative .category-name {
+          color: var(--secondary-color);
+          text-shadow: none;
+          font-size: 18px;
+          margin-bottom: 8px;
+        }
+
+        .category-card.alternative .category-description {
+          color: var(--gray-600);
+          opacity: 1;
+          margin-bottom: 10px;
+        }
+
+        .category-card.alternative .category-count {
+          background: var(--primary-color);
+          color: white;
+          margin-bottom: 0;
+        }
+
+        .category-card.alternative .category-arrow {
+          display: none;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
           .section-title {
-            font-size: 2rem;
+            font-size: 28px;
           }
 
           .category-name {
-            font-size: 1.25rem;
+            font-size: 20px;
           }
 
           .category-content {
-            padding: 1.5rem;
+            padding: 15px;
           }
         }
 
-        @media (max-width: 576px) {
+        @media (max-width: 480px) {
           .category-name {
-            font-size: 1.125rem;
+            font-size: 18px;
           }
 
           .category-description {
-            font-size: 0.9rem;
+            font-size: 12px;
           }
         }
       `}</style>

@@ -163,11 +163,11 @@ const WoodMartHero = () => {
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 2px;
-          color: #83B735;
+          color: var(--primary-color);
           margin-bottom: 15px;
           background: rgba(131, 183, 53, 0.1);
           padding: 8px 16px;
-          border-radius: var(--border-radius-sm);
+          border-radius: var(--border-radius-lg);
           backdrop-filter: blur(10px);
         }
 
@@ -178,6 +178,7 @@ const WoodMartHero = () => {
           line-height: 1.1;
           margin-bottom: 20px;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+          letter-spacing: -0.03em;
         }
 
         .hero-description {
@@ -198,16 +199,16 @@ const WoodMartHero = () => {
           text-transform: uppercase;
           letter-spacing: 1px;
           color: white;
-          background: #83B735;
+          background: var(--primary-color);
           padding: 15px 35px;
-          border-radius: var(--border-radius);
+          border-radius: var(--woodmart-button-border-radius);
           text-decoration: none;
-          transition: all 0.3s ease;
+          transition: var(--woodmart-transition-smooth);
           box-shadow: 0 4px 15px rgba(131, 183, 53, 0.3);
         }
 
         .hero-btn:hover {
-          background: #6B9B2A;
+          background: var(--primary-hover);
           color: white;
           transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(131, 183, 53, 0.4);
@@ -234,7 +235,7 @@ const WoodMartHero = () => {
         }
 
         .hero-nav:hover {
-          background: #83B735;
+          background: var(--primary-color);
           color: white;
           transform: translateY(-50%) scale(1.1);
         }
@@ -268,12 +269,12 @@ const WoodMartHero = () => {
         }
 
         .hero-indicator.active {
-          background: #83B735;
+          background: var(--primary-color);
           border-color: white;
         }
 
         .hero-indicator:hover {
-          border-color: #83B735;
+          border-color: var(--primary-color);
         }
 
         /* Responsive Design */

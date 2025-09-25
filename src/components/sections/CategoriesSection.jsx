@@ -170,7 +170,7 @@ const CategoriesSection = () => {
 
   if (loading) {
     return (
-      <section className="categories-section py-5">
+     <section className="categories-section py-5">
         <div className="container">
           <div className="row">
             <div className="col-12">
@@ -200,7 +200,7 @@ const CategoriesSection = () => {
   }
 
   return (
-    <section className="categories-section py-5">
+     <section className="categories-section py-5">
       <div className="container">
         <div className="row">
           <div className="col-12">
@@ -221,8 +221,10 @@ const CategoriesSection = () => {
                       src={category.image} 
                       alt={category.name}
                       onError={(e) => {
-                        const target = e.target ;
-                        target.src = '/images/placeholder-category.jpg';
+                        const target = e.target;
+                        if (target && target.tagName === 'IMG') {
+                          target.src = '/images/placeholder-category.jpg';
+                        }
                       }}
                     />
                     <div className="category-overlay">
@@ -235,7 +237,7 @@ const CategoriesSection = () => {
                     <h4 className="category-name">{category.name}</h4>
                     <p className="category-description">{category.description}</p>
                     <div className="category-count">
-                      {Math.floor(Math.random() * 1000) + 100} products
+                      {category.product_count} products
                     </div>
                   </div>
                 </div>
@@ -259,38 +261,38 @@ const CategoriesSection = () => {
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 3rem;
         }
 
         .section-title {
           font-size: 2.5rem;
-          font-weight;
+          font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .section-subtitle {
           font-size: 1.1rem;
           color: var(--gray-600);
-          margin-bottom;
+          margin-bottom: 0;
         }
 
         .category-link {
-          text-decoration;
-          color;
-          display;
+          text-decoration: none;
+          color: inherit;
+          display: block;
           height: 100%;
         }
 
         .category-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-xl);
-          overflow;
+          overflow: hidden;
           box-shadow: var(--shadow-sm);
           transition: var(--transition);
           height: 100%;
-          display;
-          flex-direction;
+          display: flex;
+          flex-direction: column;
         }
 
         .category-card:hover {
@@ -299,34 +301,34 @@ const CategoriesSection = () => {
         }
 
         .category-image {
-          position;
-          height;
-          overflow;
+          position: relative;
+          height: 200px;
+          overflow: hidden;
         }
 
         .category-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: var(--transition);
         }
 
         .category-overlay {
-          position;
-          top;
-          left;
-          right;
-          bottom;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
           background: linear-gradient(135deg, rgba(131, 183, 53, 0.8) 0%, rgba(131, 183, 53, 0.6) 100%);
-          display;
-          align-items;
-          justify-content;
-          opacity;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
           transition: var(--transition);
         }
 
         .category-card:hover .category-overlay {
-          opacity;
+          opacity: 1;
         }
 
         .category-card:hover .category-image img {
@@ -334,21 +336,21 @@ const CategoriesSection = () => {
         }
 
         .category-icon {
-          color;
-          font-size;
-          text-align;
+          color: white;
+          font-size: 3rem;
+          text-align: center;
         }
 
         .category-content {
           padding: 1.5rem;
-          flex;
-          display;
-          flex-direction;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .category-name {
           font-size: 1.25rem;
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
           margin-bottom: 0.5rem;
         }
@@ -356,15 +358,15 @@ const CategoriesSection = () => {
         .category-description {
           font-size: 0.9rem;
           color: var(--gray-600);
-          margin-bottom;
-          flex;
+          margin-bottom: 1rem;
+          flex: 1;
         }
 
         .category-count {
           font-size: 0.85rem;
           color: var(--primary-color);
-          font-weight;
-          margin-top;
+          font-weight: 500;
+          margin-top: auto;
         }
 
         /* Loading States */
@@ -372,7 +374,7 @@ const CategoriesSection = () => {
           background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
           background-size: 200% 100%;
           animation: shimmer 1.5s infinite;
-          border-radius;
+          border-radius: 4px;
         }
 
         .category-card.loading .category-image {
@@ -384,21 +386,21 @@ const CategoriesSection = () => {
         }
 
         .category-card.loading .category-icon {
-          width;
-          height;
-          margin;
+          width: 60px;
+          height: 60px;
+          margin: 0 auto 1rem;
         }
 
         .category-card.loading .category-name {
           width: 80%;
-          height;
+          height: 20px;
           margin-bottom: 0.5rem;
         }
 
         .category-card.loading .category-count {
           width: 60%;
-          height;
-          margin-top;
+          height: 16px;
+          margin-top: 1rem;
         }
 
         @keyframes shimmer {
@@ -410,17 +412,17 @@ const CategoriesSection = () => {
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 2rem;
           }
 
           .category-image {
-            height;
+            height: 150px;
           }
 
           .category-content {
-            padding;
+            padding: 1rem;
           }
 
           .category-name {

@@ -1089,54 +1089,67 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* XpertBid Hero Section */}
-      <WoodMartHero />
+      {/* Hero Section */}
+      <section className="woodmart-hero-section">
+        <WoodMartHero />
+      </section>
       
-      {/* Categories Section */}
-      <WoodMartCategories 
-        title="Shop by Category"
-        subtitle="Browse our furniture collections"
-        categories={[
-          {
-            id: 1,
-            name: 'Living Room',
-            slug: 'living-room',
-            image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
-            productCount: 150,
-            description: 'Comfortable sofas, chairs, and coffee tables'
-          },
-          {
-            id: 2,
-            name: 'Bedroom',
-            slug: 'bedroom',
-            image: 'https://images.unsplash.com/photo-1555041469-a586c61ea4bc?w=400&h=300&fit=crop',
-            productCount: 120,
-            description: 'Beds, dressers, and bedroom furniture'
-          },
-          {
-            id: 3,
-            name: 'Kitchen',
-            slug: 'kitchen',
-            image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
-            productCount: 80,
-            description: 'Kitchen cabinets, tables, and storage'
-          },
-          {
-            id: 4,
-            name: 'Office',
-            slug: 'office',
-            image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop',
-            productCount: 90,
-            description: 'Desks, chairs, and office furniture'
-          }
-        ]}
-        columns={4}
-      />
+      {/* Featured Categories Section */}
+      <section className="woodmart-section">
+        <WoodMartCategories 
+          title="FEATURED CATEGORIES"
+          subtitle="WOODMART COLLECTIONS"
+          categories={[
+            {
+              id: 1,
+              name: 'FURNITURE',
+              slug: 'furniture',
+              image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',
+              productCount: 150,
+              description: 'Modern and comfortable furniture pieces'
+            },
+            {
+              id: 2,
+              name: 'CLOCKS',
+              slug: 'clocks',
+              image: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=600&h=400&fit=crop',
+              productCount: 45,
+              description: 'Stylish timepieces for every room'
+            },
+            {
+              id: 3,
+              name: 'LIGHTING',
+              slug: 'lighting',
+              image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=600&h=400&fit=crop',
+              productCount: 80,
+              description: 'Beautiful lighting solutions'
+            },
+            {
+              id: 4,
+              name: 'ACCESSORIES',
+              slug: 'accessories',
+              image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',
+              productCount: 120,
+              description: 'Stylish home accessories'
+            },
+            {
+              id: 5,
+              name: 'TOYS',
+              slug: 'toys',
+              image: 'https://images.unsplash.com/photo-1558877385-1f6d06690c84?w=600&h=400&fit=crop',
+              productCount: 65,
+              description: 'Creative and educational toys'
+            }
+          ]}
+          columns={5}
+        />
+      </section>
       
-      {/* Featured Products */}
+      {/* Featured Products Section */}
+      <section className="woodmart-section woodmart-section-light">
         <WoodMartProductGrid 
           title="Featured Products"
-          subtitle="Handpicked furniture just for you"
+          subtitle="Best Sellers - Featured - Sales"
           products={[
             {
               id: 1,
@@ -1259,12 +1272,53 @@ export default function Home() {
           showViewAll={true}
           viewAllLink="/shop"
         />
+      </section>
+
+      {/* Featured Auctions Section */}
+      <section className="woodmart-section">
+        <WoodMartAuctions 
+          title="Featured Auctions"
+          subtitle="Live auctions ending soon"
+          auctions={auctions.slice(0, 8)}
+          columns={4}
+          showViewAll={true}
+          viewAllLink="/auctions"
+        />
+      </section>
+
+      {/* Featured Properties Section */}
+      <section className="woodmart-section woodmart-section-light">
+        <WoodMartProperties 
+          title="Featured Properties"
+          subtitle="Prime real estate opportunities"
+          properties={properties.slice(0, 8)}
+          columns={4}
+          showViewAll={true}
+          viewAllLink="/properties"
+        />
+      </section>
+
+      {/* Featured Vehicles Section */}
+      <section className="woodmart-section">
+        <WoodMartVehicles 
+          title="Featured Vehicles"
+          subtitle="Quality vehicles for every need"
+          vehicles={vehicles.slice(0, 8)}
+          columns={4}
+          showViewAll={true}
+          viewAllLink="/vehicles"
+        />
+      </section>
       
       {/* Blog Section */}
-      <BlogSection />
+      <section className="woodmart-section woodmart-section-light">
+        <BlogSection />
+      </section>
       
       {/* Newsletter Section */}
-      <WoodMartNewsletter />
+      <section className="woodmart-section woodmart-section-dark">
+        <WoodMartNewsletter />
+      </section>
       
     </Layout>
   );

@@ -52,7 +52,7 @@ const WoodMartNewsletter = ({
               <div className="col-lg-8 text-center">
                 <div className="newsletter-success">
                   <div className="success-icon">
-                    <i className="f-check-circle"></i>
+                    <i className="fas fa-check-circle"></i>
                   </div>
                   <h3 className="success-title">Thank You!</h3>
                   <p className="success-message">
@@ -110,13 +110,13 @@ const WoodMartNewsletter = ({
                     >
                       {isSubmitting ? (
                         <>
-                          <i className="f-spinner fa-spin me-2"></i>
+                          <i className="fas fa-spinner fa-spin me-2"></i>
                           Subscribing...
                         </>
                       ) : (
                         <>
                           {buttonText}
-                          <i className="f-arrow-right ms-2"></i>
+                          <i className="fas fa-arrow-right ms-2"></i>
                         </>
                       )}
                     </button>
@@ -125,15 +125,15 @@ const WoodMartNewsletter = ({
 
                 <div className="newsletter-features">
                   <div className="feature-item">
-                    <i className="f-gift"></i>
+                    <i className="fas fa-gift"></i>
                     <span>10% Off First Order</span>
                   </div>
                   <div className="feature-item">
-                    <i className="f-bell"></i>
+                    <i className="fas fa-bell"></i>
                     <span>Latest Updates</span>
                   </div>
                   <div className="feature-item">
-                    <i className="f-heart"></i>
+                    <i className="fas fa-heart"></i>
                     <span>Exclusive Offers</span>
                   </div>
                 </div>
@@ -145,12 +145,12 @@ const WoodMartNewsletter = ({
 
       <style jsx>{`
         .woodmart-newsletter {
-          margin: 4rem 0;
+          margin: 60px 0;
         }
 
         .newsletter-wrapper {
           position: relative;
-          padding: 5rem 2rem;
+          padding: 80px 0;
           border-radius: var(--border-radius-xl);
           overflow: hidden;
         }
@@ -173,45 +173,45 @@ const WoodMartNewsletter = ({
         .newsletter-content {
           position: relative;
           z-index: 2;
-          color: #ffffff;
+          color: white;
         }
 
         .newsletter-subtitle {
           display: inline-block;
           font-family: var(--font-family-heading);
-          font-size: 0.875rem;
+          font-size: 14px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 2px;
           color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 1rem;
+          margin-bottom: 20px;
           background: rgba(255, 255, 255, 0.1);
-          padding: 0.5rem 1rem;
+          padding: 8px 16px;
           border-radius: var(--border-radius-sm);
           backdrop-filter: blur(10px);
         }
 
         .newsletter-title {
           font-family: var(--font-family-heading);
-          font-size: 3rem;
+          font-size: 48px;
           font-weight: 700;
           line-height: 1.1;
-          margin-bottom: 1.5rem;
+          margin-bottom: 24px;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .newsletter-description {
           font-family: var(--font-family);
-          font-size: 1.125rem;
+          font-size: 18px;
           line-height: 1.6;
-          margin-bottom: 2rem;
+          margin-bottom: 40px;
           opacity: 0.9;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .newsletter-form {
           max-width: 500px;
-          margin: 0 auto 3rem;
+          margin: 0 auto 40px auto;
         }
 
         .newsletter-form .input-group {
@@ -222,9 +222,9 @@ const WoodMartNewsletter = ({
 
         .newsletter-form .form-control {
           border: none;
-          padding: 1rem 1.5rem;
-          font-size: 1rem;
-          background: #ffffff;
+          padding: 18px 24px;
+          font-size: 16px;
+          background: white;
           color: var(--secondary-color);
         }
 
@@ -239,14 +239,14 @@ const WoodMartNewsletter = ({
 
         .newsletter-form .btn {
           border: none;
-          padding: 1rem 2rem;
+          padding: 18px 32px;
           font-family: var(--font-family-heading);
-          font-size: 1rem;
+          font-size: 16px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 1px;
           background: var(--secondary-color);
-          color: #ffffff;
+          color: white;
           transition: all 0.3s ease;
         }
 
@@ -263,62 +263,62 @@ const WoodMartNewsletter = ({
         .newsletter-features {
           display: flex;
           justify-content: center;
-          gap: 2rem;
+          gap: 40px;
           flex-wrap: wrap;
         }
 
         .feature-item {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 8px;
           font-family: var(--font-family);
-          font-size: 0.875rem;
+          font-size: 14px;
           font-weight: 500;
           color: rgba(255, 255, 255, 0.9);
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .feature-item i {
-          font-size: 1rem;
-          color: #ffffff;
+          font-size: 16px;
+          color: white;
         }
 
         /* Success State */
         .newsletter-success {
-          color: #ffffff;
+          color: white;
         }
 
         .success-icon {
-          font-size: 4rem;
-          color: #ffffff;
-          margin-bottom: 2rem;
+          font-size: 64px;
+          color: white;
+          margin-bottom: 20px;
         }
 
         .success-title {
           font-family: var(--font-family-heading);
-          font-size: 2.5rem;
+          font-size: 36px;
           font-weight: 700;
-          margin-bottom: 1rem;
+          margin-bottom: 16px;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .success-message {
           font-family: var(--font-family);
-          font-size: 1.125rem;
+          font-size: 18px;
           line-height: 1.6;
-          margin-bottom: 2rem;
+          margin-bottom: 30px;
           opacity: 0.9;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .btn-resubscribe {
           background: rgba(255, 255, 255, 0.2);
-          color: #ffffff;
+          color: white;
           border: 2px solid rgba(255, 255, 255, 0.3);
-          padding: 1rem 2rem;
+          padding: 12px 24px;
           border-radius: var(--border-radius-round);
           font-family: var(--font-family-heading);
-          font-size: 1rem;
+          font-size: 14px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 1px;
@@ -328,24 +328,24 @@ const WoodMartNewsletter = ({
         }
 
         .btn-resubscribe:hover {
-          background: #ffffff;
+          background: white;
           color: var(--primary-color);
-          border-color: #ffffff;
+          border-color: white;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
           .newsletter-wrapper {
-            padding: 3rem 1rem;
-            margin: 0 1rem;
+            padding: 60px 0;
+            margin: 0 15px;
           }
 
           .newsletter-title {
-            font-size: 2rem;
+            font-size: 36px;
           }
 
           .newsletter-description {
-            font-size: 1rem;
+            font-size: 16px;
           }
 
           .newsletter-form {
@@ -353,44 +353,44 @@ const WoodMartNewsletter = ({
           }
 
           .newsletter-form .form-control {
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
+            padding: 16px 20px;
+            font-size: 14px;
           }
 
           .newsletter-form .btn {
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
+            padding: 16px 24px;
+            font-size: 14px;
           }
 
           .newsletter-features {
-            gap: 1rem;
+            gap: 20px;
           }
 
           .feature-item {
-            font-size: 1rem;
+            font-size: 12px;
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 480px) {
           .newsletter-title {
-            font-size: 1rem;
+            font-size: 28px;
           }
 
           .newsletter-description {
-            font-size: 1rem;
+            font-size: 14px;
           }
 
           .newsletter-features {
             flex-direction: column;
-            gap: 1rem;
+            gap: 15px;
           }
 
           .success-title {
-            font-size: 1rem;
+            font-size: 28px;
           }
 
           .success-message {
-            font-size: 1rem;
+            font-size: 16px;
           }
         }
       `}</style>

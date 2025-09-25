@@ -293,8 +293,10 @@ const FeaturedProducts = () => {
                       src={product.image} 
                       alt={product.name}
                       onError={(e) => {
-                        const target = e.target ;
-                        target.src = '/images/placeholder-product.jpg';
+                        const target = e.target;
+                        if (target && target.tagName === 'IMG') {
+                          target.src = '/images/placeholder-product.jpg';
+                        }
                       }}
                     />
                     
@@ -313,10 +315,10 @@ const FeaturedProducts = () => {
                         <i className="far fa-heart"></i>
                       </button>
                       <button className="product-action-btn" title="Quick View">
-                        <i className="f-eye"></i>
+                        <i className="fas fa-eye"></i>
                       </button>
                       <button className="product-action-btn" title="Compare">
-                        <i className="f-exchange-alt"></i>
+                        <i className="fas fa-exchange-alt"></i>
                       </button>
                     </div>
                   </div>
@@ -355,7 +357,7 @@ const FeaturedProducts = () => {
                     </div>
 
                     <button className="btn btn-primary btn-add-cart">
-                      <i className="f-shopping-cart me-2"></i>
+                      <i className="fas fa-shopping-cart me-2"></i>
                       Add to Cart
                     </button>
                   </div>
@@ -376,68 +378,68 @@ const FeaturedProducts = () => {
 
       <style jsx>{`
         .featured-products-section {
-          background-color;
+          background-color: white;
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 3rem;
         }
 
         .section-title {
           font-size: 2.5rem;
-          font-weight;
+          font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .section-subtitle {
           font-size: 1.1rem;
           color: var(--gray-600);
-          margin-bottom;
+          margin-bottom: 0;
         }
 
         .product-tabs {
-          gap;
-          margin-bottom;
-          flex-wrap;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
         }
 
         .product-tab {
-          background;
+          background: transparent;
           border: 2px solid var(--gray-300);
           color: var(--gray-600);
-          padding;
-          border-radius;
-          font-weight;
+          padding: 12px 24px;
+          border-radius: 25px;
+          font-weight: 500;
           transition: var(--transition);
-          cursor;
-          display;
-          align-items;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
         }
 
-        .product-tab,
+        .product-tab:hover,
         .product-tab.active {
           background-color: var(--primary-color);
           border-color: var(--primary-color);
-          color;
+          color: white;
         }
 
         .product-link {
-          text-decoration;
-          color;
-          display;
+          text-decoration: none;
+          color: inherit;
+          display: block;
           height: 100%;
         }
 
         .product-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-xl);
-          overflow;
+          overflow: hidden;
           box-shadow: var(--shadow-sm);
           transition: var(--transition);
           height: 100%;
-          display;
-          flex-direction;
+          display: flex;
+          flex-direction: column;
         }
 
         .product-card:hover {
@@ -446,15 +448,15 @@ const FeaturedProducts = () => {
         }
 
         .product-image {
-          position;
-          height;
-          overflow;
+          position: relative;
+          height: 250px;
+          overflow: hidden;
         }
 
         .product-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: var(--transition);
         }
 
@@ -463,21 +465,21 @@ const FeaturedProducts = () => {
         }
 
         .product-badges {
-          position;
-          top;
-          left;
-          z-index;
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          z-index: 2;
         }
 
         .product-badge {
-          display;
-          padding;
-          font-size;
-          font-weight;
-          text-transform;
-          border-radius;
-          margin-bottom;
-          color;
+          display: block;
+          padding: 4px 8px;
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          border-radius: 4px;
+          margin-bottom: 5px;
+          color: white;
         }
 
         .badge-sale { background-color: var(--danger-color); }
@@ -491,47 +493,47 @@ const FeaturedProducts = () => {
         .badge-bestseller { background-color: #e67e22; }
 
         .product-actions {
-          position;
-          top;
-          right;
-          display;
-          flex-direction;
-          gap;
-          opacity;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          opacity: 0;
           transition: var(--transition);
-          z-index;
+          z-index: 2;
         }
 
         .product-card:hover .product-actions {
-          opacity;
+          opacity: 1;
         }
 
         .product-action-btn {
-          width;
-          height;
+          width: 35px;
+          height: 35px;
           border-radius: 50%;
-          background;
-          border;
-          display;
-          align-items;
-          justify-content;
+          background: white;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           box-shadow: var(--shadow-sm);
           color: var(--secondary-color);
           transition: var(--transition);
-          cursor;
+          cursor: pointer;
         }
 
         .product-action-btn:hover {
           background: var(--primary-color);
-          color;
+          color: white;
           transform: scale(1.1);
         }
 
         .product-content {
           padding: 1.5rem;
-          flex;
-          display;
-          flex-direction;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .product-vendor {
@@ -541,8 +543,8 @@ const FeaturedProducts = () => {
         .vendor-name {
           font-size: 0.85rem;
           color: var(--gray-600);
-          text-decoration;
-          cursor;
+          text-decoration: none;
+          cursor: pointer;
           transition: var(--transition-fast);
         }
 
@@ -552,21 +554,21 @@ const FeaturedProducts = () => {
 
         .product-name {
           font-size: 1.1rem;
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
           margin-bottom: 0.75rem;
           line-height: 1.4;
           display: -webkit-box;
-          -webkit-line-clamp;
-          -webkit-box-orient;
-          overflow;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .product-rating {
-          display;
-          align-items;
+          display: flex;
+          align-items: center;
           gap: 0.5rem;
-          margin-bottom;
+          margin-bottom: 1rem;
         }
 
         .stars {
@@ -579,37 +581,37 @@ const FeaturedProducts = () => {
         }
 
         .product-price {
-          margin-bottom;
-          margin-top;
+          margin-bottom: 1rem;
+          margin-top: auto;
         }
 
         .current-price {
           font-size: 1.25rem;
-          font-weight;
+          font-weight: 700;
           color: var(--primary-color);
         }
 
         .original-price {
-          font-size;
+          font-size: 1rem;
           color: var(--gray-600);
           text-decoration: line-through;
           margin-left: 0.5rem;
         }
 
         .discount-percent {
-          display;
+          display: block;
           font-size: 0.85rem;
           color: var(--danger-color);
-          font-weight;
+          font-weight: 600;
           margin-top: 0.25rem;
         }
 
         .btn-add-cart {
           width: 100%;
-          padding;
+          padding: 10px;
           font-size: 0.9rem;
-          font-weight;
-          border-radius;
+          font-weight: 500;
+          border-radius: 25px;
         }
 
         /* Loading States */
@@ -617,7 +619,7 @@ const FeaturedProducts = () => {
           background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
           background-size: 200% 100%;
           animation: shimmer 1.5s infinite;
-          border-radius;
+          border-radius: 4px;
         }
 
         .product-card.loading .product-image {
@@ -626,26 +628,26 @@ const FeaturedProducts = () => {
 
         .product-card.loading .product-name {
           width: 90%;
-          height;
+          height: 20px;
           margin-bottom: 0.75rem;
         }
 
         .product-card.loading .product-vendor {
           width: 60%;
-          height;
+          height: 16px;
           margin-bottom: 0.5rem;
         }
 
         .product-card.loading .product-price {
           width: 70%;
-          height;
-          margin-bottom;
+          height: 24px;
+          margin-bottom: 1rem;
         }
 
         .product-card.loading .product-rating {
           width: 50%;
-          height;
-          margin-bottom;
+          height: 16px;
+          margin-bottom: 1rem;
         }
 
         @keyframes shimmer {
@@ -657,30 +659,30 @@ const FeaturedProducts = () => {
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 2rem;
           }
 
           .product-tabs {
-            justify-content;
+            justify-content: center;
           }
 
           .product-tab {
-            padding;
+            padding: 8px 16px;
             font-size: 0.9rem;
           }
 
           .product-image {
-            height;
+            height: 200px;
           }
 
           .product-content {
-            padding;
+            padding: 1rem;
           }
 
           .product-name {
-            font-size;
+            font-size: 1rem;
           }
         }
       `}</style>

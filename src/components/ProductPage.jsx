@@ -37,27 +37,55 @@ const ProductPage = ({ product }) => {
   return (
     <div className="product-page">
       <div className="container py-4">
+        {/* Breadcrumb */}
+        <nav aria-label="breadcrumb" className="mb-4">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <Link href="/">Home</Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link href="/shop">Shop</Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link href={`/categories/${product.category.toLowerCase()}`}>
+                {product.category}
+              </Link>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              {product.name}
+            </li>
+          </ol>
+        </nav>
+
         <div className="row">
           {/* Product Images */}
           <div className="col-lg-6">
             <div className="product-images">
-              <div className="main-image">
-                <img 
-                  src={images[selectedImage]} 
-                  alt={product?.name || 'Product'}
-                  className="img-fluid"
+              {/* Main Image */}
+              <div className="main-image mb-3">
+                <img
+                  src={product.images[selectedImage]}
+                  alt={product.name}
+                  className="img-fluid w-100"
+                  style={{ borderRadius: '8px', aspectRatio: '1/1', objectFit: 'cover' }}
                 />
-                {product?.is_featured && (
-                  <div className="featured-badge">Featured</div>
-                )}
               </div>
-              <div className="thumbnail-images">
-                {images.map((image, index) => (
+
+              {/* Thumbnail Images */}
+              <div className="thumbnail-images d-flex gap-2">
+                {product.images.map((image, index) => (
                   <img
                     key={index}
                     src={image}
-                    alt={`${product?.name || 'Product'} ${index + 1}`}
-                    className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    alt={`${product.name} ${index + 1}`}
+                    className={`img-thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    style={{ 
+                      width: '80px', 
+                      height: '80px', 
+                      objectFit: 'cover',
+                      cursor: 'pointer',
+                      border: selectedImage === index ? '2px solid #43ACE9' : '1px solid #dee2e6'
+                    }}
                     onClick={() => setSelectedImage(index)}
                   />
                 ))}
@@ -68,373 +96,307 @@ const ProductPage = ({ product }) => {
           {/* Product Details */}
           <div className="col-lg-6">
             <div className="product-details">
-              <h1 className="product-title">{product?.name || 'Product'}</h1>
-              
-              <div className="product-meta">
-                <div className="vendor">
-                  <span className="label">Sold by:</span>
-                  <span className="value">{product?.business_name || 'Unknown Vendor'}</span>
-                </div>
-                <div className="sku">
-                  <span className="label">SKU:</span>
-                  <span className="value">{product?.sku || 'N/A'}</span>
+              {/* Product Title */}
+              <h1 className="product-title mb-3" style={{ 
+                fontFamily: 'Poppins, sans-serif', 
+                fontSize: '28px', 
+                fontWeight: '600',
+                color: '#000'
+              }}>
+                {product.name}
+              </h1>
+
+              {/* Rating */}
+              <div className="rating mb-3">
+                <div className="stars d-flex align-items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <i
+                      key={i}
+                      className={`fas fa-star ${i < product.rating ? 'text-warning' : 'text-muted'}`}
+                    ></i>
+                  ))}
+                  <span className="ms-2 text-muted">({product.reviewCount} reviews)</span>
                 </div>
               </div>
 
-              <div className="product-price">
-                <span className="current-price">${currentPrice}</span>
-                {originalPrice && (
-                  <span className="original-price">${originalPrice}</span>
+              {/* Price */}
+              <div className="price mb-4">
+                {product.salePrice ? (
+                  <div className="d-flex align-items-center gap-3">
+                    <span className="sale-price" style={{ 
+                      fontSize: '32px', 
+                      fontWeight: '700', 
+                      color: '#43ACE9',
+                      fontFamily: 'Poppins, sans-serif'
+                    }}>
+                      ${product.salePrice}
+                    </span>
+                    <span className="original-price text-muted text-decoration-line-through" style={{ fontSize: '24px' }}>
+                      ${product.price}
+                    </span>
+                    <span className="badge bg-danger" style={{ fontSize: '12px' }}>
+                      Save ${product.price - product.salePrice}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="price" style={{ 
+                    fontSize: '32px', 
+                    fontWeight: '700', 
+                    color: '#43ACE9',
+                    fontFamily: 'Poppins, sans-serif'
+                  }}>
+                    ${product.price}
+                  </span>
                 )}
               </div>
 
-              <div className="product-description">
-                <p>{product?.description || 'No description available'}</p>
+              {/* Description */}
+              <div className="description mb-4">
+                <p style={{ color: '#606060', lineHeight: '1.6' }}>
+                  {product.description}
+                </p>
+              </div>
+
+              {/* Stock Status */}
+              <div className="stock-status mb-4">
+                {product.inStock ? (
+                  <span className="badge bg-success">
+                    <i className="fas fa-check me-1"></i>
+                    In Stock {product.stockQuantity && `(${product.stockQuantity} available)`}
+                  </span>
+                ) : (
+                  <span className="badge bg-danger">
+                    <i className="fas fa-times me-1"></i>
+                    Out of Stock
+                  </span>
+                )}
               </div>
 
               {/* Variations */}
-              <div className="product-variations">
-                {/* Size Selection */}
-                <div className="variation-group">
-                  <label>Size:</label>
-                  <div className="size-options">
-                    {['S', 'M', 'L', 'XL'].map((size) => (
-                      <button
-                        key={size}
-                        className={`size-option ${selectedSize === size ? 'selected' : ''}`}
-                        onClick={() => setSelectedSize(size)}
-                      >
-                        {size}
-                      </button>
-                    ))}
+              {product.variations && (
+                <div className="variations mb-4">
+                  {/* Size Selection */}
+                  <div className="size-selection mb-3">
+                    <label className="form-label fw-bold">Size:</label>
+                    <div className="d-flex gap-2">
+                      {product.variations.map((variation, index) => (
+                        <button
+                          key={index}
+                          className={`btn btn-outline-secondary ${selectedSize === variation.size ? 'active' : ''}`}
+                          onClick={() => setSelectedSize(variation.size)}
+                          style={{ minWidth: '50px' }}
+                        >
+                          {variation.size}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Color Selection */}
-                <div className="variation-group">
-                  <label>Color:</label>
-                  <div className="color-options">
-                    {['Red', 'Blue', 'Green', 'Black'].map((color) => (
-                      <button
-                        key={color}
-                        className={`color-option ${selectedColor === color ? 'selected' : ''}`}
-                        onClick={() => setSelectedColor(color)}
-                        style={{ backgroundColor: color.toLowerCase() }}
-                      >
-                        {color}
-                      </button>
-                    ))}
+                  {/* Color Selection */}
+                  <div className="color-selection mb-3">
+                    <label className="form-label fw-bold">Color:</label>
+                    <div className="d-flex gap-2">
+                      {product.variations.map((variation, index) => (
+                        <button
+                          key={index}
+                          className={`color-swatch ${selectedColor === variation.color ? 'active' : ''}`}
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            backgroundColor: variation.colorCode || '#ccc',
+                            border: '2px solid #dee2e6',
+                            borderRadius: '50%',
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => setSelectedColor(variation.color)}
+                          title={variation.color}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Quantity */}
-              <div className="quantity-selector">
-                <label htmlFor="quantity">Quantity:</label>
-                <div className="quantity-controls">
-                  <button 
+              <div className="quantity mb-4">
+                <label className="form-label fw-bold">Quantity:</label>
+                <div className="quantity-controls d-flex align-items-center">
+                  <button
+                    className="btn btn-outline-secondary"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
                   >
-                    -
+                    <i className="fas fa-minus"></i>
                   </button>
                   <input
                     type="number"
-                    id="quantity"
+                    className="form-control text-center mx-2"
+                    style={{ width: '80px' }}
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                     min="1"
                   />
-                  <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                  <button
+                    className="btn btn-outline-secondary"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    <i className="fas fa-plus"></i>
+                  </button>
                 </div>
               </div>
 
-              {/* Add to Cart */}
-              <div className="add-to-cart">
-                <button 
-                  className="btn btn-primary btn-lg w-100"
-                  onClick={handleAddToCart}
-                  disabled={product?.stock_status !== 'in_stock'}
-                >
-                  {product?.stock_status === 'in_stock' ? 'Add to Cart' : 'Out of Stock'}
-                </button>
+              {/* Success Notification */}
+              {showAddToCartSuccess && (
+                <div className="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                  <i className="fas fa-check-circle me-2"></i>
+                  Product added to cart successfully!
+                  <button type="button" className="btn-close" onClick={() => setShowAddToCartSuccess(false)}></button>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="action-buttons mb-4">
+                <div className="d-flex gap-3">
+                  <button
+                    className="btn btn-primary flex-fill"
+                    onClick={handleAddToCart}
+                    disabled={!product.inStock}
+                    style={{
+                      padding: '15px 30px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}
+                  >
+                    <i className="fas fa-shopping-cart me-2"></i>
+                    Add to Cart
+                  </button>
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={handleBuyNow}
+                    disabled={!product.inStock}
+                    style={{
+                      padding: '15px 20px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}
+                  >
+                    Buy Now
+                  </button>
+                  <button
+                    className="btn btn-outline-secondary"
+                    onClick={handleWishlist}
+                    style={{ padding: '15px 20px' }}
+                  >
+                    <i className="fas fa-heart"></i>
+                  </button>
+                </div>
               </div>
 
-              {/* Product Info */}
-              <div className="product-info">
-                <div className="info-item">
-                  <span className="label">Stock Status:</span>
-                  <span className={`status ${product?.stock_status}`}>
-                    {product?.stock_status === 'in_stock' ? 'In Stock' : 'Out of Stock'}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Stock Quantity:</span>
-                  <span className="value">{product?.stock_quantity || 0}</span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Category:</span>
-                  <span className="value">{product?.category_name || 'Uncategorized'}</span>
-                </div>
-                {product?.brand_name && (
-                  <div className="info-item">
-                    <span className="label">Brand:</span>
-                    <span className="value">{product.brand_name}</span>
+              {/* Product Meta */}
+              <div className="product-meta">
+                <div className="row">
+                  <div className="col-6">
+                    <strong>SKU:</strong> {product.sku}
                   </div>
-                )}
+                  <div className="col-6">
+                    <strong>Vendor:</strong> {product.vendor}
+                  </div>
+                  <div className="col-6">
+                    <strong>Category:</strong> {product.category}
+                  </div>
+                  <div className="col-6">
+                    <strong>Tags:</strong> {product.tags.join(', ')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Tabs */}
+        <div className="product-tabs mt-5">
+          <ul className="nav nav-tabs" id="productTabs" role="tablist">
+            <li className="nav-item" role="presentation">
+              <button
+                className="nav-link active"
+                id="description-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#description"
+                type="button"
+                role="tab"
+                aria-controls="description"
+                aria-selected="true"
+                style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '500', textTransform: 'uppercase' }}
+              >
+                Description
+              </button>
+            </li>
+            <li className="nav-item" role="presentation">
+              <button
+                className="nav-link"
+                id="specifications-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#specifications"
+                type="button"
+                role="tab"
+                aria-controls="specifications"
+                aria-selected="false"
+                style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '500', textTransform: 'uppercase' }}
+              >
+                Specifications
+              </button>
+            </li>
+            <li className="nav-item" role="presentation">
+              <button
+                className="nav-link"
+                id="reviews-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#reviews"
+                type="button"
+                role="tab"
+                aria-controls="reviews"
+                aria-selected="false"
+                style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '500', textTransform: 'uppercase' }}
+              >
+                Reviews ({product.reviewCount})
+              </button>
+            </li>
+          </ul>
+
+          <div className="tab-content" id="productTabsContent">
+            <div className="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+              <div className="p-4">
+                <p>{product.description}</p>
+              </div>
+            </div>
+
+            <div className="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+              <div className="p-4">
+                <table className="table">
+                  <tbody>
+                    {Object.entries(product.specifications).map(([key, value]) => (
+                      <tr key={key}>
+                        <td><strong>{key}:</strong></td>
+                        <td>{value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+              <div className="p-4">
+                <p>Reviews will be displayed here...</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .product-page {
-          min-height: 100vh;
-        }
-
-        .product-images {
-          margin-bottom: 30px;
-        }
-
-        .main-image {
-          position: relative;
-          margin-bottom: 15px;
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .main-image img {
-          width: 100%;
-          height: 400px;
-          object-fit: cover;
-        }
-
-        .featured-badge {
-          position: absolute;
-          top: 15px;
-          left: 15px;
-          background: #28a745;
-          color: white;
-          padding: 5px 10px;
-          border-radius: 4px;
-          font-size: 0.8rem;
-          font-weight: 600;
-        }
-
-        .thumbnail-images {
-          display: flex;
-          gap: 10px;
-          overflow-x: auto;
-        }
-
-        .thumbnail {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          border-radius: 4px;
-          cursor: pointer;
-          border: 2px solid transparent;
-          transition: border-color 0.2s;
-        }
-
-        .thumbnail.active {
-          border-color: #007bff;
-        }
-
-        .product-title {
-          font-size: 2rem;
-          font-weight: 700;
-          margin-bottom: 15px;
-          color: #333;
-        }
-
-        .product-meta {
-          margin-bottom: 20px;
-        }
-
-        .product-meta > div {
-          margin-bottom: 8px;
-        }
-
-        .label {
-          font-weight: 600;
-          color: #666;
-          margin-right: 8px;
-        }
-
-        .value {
-          color: #333;
-        }
-
-        .product-price {
-          margin-bottom: 20px;
-        }
-
-        .current-price {
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: #28a745;
-          margin-right: 10px;
-        }
-
-        .original-price {
-          font-size: 1.2rem;
-          color: #999;
-          text-decoration: line-through;
-        }
-
-        .product-description {
-          margin-bottom: 30px;
-          color: #666;
-          line-height: 1.6;
-        }
-
-        .variation-group {
-          margin-bottom: 20px;
-        }
-
-        .variation-group label {
-          display: block;
-          margin-bottom: 10px;
-          font-weight: 600;
-          color: #333;
-        }
-
-        .size-options, .color-options {
-          display: flex;
-          gap: 10px;
-        }
-
-        .size-option, .color-option {
-          padding: 8px 16px;
-          border: 2px solid #ddd;
-          background: white;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .size-option:hover, .color-option:hover {
-          border-color: #007bff;
-        }
-
-        .size-option.selected, .color-option.selected {
-          border-color: #007bff;
-          background: #007bff;
-          color: white;
-        }
-
-        .color-option {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          padding: 0;
-          position: relative;
-        }
-
-        .color-option::after {
-          content: attr(style);
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
-          font-size: 0.7rem;
-          font-weight: bold;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .quantity-selector {
-          margin-bottom: 30px;
-        }
-
-        .quantity-selector label {
-          display: block;
-          margin-bottom: 10px;
-          font-weight: 600;
-          color: #333;
-        }
-
-        .quantity-controls {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .quantity-controls button {
-          width: 40px;
-          height: 40px;
-          border: 1px solid #ddd;
-          background: white;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 1.2rem;
-          font-weight: bold;
-        }
-
-        .quantity-controls button:hover {
-          background: #f8f9fa;
-        }
-
-        .quantity-controls button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .quantity-controls input {
-          width: 80px;
-          height: 40px;
-          text-align: center;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-
-        .add-to-cart {
-          margin-bottom: 30px;
-        }
-
-        .product-info {
-          background: #f8f9fa;
-          padding: 20px;
-          border-radius: 8px;
-        }
-
-        .info-item {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 10px;
-        }
-
-        .info-item:last-child {
-          margin-bottom: 0;
-        }
-
-        .status.in_stock {
-          color: #28a745;
-          font-weight: 600;
-        }
-
-        .status.out_of_stock {
-          color: #dc3545;
-          font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-          .product-title {
-            font-size: 1.5rem;
-          }
-
-          .current-price {
-            font-size: 1.5rem;
-          }
-
-          .size-options, .color-options {
-            flex-wrap: wrap;
-          }
-        }
-      `}</style>
     </div>
   );
 };

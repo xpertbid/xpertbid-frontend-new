@@ -25,12 +25,8 @@ const WoodMartProperties = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">
-            <TranslatedText text={subtitle} />
-          </span>
-          <h2 className="section-title">
-            <TranslatedText text={title} />
-          </h2>
+          <span className="section-subtitle">{subtitle}</span>
+          <h2 className="section-title">{title}</h2>
         </div>
 
         {/* Properties Grid */}
@@ -65,10 +61,10 @@ const WoodMartProperties = ({
                           <i className="far fa-heart"></i>
                         </button>
                         <button className="btn-action btn-compare" title="Add to Compare">
-                          <i className="f-balance-scale"></i>
+                          <i className="fas fa-balance-scale"></i>
                         </button>
                         <button className="btn-action btn-quick-view" title="Quick View">
-                          <i className="f-eye"></i>
+                          <i className="fas fa-eye"></i>
                         </button>
                       </div>
                     </div>
@@ -80,7 +76,7 @@ const WoodMartProperties = ({
                     {/* Location */}
                     {property.location && (
                       <div className="property-location">
-                        <i className="f-map-marker-alt"></i>
+                        <i className="fas fa-map-marker-alt"></i>
                         <span>{property.location}</span>
                       </div>
                     )}
@@ -89,25 +85,25 @@ const WoodMartProperties = ({
                     <div className="property-specs">
                       {property.bedrooms && (
                         <span className="spec-item">
-                          <i className="f-bed"></i>
+                          <i className="fas fa-bed"></i>
                           {property.bedrooms} Bed{property.bedrooms > 1 ? 's' : ''}
                         </span>
                       )}
                       {property.bathrooms && (
                         <span className="spec-item">
-                          <i className="f-bath"></i>
+                          <i className="fas fa-bath"></i>
                           {property.bathrooms} Bath{property.bathrooms > 1 ? 's' : ''}
                         </span>
                       )}
                       {property.area && (
                         <span className="spec-item">
-                          <i className="f-expand-arrows-alt"></i>
+                          <i className="fas fa-expand-arrows-alt"></i>
                           {property.area} sq ft
                         </span>
                       )}
                       {property.propertyType && (
                         <span className="spec-item">
-                          <i className="f-home"></i>
+                          <i className="fas fa-home"></i>
                           {property.propertyType}
                         </span>
                       )}
@@ -119,7 +115,7 @@ const WoodMartProperties = ({
                         {[...Array(5)].map((_, i) => (
                           <i
                             key={i}
-                            className={`f-star ${i < Math.floor(property.rating) ? 'active' : ''}`}
+                            className={`fas fa-star ${i < Math.floor(property.rating) ? 'active' : ''}`}
                           />
                         ))}
                       </div>
@@ -130,25 +126,16 @@ const WoodMartProperties = ({
 
                     {/* Price */}
                     <div className="property-price">
-                      <PriceDisplay 
-                        amount={property.price} 
-                        className="current-price"
-                        fromCurrency="USD"
-                      />
+                      <span className="current-price">${property.price.toLocaleString()}</span>
                       {property.comparePrice && (
-                        <span className="compare-price">
-                          <PriceDisplay 
-                            amount={property.comparePrice} 
-                            fromCurrency="USD"
-                          />
-                        </span>
+                        <span className="compare-price">${property.comparePrice.toLocaleString()}</span>
                       )}
                     </div>
 
                     {/* Action Button */}
                     <div className="property-actions-bottom">
                       <Link href={`/properties/${property.slug}`} className="btn btn-primary btn-block" onClick={(e) => e.stopPropagation()}>
-                        <TranslatedText text="View Details" />
+                        View Details
                       </Link>
                     </div>
                   </div>
@@ -163,7 +150,7 @@ const WoodMartProperties = ({
           <div className="text-center mt-5">
             <Link href={viewAllLink} className="btn btn-outline-primary btn-lg">
               View All Properties
-              <i className="f-arrow-right ms-2"></i>
+              <i className="fas fa-arrow-right ms-2"></i>
             </Link>
           </div>
         )}
@@ -171,36 +158,36 @@ const WoodMartProperties = ({
 
       <style jsx>{`
         .woodmart-properties {
-          background;
+          background: white;
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 60px;
         }
 
         .section-subtitle {
           display: inline-block;
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 2px;
           color: var(--primary-color);
-          margin-bottom;
+          margin-bottom: 15px;
         }
 
         .section-title {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 36px;
+          font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 0;
         }
 
         .property-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-lg);
-          overflow;
+          overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
           height: 100%;
@@ -212,27 +199,27 @@ const WoodMartProperties = ({
         }
 
         .property-link {
-          display;
-          text-decoration;
-          color;
+          display: block;
+          text-decoration: none;
+          color: inherit;
           height: 100%;
         }
 
         .property-link:hover {
-          text-decoration;
-          color;
+          text-decoration: none;
+          color: inherit;
         }
 
         .property-image-wrapper {
-          position;
-          overflow;
+          position: relative;
+          overflow: hidden;
           padding-top: 66.66%; /* 3:2 aspect ratio */
         }
 
         .property-image {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
         }
@@ -240,7 +227,7 @@ const WoodMartProperties = ({
         .property-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -249,108 +236,108 @@ const WoodMartProperties = ({
         }
 
         .property-badges {
-          position;
-          top;
-          left;
-          z-index;
-          display;
-          flex-direction;
-          gap;
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          z-index: 3;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .badge {
-          font-size;
-          font-weight;
-          text-transform;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
-          padding;
+          padding: 4px 8px;
           border-radius: var(--border-radius-sm);
         }
 
         .badge-new {
           background: var(--success-color);
-          color;
+          color: white;
         }
 
         .badge-sale {
           background: var(--accent-color);
-          color;
+          color: white;
         }
 
         .badge-featured {
           background: var(--primary-color);
-          color;
+          color: white;
         }
 
         .badge-custom {
           background: var(--warning-color);
-          color;
+          color: white;
         }
 
         .property-overlay {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
           background: rgba(0, 0, 0, 0.7);
-          display;
-          align-items;
-          justify-content;
-          opacity;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
           transition: opacity 0.3s ease;
-          z-index;
+          z-index: 2;
         }
 
         .property-card:hover .property-overlay {
-          opacity;
+          opacity: 1;
         }
 
         .property-actions {
-          display;
-          gap;
+          display: flex;
+          gap: 15px;
         }
 
         .btn-action {
-          width;
-          height;
+          width: 45px;
+          height: 45px;
           border-radius: 50%;
-          border;
-          background;
+          border: none;
+          background: white;
           color: var(--secondary-color);
-          display;
-          align-items;
-          justify-content;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           transition: all 0.3s ease;
-          cursor;
+          cursor: pointer;
         }
 
         .btn-action:hover {
           background: var(--primary-color);
-          color;
+          color: white;
           transform: scale(1.1);
         }
 
         .property-content {
-          padding;
+          padding: 20px;
         }
 
         .property-name {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 18px;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 10px;
           line-height: 1.3;
         }
 
         .property-location {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 15px;
           color: var(--gray-600);
-          font-size;
+          font-size: 14px;
         }
 
         .property-location i {
@@ -358,39 +345,39 @@ const WoodMartProperties = ({
         }
 
         .property-specs {
-          display;
-          flex-wrap;
-          gap;
-          margin-bottom;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+          margin-bottom: 15px;
         }
 
         .spec-item {
-          display;
-          align-items;
-          gap;
-          font-size;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 12px;
           color: var(--gray-600);
         }
 
         .spec-item i {
           color: var(--primary-color);
-          width;
+          width: 12px;
         }
 
         .property-rating {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 15px;
         }
 
         .stars {
-          display;
-          gap;
+          display: flex;
+          gap: 2px;
         }
 
         .stars i {
-          font-size;
+          font-size: 12px;
           color: var(--gray-300);
         }
 
@@ -399,62 +386,62 @@ const WoodMartProperties = ({
         }
 
         .rating-text {
-          font-size;
+          font-size: 12px;
           color: var(--gray-600);
         }
 
         .property-price {
-          margin-bottom;
+          margin-bottom: 15px;
         }
 
         .current-price {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 20px;
+          font-weight: 700;
           color: var(--primary-color);
         }
 
         .compare-price {
-          font-size;
+          font-size: 14px;
           color: var(--gray-500);
           text-decoration: line-through;
-          margin-left;
+          margin-left: 10px;
         }
 
         .property-actions-bottom .btn {
           width: 100%;
-          font-size;
-          font-weight;
-          padding;
+          font-size: 14px;
+          font-weight: 600;
+          padding: 10px 20px;
         }
 
         /* Responsive Design */
-        @media (max-width) {
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
+            font-size: 28px;
           }
 
           .property-name {
-            font-size;
+            font-size: 16px;
           }
 
           .property-content {
-            padding;
+            padding: 15px;
           }
 
           .property-specs {
-            gap;
+            gap: 10px;
           }
 
           .spec-item {
-            font-size;
+            font-size: 11px;
           }
         }
 
-        @media (max-width) {
+        @media (max-width: 480px) {
           .property-specs {
-            flex-direction;
-            gap;
+            flex-direction: column;
+            gap: 5px;
           }
         }
       `}</style>
