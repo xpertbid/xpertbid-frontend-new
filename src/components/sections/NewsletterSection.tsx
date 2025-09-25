@@ -43,7 +43,7 @@ const NewsletterSection: React.FC = () => {
       
       setIsSubscribed(true);
       setEmail('');
-    } catch (error) {
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);

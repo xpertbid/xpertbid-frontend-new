@@ -24,20 +24,20 @@ const KycForm: React.FC<KycFormProps> = ({ kycType, documentId, onSuccess, onCan
 
   useEffect(() => {
     if (isEditMode && currentDocument) {
-      setFormData(currentDocument.documents || {});
-      // Find the kyc type name from the kyc_type_id
-      const kycType = kycTypes.find(type => type.id === currentDocument.kyc_type_id);
+      setFormData(typeof currentDocument.documents === 'object' ? currentDocument.documents || {} : {});
+      // Find the kyc type name from the kyc_type
+      const kycType = Object.values(kycTypes).find(type => type.name === currentDocument.kyc_type);
       setSelectedKycType(kycType ? kycType.name : '');
     }
-  }, [isEditMode, currentDocument]);
+  }, [isEditMode, currentDocument, kycTypes]);
 
-  const availableTypes = kycTypes.map(type => type.name);
+  const availableTypes = Object.values(kycTypes).map(type => type.name);
   // Get fields for the selected KYC type
   const currentTypeFields = (() => {
-    const kycType = kycTypes.find(type => type.name === selectedKycType);
+    const kycType = Object.values(kycTypes).find(type => type.name === selectedKycType);
     if (kycType) {
       return {
-        required: kycType.required_fields || [],
+        required: kycType.required_documents || [],
         optional: []
       };
     }

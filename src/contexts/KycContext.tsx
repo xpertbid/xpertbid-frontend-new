@@ -1,12 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { kycService } from '@/services/kycService';
-import { KycDocument, KycType } from '@/types';
+import { apiService } from '@/services/api';
+import { KycDocument, KycType, KycTypeInfo, KycDocumentFormData } from '@/types';
 
 interface KycState {
   documents: KycDocument[];
-  kycTypes: KycType[];
+  kycTypes: { [key: string]: KycTypeInfo };
   isLoading: boolean;
   error: string | null;
   selectedDocument: KycDocument | null;
@@ -26,7 +26,7 @@ interface KycContextType extends KycState {
 type KycAction =
   | { type: 'KYC_START' }
   | { type: 'KYC_DOCUMENTS_LOADED'; payload: KycDocument[] }
-  | { type: 'KYC_TYPES_LOADED'; payload: KycTypes }
+  | { type: 'KYC_TYPES_LOADED'; payload: { [key: string]: KycTypeInfo } }
   | { type: 'KYC_DOCUMENT_CREATED'; payload: KycDocument }
   | { type: 'KYC_DOCUMENT_UPDATED'; payload: KycDocument }
   | { type: 'KYC_DOCUMENT_SELECTED'; payload: KycDocument | null }
@@ -106,8 +106,12 @@ export const KycProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const loadKycDocuments = async () => {
     dispatch({ type: 'KYC_START' });
     try {
-      const documents = await kycService.getKycDocuments();
-      dispatch({ type: 'KYC_DOCUMENTS_LOADED', payload: documents });
+      const response = await apiService.getKycDocuments();
+      if (response.success) {
+        dispatch({ type: 'KYC_DOCUMENTS_LOADED', payload: response.data });
+      } else {
+        throw new Error(response.message || 'Failed to load KYC documents');
+      }
     } catch (error: unknown) {
       dispatch({ type: 'KYC_FAILURE', payload: error instanceof Error ? error.message : 'Failed to load KYC documents' });
     }
@@ -116,8 +120,12 @@ export const KycProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const loadKycTypes = async () => {
     dispatch({ type: 'KYC_START' });
     try {
-      const kycTypes = await kycService.getKycTypes();
-      dispatch({ type: 'KYC_TYPES_LOADED', payload: kycTypes });
+      const response = await apiService.getKycTypes();
+      if (response.success) {
+        dispatch({ type: 'KYC_TYPES_LOADED', payload: response.data });
+      } else {
+        throw new Error(response.message || 'Failed to load KYC types');
+      }
     } catch (error: unknown) {
       dispatch({ type: 'KYC_FAILURE', payload: error instanceof Error ? error.message : 'Failed to load KYC types' });
     }
@@ -126,8 +134,12 @@ export const KycProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const createKycDocument = async (formData: Record<string, unknown>) => {
     dispatch({ type: 'KYC_START' });
     try {
-      const document = await kycService.createKycDocument(formData);
-      dispatch({ type: 'KYC_DOCUMENT_CREATED', payload: document });
+      const response = await apiService.submitKycDocument(formData as KycDocumentFormData);
+      if (response.success) {
+        dispatch({ type: 'KYC_DOCUMENT_CREATED', payload: response.data });
+      } else {
+        throw new Error(response.message || 'Failed to create KYC document');
+      }
     } catch (error: unknown) {
       dispatch({ type: 'KYC_FAILURE', payload: error instanceof Error ? error.message : 'Failed to create KYC document' });
       throw error;
@@ -137,8 +149,12 @@ export const KycProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateKycDocument = async (id: number, formData: Record<string, unknown>) => {
     dispatch({ type: 'KYC_START' });
     try {
-      const document = await kycService.updateKycDocument(id, formData);
-      dispatch({ type: 'KYC_DOCUMENT_UPDATED', payload: document });
+      const response = await apiService.updateKycDocument(id, formData as Partial<KycDocumentFormData>);
+      if (response.success) {
+        dispatch({ type: 'KYC_DOCUMENT_UPDATED', payload: response.data });
+      } else {
+        throw new Error(response.message || 'Failed to update KYC document');
+      }
     } catch (error: unknown) {
       dispatch({ type: 'KYC_FAILURE', payload: error instanceof Error ? error.message : 'Failed to update KYC document' });
       throw error;
@@ -146,27 +162,13 @@ export const KycProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const uploadDocument = async (id: number, file: File) => {
-    dispatch({ type: 'KYC_START' });
-    try {
-      await kycService.uploadDocument(id, file);
-      // Reload documents to get updated document list
-      await loadKycDocuments();
-    } catch (error: unknown) {
-      dispatch({ type: 'KYC_FAILURE', payload: error instanceof Error ? error.message : 'Failed to upload document' });
-      throw error;
-    }
+    // TODO: Implement document upload
+    throw new Error('Document upload not implemented yet');
   };
 
   const removeDocument = async (id: number, documentPath: string) => {
-    dispatch({ type: 'KYC_START' });
-    try {
-      await kycService.removeDocument(id, documentPath);
-      // Reload documents to get updated document list
-      await loadKycDocuments();
-    } catch (error: unknown) {
-      dispatch({ type: 'KYC_FAILURE', payload: error instanceof Error ? error.message : 'Failed to remove document' });
-      throw error;
-    }
+    // TODO: Implement document removal
+    throw new Error('Document removal not implemented yet');
   };
 
   const setSelectedDocument = (document: KycDocument | null) => {

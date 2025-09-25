@@ -17,7 +17,7 @@ const ApiStatusIndicator: React.FC = () => {
           setApiStatus('offline');
           setShowIndicator(true);
         }
-      } catch (error) {
+      } catch (_error) {
         setApiStatus('offline');
         setShowIndicator(true);
       }

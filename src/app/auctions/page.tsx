@@ -17,6 +17,21 @@ export default function AuctionsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [auctionsPerPage] = useState(12);
 
+  // Helper function to safely get first image
+  const getFirstImage = (images: string | string[] | undefined): string => {
+    if (!images) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+    if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+    if (typeof images === 'string') {
+      try {
+        const parsed = JSON.parse(images);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+      } catch {
+        return images; // If it's not JSON, treat as single URL
+      }
+    }
+    return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+  };
+
   // Filter states
   const [filters, setFilters] = useState({
     minPrice: '',
@@ -498,7 +513,7 @@ export default function AuctionsPage() {
                             <div className="auction-image-wrapper flex-shrink-0">
                               <div className="auction-image">
                                 <Image
-                                  src={auction.product_image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop'}
+                                  src={getFirstImage(auction.product_image)}
                                   alt={auction.product_name || 'Auction Item'}
                                   width={200}
                                   height={150}
@@ -537,7 +552,7 @@ export default function AuctionsPage() {
                             <div className="auction-image-wrapper">
                               <div className="auction-image">
                                 <Image
-                                  src={auction.product_image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop'}
+                                  src={getFirstImage(auction.product_image)}
                                   alt={auction.product_name || 'Auction Item'}
                                   width={400}
                                   height={300}

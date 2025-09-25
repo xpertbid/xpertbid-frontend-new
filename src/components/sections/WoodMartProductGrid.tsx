@@ -1,9 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { apiService } from '@/services/api';
+import PriceDisplay from '@/components/PriceDisplay';
+import TranslatedText from '@/components/TranslatedText';
 
 interface Product {
   id: number;
@@ -39,7 +43,40 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
   viewAllLink = "/shop"
 }) => {
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const [wishlistItems, setWishlistItems] = useState<Set<number>>(new Set());
+  const [loading, setLoading] = useState<boolean>(false);
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
+
+  const loadWishlistStatus = async () => {
+    try {
+      setLoading(true);
+      const promises = products.map(product => 
+        apiService.checkWishlistStatus(product.id.toString())
+      );
+      const responses = await Promise.all(promises);
+      
+      const wishlistSet = new Set<number>();
+      responses.forEach((response, index) => {
+        if (response.success && response.data.in_wishlist) {
+          wishlistSet.add(products[index].id);
+        }
+      });
+      
+      setWishlistItems(wishlistSet);
+    } catch (error) {
+      console.error('Error loading wishlist status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load wishlist status for all products
+  useEffect(() => {
+    if (isAuthenticated && products.length > 0) {
+      loadWishlistStatus();
+    }
+  }, [isAuthenticated, products, loadWishlistStatus]);
 
   const handleAddToCart = (product: Product) => {
     addToCart({
@@ -50,7 +87,40 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
       image: product.image,
       vendor: 'WoodMart',
       sku: `WM-${product.id}`,
+      slug: product.slug || '',
     });
+  };
+
+  const handleWishlistToggle = async (product: Product) => {
+    if (!isAuthenticated) {
+      // Redirect to login or show login modal
+      window.location.href = '/login';
+      return;
+    }
+
+    try {
+      const isInWishlist = wishlistItems.has(product.id);
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const response = await apiService.removeFromWishlist(product.id.toString());
+        if (response.success) {
+          setWishlistItems(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(product.id);
+            return newSet;
+          });
+        }
+      } else {
+        // Add to wishlist
+        const response = await apiService.addToWishlist(product.id.toString());
+        if (response.success) {
+          setWishlistItems(prev => new Set(prev).add(product.id));
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+    }
   };
 
   return (
@@ -58,8 +128,12 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">{subtitle}</span>
-          <h2 className="section-title">{title}</h2>
+          <span className="section-subtitle">
+            <TranslatedText text={subtitle} />
+          </span>
+          <h2 className="section-title">
+            <TranslatedText text={title} />
+          </h2>
         </div>
 
         {/* Product Grid */}
@@ -100,8 +174,13 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
 
                   {/* Quick Actions */}
                   <div className="product-actions">
-                    <button className="action-btn wishlist-btn" title="Add to Wishlist">
-                      <i className="far fa-heart"></i>
+                    <button 
+                      className={`action-btn wishlist-btn ${wishlistItems.has(product.id) ? 'active' : ''}`}
+                      title={wishlistItems.has(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                      onClick={() => handleWishlistToggle(product)}
+                      disabled={loading}
+                    >
+                      <i className={`${wishlistItems.has(product.id) ? 'fas' : 'far'} fa-heart`}></i>
                     </button>
                     <button className="action-btn quick-view-btn" title="Quick View">
                       <i className="fas fa-eye"></i>
@@ -118,7 +197,7 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
                       onClick={() => handleAddToCart(product)}
                     >
                       <i className="fas fa-shopping-cart me-2"></i>
-                      Add to Cart
+                      <TranslatedText text="Add to Cart" />
                     </button>
                   </div>
                 </div>
@@ -148,9 +227,18 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
 
                   {/* Product Price */}
                   <div className="product-price">
-                    <span className="current-price">${product.price}</span>
+                    <PriceDisplay 
+                      amount={product.price} 
+                      className="current-price"
+                      fromCurrency="USD"
+                    />
                     {product.comparePrice && (
-                      <span className="compare-price">${product.comparePrice}</span>
+                      <span className="compare-price">
+                        <PriceDisplay 
+                          amount={product.comparePrice} 
+                          fromCurrency="USD"
+                        />
+                      </span>
                     )}
                   </div>
                 </div>
@@ -163,7 +251,7 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
         {showViewAll && (
           <div className="text-center mt-5">
             <Link href={viewAllLink} className="btn-view-all">
-              View All Products
+              <TranslatedText text="View All" />
               <i className="fas fa-arrow-right ms-2"></i>
             </Link>
           </div>
@@ -204,7 +292,9 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
           overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          height: 100%;
+          height: 450px;
+          display: flex;
+          flex-direction: column;
         }
 
         .product-card:hover {
@@ -215,11 +305,13 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
         .product-image-wrapper {
           position: relative;
           overflow: hidden;
+          height: 250px;
+          flex-shrink: 0;
         }
 
         .product-image {
           position: relative;
-          padding-top: 100%;
+          height: 100%;
           overflow: hidden;
         }
 
@@ -309,6 +401,16 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
           transform: scale(1.1);
         }
 
+        .wishlist-btn.active {
+          background: var(--danger-color);
+          color: white;
+        }
+
+        .wishlist-btn.active:hover {
+          background: var(--danger-color);
+          color: white;
+        }
+
         .product-add-to-cart {
           position: absolute;
           bottom: 0;
@@ -348,6 +450,10 @@ const WoodMartProductGrid: React.FC<WoodMartProductGridProps> = ({
 
         .product-info {
           padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
 
         .product-rating {

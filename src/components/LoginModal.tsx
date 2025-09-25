@@ -4,6 +4,22 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { socialAuthService } from '../services/socialAuth';
 
+// Type definitions for Google API
+interface GoogleAccounts {
+  id: {
+    callback: (response: unknown) => void;
+    prompt: () => void;
+  };
+}
+
+// Google interface is already declared in socialAuth.ts
+interface GoogleAccounts {
+  id: {
+    callback: (response: unknown) => void;
+    prompt: () => void;
+  };
+}
+
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -88,8 +104,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
   // Initialize social auth when modal opens
   useEffect(() => {
     if (isOpen) {
-      socialAuthService.initializeGoogle();
-      socialAuthService.initializeFacebook();
+      const initializeSocialAuth = async () => {
+        try {
+          await socialAuthService.initializeGoogle();
+          await socialAuthService.initializeFacebook();
+        } catch (error) {
+          console.error('Error initializing social auth:', error);
+        }
+      };
+      initializeSocialAuth();
     }
   }, [isOpen]);
 
@@ -99,22 +122,37 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     setError('');
     
     try {
+      if (!window.google) {
+        throw new Error('Google Sign-In is not available. Please try again.');
+      }
+
       const response = await new Promise((resolve, reject) => {
+        // Set up a timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          reject(new Error('Google Sign-In timed out. Please try again.'));
+        }, 30000); // 30 second timeout
         
-        (window as any).google.accounts.id.callback = (response: unknown) => {
+        (window as unknown as { google: { accounts: GoogleAccounts } }).google.accounts.id.callback = (response: unknown) => {
+          clearTimeout(timeout);
           socialAuthService['handleGoogleResponse'](response)
             .then(resolve)
             .catch(reject);
         };
         
-        (window as any).google.accounts.id.prompt();
+        try {
+          (window as unknown as { google: { accounts: GoogleAccounts } }).google.accounts.id.prompt();
+        } catch (_error) {
+          clearTimeout(timeout);
+          reject(new Error('Failed to start Google Sign-In. Please try again.'));
+        }
       });
 
       if (response) {
-        onLoginSuccess(response);
+        onLoginSuccess();
       }
     } catch (error: unknown) {
-      setError(error.message || 'Google login failed. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Google login failed. Please try again.';
+      setError(errorMessage);
     } finally {
       setSocialLoading(prev => ({ ...prev, google: false }));
     }
@@ -126,12 +164,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     setError('');
     
     try {
+      if (!window.FB) {
+        throw new Error('Facebook login is not available. Please configure Facebook App ID.');
+      }
+
       const response = await socialAuthService.triggerFacebookLogin();
       if (response) {
-        onLoginSuccess(response);
+        onLoginSuccess();
       }
     } catch (error: unknown) {
-      setError(error.message || 'Facebook login failed. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Facebook login failed. Please try again.';
+      setError(errorMessage);
     } finally {
       setSocialLoading(prev => ({ ...prev, facebook: false }));
     }

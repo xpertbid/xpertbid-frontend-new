@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 
 const CheckoutPage: React.FC = () => {
-  const { items, subtotal, shipping, tax, total, itemCount, clearCart } = useCart();
+  const { items, subtotal, shipping, tax, total, clearCart } = useCart();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Billing Information

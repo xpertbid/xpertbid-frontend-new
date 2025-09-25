@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import PriceDisplay from '@/components/PriceDisplay';
+import TranslatedText from '@/components/TranslatedText';
 
 interface Vehicle {
   id: number;
@@ -42,13 +44,32 @@ const WoodMartVehicles: React.FC<WoodMartVehiclesProps> = ({
 }) => {
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
 
+  // Helper function to safely get first image
+  const getFirstImage = (images: string | string[] | undefined): string => {
+    if (!images) return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
+    if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
+    if (typeof images === 'string') {
+      try {
+        const parsed = JSON.parse(images);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
+      } catch {
+        return images; // If it's not JSON, treat as single URL
+      }
+    }
+    return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
+  };
+
   return (
     <section className="woodmart-vehicles py-5 bg-light">
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">{subtitle}</span>
-          <h2 className="section-title">{title}</h2>
+          <span className="section-subtitle">
+            <TranslatedText text={subtitle} />
+          </span>
+          <h2 className="section-title">
+            <TranslatedText text={title} />
+          </h2>
         </div>
 
         {/* Vehicles Grid */}
@@ -60,7 +81,7 @@ const WoodMartVehicles: React.FC<WoodMartVehiclesProps> = ({
                   <div className="vehicle-image-wrapper">
                     <div className="vehicle-image">
                       <Image
-                        src={vehicle.image}
+                        src={getFirstImage(vehicle.image)}
                         alt={vehicle.name}
                         width={300}
                         height={200}
@@ -140,16 +161,25 @@ const WoodMartVehicles: React.FC<WoodMartVehiclesProps> = ({
 
                     {/* Price */}
                     <div className="vehicle-price">
-                      <span className="current-price">${vehicle.price.toLocaleString()}</span>
+                      <PriceDisplay 
+                        amount={vehicle.price} 
+                        className="current-price"
+                        fromCurrency="USD"
+                      />
                       {vehicle.comparePrice && (
-                        <span className="compare-price">${vehicle.comparePrice.toLocaleString()}</span>
+                        <span className="compare-price">
+                          <PriceDisplay 
+                            amount={vehicle.comparePrice} 
+                            fromCurrency="USD"
+                          />
+                        </span>
                       )}
                     </div>
 
                     {/* Action Button */}
                     <div className="vehicle-actions-bottom">
                       <Link href={`/vehicles/${vehicle.slug}`} className="btn btn-primary btn-block" onClick={(e) => e.stopPropagation()}>
-                        View Details
+                        <TranslatedText text="View Details" />
                       </Link>
                     </div>
                   </div>

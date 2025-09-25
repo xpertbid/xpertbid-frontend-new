@@ -42,14 +42,14 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             let initialImage = 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=600&fit=crop';
             
             try {
-              if (foundProduct.gallery) {
-                if (typeof foundProduct.gallery === 'string') {
-                  const galleryArray = JSON.parse(foundProduct.gallery);
+              if (foundProduct.images) {
+                if (typeof foundProduct.images === 'string') {
+                  const galleryArray = JSON.parse(foundProduct.images);
                   if (Array.isArray(galleryArray) && galleryArray.length > 0 && galleryArray[0]) {
                     initialImage = galleryArray[0];
                   }
-                } else if (Array.isArray(foundProduct.gallery) && foundProduct.gallery.length > 0 && foundProduct.gallery[0]) {
-                  initialImage = foundProduct.gallery[0];
+                } else if (Array.isArray(foundProduct.images) && foundProduct.images.length > 0 && foundProduct.images[0]) {
+                  initialImage = foundProduct.images[0];
                 }
               }
             } catch (error) {
@@ -101,17 +101,17 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   };
 
   const getGalleryImages = () => {
-    if (!product?.gallery) return [selectedImage];
+    if (!product?.images) return [selectedImage];
     
     try {
-      if (typeof product.gallery === 'string') {
-        const galleryArray = JSON.parse(product.gallery);
-        return Array.isArray(galleryArray) ? galleryArray : [selectedImage];
-      } else if (Array.isArray(product.gallery)) {
-        return product.gallery;
+      if (typeof product.images === 'string') {
+        const imagesArray = JSON.parse(product.images);
+        return Array.isArray(imagesArray) ? imagesArray : [selectedImage];
+      } else if (Array.isArray(product.images)) {
+        return product.images;
       }
     } catch (error) {
-      console.warn('Error parsing gallery:', error);
+      console.warn('Error parsing images:', error);
     }
     
     return [selectedImage];
@@ -381,14 +381,14 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               let relatedImageUrl = 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=300&h=300&fit=crop';
               
               try {
-                if (relatedProduct.gallery) {
-                  if (typeof relatedProduct.gallery === 'string') {
-                    const galleryArray = JSON.parse(relatedProduct.gallery);
+                if (relatedProduct.images) {
+                  if (typeof relatedProduct.images === 'string') {
+                    const galleryArray = JSON.parse(relatedProduct.images);
                     if (Array.isArray(galleryArray) && galleryArray.length > 0 && galleryArray[0]) {
                       relatedImageUrl = galleryArray[0];
                     }
-                  } else if (Array.isArray(relatedProduct.gallery) && relatedProduct.gallery.length > 0 && relatedProduct.gallery[0]) {
-                    relatedImageUrl = relatedProduct.gallery[0];
+                  } else if (Array.isArray(relatedProduct.images) && relatedProduct.images.length > 0 && relatedProduct.images[0]) {
+                    relatedImageUrl = relatedProduct.images[0];
                   }
                 }
               } catch (error) {
@@ -513,7 +513,9 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          height: 100%;
+          height: 450px;
+          display: flex;
+          flex-direction: column;
         }
 
         .related-product-card:hover {
@@ -524,11 +526,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         .related-product-image-wrapper {
           position: relative;
           overflow: hidden;
+          height: 250px;
+          flex-shrink: 0;
         }
 
         .related-product-image {
           position: relative;
-          padding-top: 100%;
+          height: 100%;
           overflow: hidden;
         }
 
@@ -577,6 +581,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
         .related-product-info {
           padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
 
         .related-product-title {

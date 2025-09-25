@@ -7,6 +7,9 @@ import Image from 'next/image';
 import { apiService } from '@/services/api';
 import { Vehicle } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+// import { useCurrency } from '@/contexts/CurrencyLanguageContext';
+import PriceDisplay from '@/components/PriceDisplay';
+import { extractVehicleId, generateVehicleSlug } from '@/utils/slug';
 
 interface VehicleDetailPageProps {
   params: Promise<{
@@ -33,28 +36,40 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
         const vehiclesResponse = await apiService.getVehicles();
         
         if (vehiclesResponse.success) {
-          const foundVehicle = vehiclesResponse.data.find(v => v.slug === resolvedParams.slug);
+          // Extract vehicle ID from slug
+          const vehicleId = extractVehicleId(resolvedParams.slug);
+          const foundVehicle = vehiclesResponse.data.find(v => v.id === vehicleId);
           
           if (foundVehicle) {
             setVehicle(foundVehicle);
             
-            // Set initial image
-            let initialImage = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop';
+            // Set initial image with safe parsing
+            const getFirstImage = (images: string | string[] | undefined): string => {
+              if (!images) return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop';
+              if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop';
+              if (typeof images === 'string') {
+                try {
+                  const parsed = JSON.parse(images);
+                  return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop';
+                } catch {
+                  return images; // If it's not JSON, treat as single URL
+                }
+              }
+              return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=600&fit=crop';
+            };
             
-            if (foundVehicle.images && foundVehicle.images.length > 0 && foundVehicle.images[0].trim() !== '') {
-              initialImage = foundVehicle.images[0];
-            }
-            
+            const initialImage = getFirstImage(foundVehicle.images);
             setSelectedImage(initialImage);
             
             // Fetch related vehicles (same category or random)
             const relatedVehiclesData = vehiclesResponse.data.filter(v => 
               v.id !== foundVehicle.id &&
-              v.status === 'publish'
+              v.vehicle_status === 'publish'
             ).slice(0, 4); // Show 4 related vehicles
             
             setRelatedVehicles(relatedVehiclesData);
           } else {
+            setError('Vehicle not found');
             // Create a mock vehicle for demonstration
             const mockVehicle = {
               id: 999,
@@ -78,12 +93,13 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
               updated_at: '2024-01-01T00:00:00Z'
             };
             
-            setVehicle(mockVehicle);
+            setVehicle(mockVehicle as unknown as Vehicle);
             setSelectedImage(mockVehicle.images[0]);
           }
         }
       } catch (err) {
         console.error('Error fetching vehicle:', err);
+        setError('Failed to load vehicle details. Please try again later.');
         
         // Create a fallback vehicle for demonstration
         const fallbackVehicle = {
@@ -108,7 +124,7 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
           updated_at: '2024-01-01T00:00:00Z'
         };
         
-        setVehicle(fallbackVehicle);
+        setVehicle(fallbackVehicle as unknown as Vehicle);
         setSelectedImage(fallbackVehicle.images[0]);
       } finally {
         setLoading(false);
@@ -128,9 +144,9 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
       price: parseFloat(vehicle.price.toString()),
       quantity: quantity,
       image: selectedImage,
-      slug: vehicle.slug,
+      slug: vehicle.slug || '',
       vendor: 'Vehicle Dealer',
-      sku: vehicle.slug,
+      sku: vehicle.slug || '',
     });
     
     // Open the cart drawer
@@ -138,8 +154,24 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
   };
 
   const getGalleryImages = () => {
-    if (!vehicle?.images || vehicle.images.length === 0) return [selectedImage];
-    return vehicle.images;
+    if (!vehicle?.images) return [selectedImage];
+    
+    // Helper function to safely get images array
+    const getImagesArray = (images: string | string[] | undefined): string[] => {
+      if (!images) return [selectedImage];
+      if (Array.isArray(images)) return images.length > 0 ? images : [selectedImage];
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed : [selectedImage];
+        } catch {
+          return [images]; // If it's not JSON, treat as single URL
+        }
+      }
+      return [selectedImage];
+    };
+    
+    return getImagesArray(vehicle.images);
   };
 
   const galleryImages = getGalleryImages();
@@ -252,7 +284,12 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
                 </div>
 
                 <div className="vehicle-price mb-4">
-                  <span className="current-price">${vehicle.price?.toLocaleString() || '25,000'}</span>
+                  <span className="current-price">
+                    <PriceDisplay 
+                      amount={vehicle.price || 25000} 
+                      fromCurrency="USD"
+                    />
+                  </span>
                 </div>
 
                 <p className="vehicle-description mb-4">
@@ -457,17 +494,28 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
           </div>
           <div className="row g-4">
             {relatedVehicles.map((relatedVehicle) => {
-              let relatedImageUrl = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=300&fit=crop';
+              // Helper function to safely get first image for related vehicles
+              const getFirstRelatedImage = (images: string | string[] | undefined): string => {
+                if (!images) return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=300&fit=crop';
+                if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=300&fit=crop';
+                if (typeof images === 'string') {
+                  try {
+                    const parsed = JSON.parse(images);
+                    return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=300&fit=crop';
+                  } catch {
+                    return images; // If it's not JSON, treat as single URL
+                  }
+                }
+                return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=300&fit=crop';
+              };
               
-              if (relatedVehicle.images && relatedVehicle.images.length > 0) {
-                relatedImageUrl = relatedVehicle.images[0];
-              }
+              const relatedImageUrl = getFirstRelatedImage(relatedVehicle.images);
 
               return (
                 <div key={relatedVehicle.id} className="col-lg-3 col-md-6 col-sm-6 col-12">
                   <div className="related-vehicle-card">
                     <div className="related-vehicle-image-wrapper">
-                      <Link href={`/vehicles/${relatedVehicle.slug}`}>
+                      <Link href={`/vehicles/${generateVehicleSlug(relatedVehicle.id, relatedVehicle.make, relatedVehicle.model, relatedVehicle.year)}`}>
                         <div className="related-vehicle-image">
                           <Image
                             src={relatedImageUrl}
@@ -486,11 +534,16 @@ export default function VehicleDetailPage({ params }: VehicleDetailPageProps) {
 
                     <div className="related-vehicle-info">
                       <h4 className="related-vehicle-title">
-                        <Link href={`/vehicles/${relatedVehicle.slug}`}>{relatedVehicle.title}</Link>
+                        <Link href={`/vehicles/${generateVehicleSlug(relatedVehicle.id, relatedVehicle.make, relatedVehicle.model, relatedVehicle.year)}`}>{relatedVehicle.title}</Link>
                       </h4>
                       
                       <div className="related-vehicle-price">
-                        <span className="current-price">${relatedVehicle.price?.toLocaleString() || '25,000'}</span>
+                        <span className="current-price">
+                          <PriceDisplay 
+                            amount={relatedVehicle.price || 25000} 
+                            fromCurrency="USD"
+                          />
+                        </span>
                       </div>
 
                       {/* Rating */}

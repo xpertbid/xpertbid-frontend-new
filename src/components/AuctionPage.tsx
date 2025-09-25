@@ -136,20 +136,20 @@ const AuctionPage: React.FC<AuctionPageProps> = ({ auction }) => {
 
               {/* Thumbnail Images */}
               <div className="thumbnail-images d-flex gap-2">
-                {auction.images.map((image, index) => (
+                {auction.images.map((image, _index) => (
                   <img
-                    key={index}
+                    key={_index}
                     src={image}
-                    alt={`${auction.title} ${index + 1}`}
-                    className={`img-thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    alt={`${auction.title} ${_index + 1}`}
+                    className={`img-thumbnail ${selectedImage === _index ? 'active' : ''}`}
                     style={{ 
                       width: '80px', 
                       height: '80px', 
                       objectFit: 'cover',
                       cursor: 'pointer',
-                      border: selectedImage === index ? '2px solid #43ACE9' : '1px solid #dee2e6'
+                      border: selectedImage === _index ? '2px solid #43ACE9' : '1px solid #dee2e6'
                     }}
-                    onClick={() => setSelectedImage(index)}
+                      onClick={() => setSelectedImage(_index)}
                   />
                 ))}
               </div>

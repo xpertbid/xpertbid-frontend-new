@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import PriceDisplay from '@/components/PriceDisplay';
+import TranslatedText from '@/components/TranslatedText';
 
 interface Auction {
   id: number;
@@ -44,6 +46,21 @@ const WoodMartAuctions: React.FC<WoodMartAuctionsProps> = ({
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Helper function to safely get first image
+  const getFirstImage = (images: string | string[] | undefined): string => {
+    if (!images) return '/images/placeholder-auction.jpg';
+    if (Array.isArray(images)) return images[0] || '/images/placeholder-auction.jpg';
+    if (typeof images === 'string') {
+      try {
+        const parsed = JSON.parse(images);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : '/images/placeholder-auction.jpg';
+      } catch {
+        return images; // If it's not JSON, treat as single URL
+      }
+    }
+    return '/images/placeholder-auction.jpg';
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -80,8 +97,12 @@ const WoodMartAuctions: React.FC<WoodMartAuctionsProps> = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">{subtitle}</span>
-          <h2 className="section-title">{title}</h2>
+          <span className="section-subtitle">
+            <TranslatedText text={subtitle} />
+          </span>
+          <h2 className="section-title">
+            <TranslatedText text={title} />
+          </h2>
         </div>
 
         {/* Auctions Grid */}
@@ -93,7 +114,7 @@ const WoodMartAuctions: React.FC<WoodMartAuctionsProps> = ({
                   <div className="auction-image-wrapper">
                     <div className="auction-image">
                       <Image
-                        src={auction.image}
+                        src={getFirstImage(auction.image)}
                         alt={auction.name}
                         width={300}
                         height={200}
@@ -147,12 +168,20 @@ const WoodMartAuctions: React.FC<WoodMartAuctionsProps> = ({
                     {/* Bid Info */}
                     <div className="auction-bid-info">
                       <div className="current-bid">
-                        <span className="bid-label">Current Bid:</span>
-                        <span className="bid-amount">${auction.currentBid.toLocaleString()}</span>
+                        <span className="bid-label">
+                          <TranslatedText text="Current Bid" />:
+                        </span>
+                        <PriceDisplay 
+                          amount={auction.currentBid} 
+                          className="bid-amount"
+                          fromCurrency="USD"
+                        />
                       </div>
                       {auction.bidCount && (
                         <div className="bid-count">
-                          <span className="count-label">Bids:</span>
+                          <span className="count-label">
+                            <TranslatedText text="Bids" />:
+                          </span>
                           <span className="count-number">{auction.bidCount}</span>
                         </div>
                       )}
@@ -162,14 +191,22 @@ const WoodMartAuctions: React.FC<WoodMartAuctionsProps> = ({
                     {auction.reservePrice && (
                       <div className="reserve-price">
                         <i className="fas fa-shield-alt"></i>
-                        <span>Reserve: ${auction.reservePrice.toLocaleString()}</span>
+                        <span>
+                          <TranslatedText text="Reserve" />: 
+                        </span>
+                        <PriceDisplay 
+                          amount={auction.reservePrice} 
+                          fromCurrency="USD"
+                        />
                       </div>
                     )}
 
                     {/* Time Left */}
                     {auction.endTime && (
                       <div className="auction-timer">
-                        <div className="timer-label">Time Left:</div>
+                        <div className="timer-label">
+                          <TranslatedText text="Time Left" />:
+                        </div>
                         <div className="timer-countdown">
                           {calculateTimeLeft(auction.endTime)}
                         </div>

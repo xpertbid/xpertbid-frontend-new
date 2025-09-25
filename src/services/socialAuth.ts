@@ -4,12 +4,17 @@ import { apiService } from './api';
 // Removed unused interfaces to fix build warnings
 
 class SocialAuthService {
-  private googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  private googleClientId = '971421469748-k1qicbfj8298bb9notpe8cfijcvf9t40.apps.googleusercontent.com';
   private facebookAppId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '';
 
   // Initialize Google Sign-In
   initializeGoogle() {
     if (typeof window !== 'undefined' && this.googleClientId) {
+      // Check if Google SDK is already loaded
+      if (window.google) {
+        return Promise.resolve(true);
+      }
+
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
@@ -19,15 +24,27 @@ class SocialAuthService {
       return new Promise((resolve) => {
         script.onload = () => {
           if (window.google) {
-            window.google.accounts.id.initialize({
-              client_id: this.googleClientId,
-              callback: this.handleGoogleResponse.bind(this),
-            });
-            resolve(true);
+            try {
+              window.google.accounts.id.initialize({
+                client_id: this.googleClientId,
+                callback: this.handleGoogleResponse.bind(this),
+              });
+              resolve(true);
+            } catch (error) {
+              console.error('Error initializing Google Sign-In:', error);
+              resolve(false);
+            }
+          } else {
+            resolve(false);
           }
+        };
+        script.onerror = () => {
+          console.error('Failed to load Google Sign-In SDK');
+          resolve(false);
         };
       });
     }
+    return Promise.resolve(false);
   }
 
   // Handle Google Sign-In Response
@@ -142,7 +159,18 @@ class SocialAuthService {
 
   // Initialize Facebook SDK
   initializeFacebook() {
-    if (typeof window !== 'undefined' && this.facebookAppId) {
+    if (typeof window !== 'undefined') {
+      // Check if Facebook SDK is already loaded
+      if (window.FB) {
+        return Promise.resolve(true);
+      }
+
+      // If no Facebook App ID, skip initialization
+      if (!this.facebookAppId) {
+        console.warn('Facebook App ID not configured. Facebook login will be disabled.');
+        return Promise.resolve(false);
+      }
+
       const script = document.createElement('script');
       script.src = 'https://connect.facebook.net/en_US/sdk.js';
       script.async = true;
@@ -159,10 +187,17 @@ class SocialAuthService {
               version: 'v18.0'
             });
             resolve(true);
+          } else {
+            resolve(false);
           }
+        };
+        script.onerror = () => {
+          console.error('Failed to load Facebook SDK');
+          resolve(false);
         };
       });
     }
+    return Promise.resolve(false);
   }
 
   // Trigger Google Sign-In

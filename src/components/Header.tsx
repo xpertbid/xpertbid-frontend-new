@@ -3,6 +3,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import LoginModal from './LoginModal';
+// import Logo from './Logo';
+import CurrencySwitcher from './CurrencySwitcher';
+import LanguageSwitcher from './LanguageSwitcher';
+import TranslatedText from './TranslatedText';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 
@@ -29,16 +33,33 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       { name: 'Sale', href: '/shop?filter=sale' },
     ]},
     { name: 'Categories', href: '/categories', hasDropdown: true, children: [
+      { name: 'All Categories', href: '/categories' },
       { name: 'Electronics', href: '/categories/electronics' },
       { name: 'Fashion', href: '/categories/fashion' },
       { name: 'Home & Garden', href: '/categories/home-garden' },
       { name: 'Sports', href: '/categories/sports' },
     ]},
+    { name: 'Properties', href: '/properties', hasDropdown: true, children: [
+      { name: 'All Properties', href: '/properties' },
+      { name: 'Houses', href: '/properties?type=house' },
+      { name: 'Apartments', href: '/properties?type=apartment' },
+      { name: 'Condos', href: '/properties?type=condo' },
+      { name: 'Villas', href: '/properties?type=villa' },
+    ]},
+    { name: 'Vehicles', href: '/vehicles', hasDropdown: true, children: [
+      { name: 'All Vehicles', href: '/vehicles' },
+      { name: 'Cars', href: '/vehicles?type=car' },
+      { name: 'SUVs', href: '/vehicles?type=suv' },
+      { name: 'Trucks', href: '/vehicles?type=truck' },
+      { name: 'Motorcycles', href: '/vehicles?type=motorcycle' },
+    ]},
     { name: 'Auctions', href: '/auctions', hasDropdown: true, children: [
+      { name: 'All Auctions', href: '/auctions' },
       { name: 'Live Auctions', href: '/auctions/live' },
       { name: 'Upcoming', href: '/auctions/upcoming' },
       { name: 'Ended', href: '/auctions/ended' },
     ]},
+    { name: 'Blog', href: '/blog', hasDropdown: false },
     { name: 'About', href: '/about', hasDropdown: false },
     { name: 'Contact', href: '/contact', hasDropdown: false },
   ];
@@ -80,31 +101,15 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           <div className="row align-items-center">
             <div className="col-md-6">
               <div className="d-flex align-items-center">
-                <div className="dropdown me-4">
-                  <button className="btn btn-link text-white p-0 border-0" type="button" data-bs-toggle="dropdown" style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-                    ENGLISH
-                    <i className="fas fa-chevron-down ms-1" style={{fontSize: '10px'}}></i>
-                  </button>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">English</a></li>
-                    <li><a className="dropdown-item" href="#">Spanish</a></li>
-                    <li><a className="dropdown-item" href="#">French</a></li>
-                  </ul>
+                <div className="header-language-switcher me-3">
+                  <LanguageSwitcher showLabel={false} />
                 </div>
-                <div className="dropdown me-4">
-                  <button className="btn btn-link text-white p-0 border-0" type="button" data-bs-toggle="dropdown" style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-                    COUNTRY
-                    <i className="fas fa-chevron-down ms-1" style={{fontSize: '10px'}}></i>
-                  </button>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">USA</a></li>
-                    <li><a className="dropdown-item" href="#">Canada</a></li>
-                    <li><a className="dropdown-item" href="#">UK</a></li>
-                  </ul>
+                <div className="header-currency-switcher me-4">
+                  <CurrencySwitcher showLabel={false} />
                 </div>
-                <span style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-                  FREE SHIPPING FOR ALL ORDERS OF $150
-                </span>
+              <span style={{fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
+                <TranslatedText text="Free shipping for all orders of $150" />
+              </span>
               </div>
             </div>
             <div className="col-md-6">
@@ -136,18 +141,15 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       <div className="header-main bg-light border-bottom">
         <div className="container">
           <div className="row align-items-center py-3">
-            {/* Logo - WoodMart Style */}
+            {/* Logo - XpertBid Style */}
             <div className="col-lg-2 col-md-3 col-6">
               <Link href="/" className="logo">
-                <h2 className="text-primary mb-0 fw-bold" style={{
-                  fontFamily: 'Poppins, sans-serif', 
-                  fontSize: '32px', 
-                  fontWeight: '700', 
-                  letterSpacing: '-0.02em',
-                  WebkitFontSmoothing: 'antialiased',
-                  MozOsxFontSmoothing: 'grayscale',
-                  color: 'var(--primary-color)'
-                }}>WoodMart</h2>
+                <img 
+                  src="/images/xpertbid-logo.png" 
+                  alt="XpertBid" 
+                  className="logo-image"
+                  style={{ height: '40px', width: 'auto' }}
+                />
               </Link>
             </div>
 
@@ -165,11 +167,15 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       All Categories
                     </button>
                     <ul className="dropdown-menu">
-                      <li><a className="dropdown-item" href="#">All Categories</a></li>
+                      <li><Link className="dropdown-item" href="/categories"><i className="fas fa-th-large me-2"></i>All Categories</Link></li>
                       <li><a className="dropdown-item" href="#">Electronics</a></li>
                       <li><a className="dropdown-item" href="#">Fashion</a></li>
                       <li><a className="dropdown-item" href="#">Home & Garden</a></li>
                       <li><a className="dropdown-item" href="#">Sports</a></li>
+                      <li><hr className="dropdown-divider" /></li>
+                      <li><Link className="dropdown-item" href="/properties"><i className="fas fa-home me-2"></i>Properties</Link></li>
+                      <li><Link className="dropdown-item" href="/vehicles"><i className="fas fa-car me-2"></i>Vehicles</Link></li>
+                      <li><Link className="dropdown-item" href="/auctions"><i className="fas fa-gavel me-2"></i>All Auctions</Link></li>
                     </ul>
                   </div>
                   <input 
@@ -207,14 +213,35 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         <i className="fas fa-user me-2" style={{fontSize: '16px'}}></i>
                         {user?.name || 'Account'}
                       </button>
-                      <ul className="dropdown-menu dropdown-menu-end">
-                        <li><Link className="dropdown-item" href="/profile">My Profile</Link></li>
-                        <li><Link className="dropdown-item" href="/account">My Account</Link></li>
-                        <li><Link className="dropdown-item" href="/orders">My Orders</Link></li>
-                        <li><Link className="dropdown-item" href="/wishlist">Wishlist</Link></li>
-                        <li><hr className="dropdown-divider" /></li>
-                        <li><button className="dropdown-item" onClick={handleLogout}>Sign Out</button></li>
-                      </ul>
+                        <ul className="dropdown-menu dropdown-menu-end">
+                          <li><Link className="dropdown-item" href="/dashboard">
+                            <TranslatedText text="Dashboard" />
+                          </Link></li>
+                          <li><Link className="dropdown-item" href="/dashboard/profile">
+                            <TranslatedText text="My Profile" />
+                          </Link></li>
+                          <li><Link className="dropdown-item" href="/orders">
+                            <TranslatedText text="My Orders" />
+                          </Link></li>
+                          <li><Link className="dropdown-item" href="/bids">
+                            <TranslatedText text="My Bids" />
+                          </Link></li>
+                          <li><Link className="dropdown-item" href="/kyc">
+                            <i className="fas fa-shield-alt me-2"></i>
+                            <TranslatedText text="KYC Verification" />
+                          </Link></li>
+                          <li><Link className="dropdown-item" href="/vendor/register">
+                            <i className="fas fa-store me-2"></i>
+                            <TranslatedText text="Become a Vendor" />
+                          </Link></li>
+                          <li><Link className="dropdown-item" href="/wishlist">
+                            <TranslatedText text="Wishlist" />
+                          </Link></li>
+                          <li><hr className="dropdown-divider" /></li>
+                          <li><button className="dropdown-item" onClick={handleLogout}>
+                            <TranslatedText text="Sign Out" />
+                          </button></li>
+                        </ul>
                     </div>
                   ) : (
                     <div className="dropdown">
@@ -313,26 +340,32 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     All Categories
                   </button>
                   <ul className="dropdown-menu dropdown-menu-start">
+                    <li><Link className="dropdown-item" href="/categories"><i className="fas fa-th-large me-2"></i>All Categories</Link></li>
+                    <li><hr className="dropdown-divider" /></li>
                     <li><Link className="dropdown-item" href="/categories/electronics">Electronics</Link></li>
                     <li><Link className="dropdown-item" href="/categories/fashion">Fashion</Link></li>
                     <li><Link className="dropdown-item" href="/categories/home-garden">Home & Garden</Link></li>
                     <li><Link className="dropdown-item" href="/categories/sports">Sports</Link></li>
                     <li><Link className="dropdown-item" href="/categories/books">Books</Link></li>
                     <li><Link className="dropdown-item" href="/categories/automotive">Automotive</Link></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li><Link className="dropdown-item" href="/properties"><i className="fas fa-home me-2"></i>Properties</Link></li>
+                    <li><Link className="dropdown-item" href="/vehicles"><i className="fas fa-car me-2"></i>Vehicles</Link></li>
+                    <li><Link className="dropdown-item" href="/auctions"><i className="fas fa-gavel me-2"></i>Auctions</Link></li>
                   </ul>
                 </div>
 
                 {/* Main Navigation */}
                 <div className={`navbar-nav flex-row ${isMenuOpen ? 'show' : 'd-none d-lg-flex'}`}>
-                  {navigation.map((item, index) => (
-                    <div key={index} className="nav-item dropdown">
+                  {navigation.map((item) => (
+                    <div key={item.href} className="nav-item dropdown">
                       <Link 
                         className="nav-link text-white px-3 py-3" 
                         href={item.href}
                         data-bs-toggle={item.hasDropdown ? 'dropdown' : undefined}
                         style={{fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px', WebkitFontSmoothing: 'antialiased'}}
                       >
-                        {item.name}
+                        <TranslatedText text={item.name} />
                         {item.hasDropdown && <i className="fas fa-chevron-down ms-1" style={{fontSize: '11px'}}></i>}
                       </Link>
                       {item.hasDropdown && item.children && (
@@ -340,7 +373,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           {item.children.map((child, childIndex) => (
                             <li key={childIndex}>
                               <Link className="dropdown-item" href={child.href}>
-                                {child.name}
+                                <TranslatedText text={child.name} />
                               </Link>
                             </li>
                           ))}
@@ -464,6 +497,57 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             padding: 15px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           }
+        }
+
+        /* Header Switcher Styles */
+        .header-language-switcher .language-button,
+        .header-currency-switcher .currency-button {
+          background: transparent !important;
+          border: 1px solid rgba(255, 255, 255, 0.3) !important;
+          color: white !important;
+          font-size: 12px !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.5px !important;
+          padding: 4px 8px !important;
+        }
+
+        .header-language-switcher .language-button:hover,
+        .header-currency-switcher .currency-button:hover {
+          border-color: rgba(255, 255, 255, 0.6) !important;
+          background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .header-language-switcher .language-code,
+        .header-currency-switcher .currency-code {
+          color: white !important;
+        }
+
+        .header-language-switcher .language-symbol,
+        .header-currency-switcher .currency-symbol {
+          color: white !important;
+        }
+
+        .header-language-switcher .language-dropdown-menu,
+        .header-currency-switcher .currency-dropdown-menu {
+          background: white !important;
+          border: 1px solid var(--gray-300) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .header-language-switcher .language-option,
+        .header-currency-switcher .currency-option {
+          color: var(--secondary-color) !important;
+        }
+
+        .header-language-switcher .language-option:hover,
+        .header-currency-switcher .currency-option:hover {
+          background-color: var(--gray-100) !important;
+        }
+
+        .header-language-switcher .language-option.active,
+        .header-currency-switcher .currency-option.active {
+          background-color: var(--primary-color) !important;
+          color: white !important;
         }
       `}</style>
 

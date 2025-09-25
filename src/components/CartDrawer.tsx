@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
+import PriceDisplay from '@/components/PriceDisplay';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface CartDrawerProps {
 }
 
 const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
-  const { items, updateQuantity, removeItem, itemCount, totalPrice } = useCart();
+  const { items, updateQuantity, removeItem, totalPrice } = useCart();
 
   const subtotal = totalPrice;
   const freeShippingThreshold = 1500;
@@ -92,7 +93,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                       
                       <div className="item-price">
                         <span className="price">
-                          {item.quantity} x ${item.price.toFixed(2)}
+                          {item.quantity} x <PriceDisplay amount={parseFloat(item.price?.toString() || '0')} fromCurrency="USD" />
                         </span>
                       </div>
                     </div>
@@ -103,13 +104,17 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               <div className="cart-summary">
                 <div className="subtotal-row">
                   <span className="subtotal-label">Subtotal:</span>
-                  <span className="subtotal-price">${subtotal.toFixed(2)}</span>
+                  <span className="subtotal-price">
+                    <PriceDisplay amount={parseFloat(subtotal?.toString() || '0')} fromCurrency="USD" />
+                  </span>
                 </div>
 
                 {remainingForFreeShipping > 0 && (
                   <div className="free-shipping-notice">
                     <p>
-                      Add <span className="highlight">${remainingForFreeShipping.toFixed(2)}</span> to cart and get <span className="highlight">free shipping!</span>
+                      Add <span className="highlight">
+                        <PriceDisplay amount={parseFloat(remainingForFreeShipping?.toString() || '0')} fromCurrency="USD" />
+                      </span> to cart and get <span className="highlight">free shipping!</span>
                     </p>
                     <div className="progress-bar">
                       <div 

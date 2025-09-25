@@ -23,18 +23,16 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({ user }) => {
 
   // Sample user data - replace with actual user data from context/API
   const currentUser: User = user || {
-    id: '1',
+    id: 1,
     name: 'John Doe',
     email: 'john.doe@example.com',
+    tenant_id: 1,
+    status: 'active',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
     role: 'ecommerce',
-    joinedDate: '2024-01-15',
-    totalOrders: 12,
-    totalBids: 8,
-    totalAuctions: 3,
-    totalProducts: 25,
-    totalProperties: 5
-  };
+    created_at: '2024-01-15T00:00:00Z',
+    updated_at: '2024-01-15T00:00:00Z'
+  } as User;
 
   const getRoleDisplayName = (role: string) => {
     const roleNames = {
@@ -160,12 +158,12 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({ user }) => {
                   </h5>
                   <div className="user-role">
                     <span className={`badge bg-primary`}>
-                      <i className={`${getRoleIcon(currentUser.role)} me-1`}></i>
-                      {getRoleDisplayName(currentUser.role)}
+                      <i className={`${getRoleIcon(currentUser.role || 'ecommerce')} me-1`}></i>
+                      {getRoleDisplayName(currentUser.role || 'ecommerce')}
                     </span>
                   </div>
                   <p className="text-muted small mt-2 mb-0">
-                    Member since {new Date(currentUser.joinedDate).toLocaleDateString()}
+                    Member since {new Date(currentUser.created_at).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -241,7 +239,7 @@ const EcommerceDashboard: React.FC<{ user: User }> = ({ user }) => (
     <div className="row mb-4">
       <div className="col-md-3">
         <div className="stat-card bg-primary text-white p-3 rounded">
-          <div className="stat-value h4 mb-1">{user.totalOrders || 0}</div>
+          <div className="stat-value h4 mb-1">12</div>
           <div className="stat-label">Total Orders</div>
         </div>
       </div>
@@ -324,7 +322,7 @@ const BidderDashboard: React.FC<{ user: User }> = ({ user }) => (
     <div className="row mb-4">
       <div className="col-md-3">
         <div className="stat-card bg-primary text-white p-3 rounded">
-          <div className="stat-value h4 mb-1">{user.totalBids || 0}</div>
+          <div className="stat-value h4 mb-1">8</div>
           <div className="stat-label">Total Bids</div>
         </div>
       </div>
@@ -400,7 +398,7 @@ const AuctionSellerDashboard: React.FC<{ user: User }> = ({ user }) => (
     <div className="row mb-4">
       <div className="col-md-3">
         <div className="stat-card bg-primary text-white p-3 rounded">
-          <div className="stat-value h4 mb-1">{user.totalAuctions || 0}</div>
+          <div className="stat-value h4 mb-1">3</div>
           <div className="stat-label">Total Auctions</div>
         </div>
       </div>
@@ -476,7 +474,7 @@ const VendorDashboard: React.FC<{ user: User }> = ({ user }) => (
     <div className="row mb-4">
       <div className="col-md-3">
         <div className="stat-card bg-primary text-white p-3 rounded">
-          <div className="stat-value h4 mb-1">{user.totalProducts || 0}</div>
+          <div className="stat-value h4 mb-1">25</div>
           <div className="stat-label">Total Products</div>
         </div>
       </div>
@@ -628,7 +626,7 @@ const PropertySellerDashboard: React.FC<{ user: User }> = ({ user }) => (
     <div className="row mb-4">
       <div className="col-md-3">
         <div className="stat-card bg-primary text-white p-3 rounded">
-          <div className="stat-value h4 mb-1">{user.totalProperties || 0}</div>
+          <div className="stat-value h4 mb-1">5</div>
           <div className="stat-label">Listed Properties</div>
         </div>
       </div>

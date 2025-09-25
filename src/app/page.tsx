@@ -8,7 +8,8 @@ import WoodMartProductGrid from '@/components/sections/WoodMartProductGrid';
 import WoodMartVehicles from '@/components/sections/WoodMartVehicles';
 import WoodMartProperties from '@/components/sections/WoodMartProperties';
 import WoodMartAuctions from '@/components/sections/WoodMartAuctions';
-import WoodMartNewsletter from '@/components/sections/WoodMartNewsletter';
+// import WoodMartNewsletter from '@/components/sections/WoodMartNewsletter';
+import BlogSection from '@/components/sections/BlogSection';
 import { apiService } from '@/services/api';
 import { Product, Category, Vehicle, Property, Auction } from '@/types';
 
@@ -38,27 +39,49 @@ export default function Home() {
           apiService.getAuctions()
         ]);
 
-        if (categoriesResponse.success) {
+
+        if (categoriesResponse.success && categoriesResponse.data.length > 0) {
           setCategories(categoriesResponse.data);
+        } else {
+          setCategories(mockCategories);
         }
 
-        if (productsResponse.success) {
+        if (productsResponse.success && productsResponse.data.length > 0) {
           setFeaturedProducts(productsResponse.data.slice(0, 12));
+        } else {
+          setFeaturedProducts(mockFeaturedProducts as unknown as Product[]);
         }
 
-        if (vehiclesResponse.success) {
+        if (vehiclesResponse.success && vehiclesResponse.data.length > 0) {
           setVehicles(vehiclesResponse.data.slice(0, 12));
+        } else {
+          setVehicles(mockVehicles as unknown as Vehicle[]);
         }
 
-        if (propertiesResponse.success) {
+        if (propertiesResponse.success && propertiesResponse.data.length > 0) {
           setProperties(propertiesResponse.data.slice(0, 12));
+        } else {
+          setProperties(mockProperties as unknown as Property[]);
         }
 
-        if (auctionsResponse.success) {
+        if (auctionsResponse.success && auctionsResponse.data.length > 0) {
           setAuctions(auctionsResponse.data.slice(0, 12));
+        } else {
+          setAuctions(mockAuctions as unknown as Auction[]);
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Error fetching data, using mock data:', err);
+        console.error('Error details:', {
+          message: err instanceof Error ? err.message : 'Unknown error',
+          stack: err instanceof Error ? err.stack : undefined,
+          name: err instanceof Error ? err.name : undefined
+        });
+        // Use mock data as fallback
+        setCategories(mockCategories);
+        setFeaturedProducts(mockFeaturedProducts as unknown as Product[]);
+        setVehicles(mockVehicles as unknown as Vehicle[]);
+        setProperties(mockProperties as unknown as Property[]);
+        setAuctions(mockAuctions as unknown as Auction[]);
       }
     };
 
@@ -69,35 +92,115 @@ export default function Home() {
   const mockCategories = [
     {
       id: 1,
+      tenant_id: 1,
+      parent_id: undefined,
+      level: 1,
+      path: 'electronics',
       name: 'Electronics',
       slug: 'electronics',
+      description: 'Latest electronics and gadgets',
       image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop',
-      productCount: 245,
-      description: 'Latest electronics and gadgets'
+      banner_image: undefined,
+      icon: 'electronics',
+      color: '#3B82F6',
+      sort_order: 1,
+      is_active: true,
+      is_featured: true,
+      status: 1,
+      language: 'en',
+      translation_group: undefined,
+      seo_meta: undefined,
+      seo_title: undefined,
+      seo_description: undefined,
+      seo_keywords: undefined,
+      canonical_url: undefined,
+      commission_rate: undefined,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 2,
+      tenant_id: 1,
+      parent_id: 1,
+      level: 2,
+      path: 'electronics/smartphones',
       name: 'Smartphones',
       slug: 'smartphones',
+      description: 'Top smartphone brands and models',
       image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop',
-      productCount: 189,
-      description: 'Top smartphone brands and models'
+      banner_image: undefined,
+      icon: 'smartphone',
+      color: '#10B981',
+      sort_order: 2,
+      is_active: true,
+      is_featured: true,
+      status: 1,
+      language: 'en',
+      translation_group: undefined,
+      seo_meta: undefined,
+      seo_title: undefined,
+      seo_description: undefined,
+      seo_keywords: undefined,
+      canonical_url: undefined,
+      commission_rate: undefined,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 3,
+      tenant_id: 1,
+      parent_id: 1,
+      level: 2,
+      path: 'electronics/laptops',
       name: 'Laptops',
       slug: 'laptops',
+      description: 'High-performance laptops for work and gaming',
       image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop',
-      productCount: 156,
-      description: 'High-performance laptops for work and gaming'
+      banner_image: undefined,
+      icon: 'laptop',
+      color: '#F59E0B',
+      sort_order: 3,
+      is_active: true,
+      is_featured: true,
+      status: 1,
+      language: 'en',
+      translation_group: undefined,
+      seo_meta: undefined,
+      seo_title: undefined,
+      seo_description: undefined,
+      seo_keywords: undefined,
+      canonical_url: undefined,
+      commission_rate: undefined,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 4,
+      tenant_id: 1,
+      parent_id: undefined,
+      level: 1,
+      path: 'fashion',
       name: 'Fashion',
       slug: 'fashion',
+      description: 'Trendy fashion and clothing',
       image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
-      productCount: 203,
-      description: 'Trendy fashion and clothing'
+      banner_image: undefined,
+      icon: 'fashion',
+      color: '#EF4444',
+      sort_order: 4,
+      is_active: true,
+      is_featured: true,
+      status: 1,
+      language: 'en',
+      translation_group: undefined,
+      seo_meta: undefined,
+      seo_title: undefined,
+      seo_description: undefined,
+      seo_keywords: undefined,
+      canonical_url: undefined,
+      commission_rate: undefined,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     }
   ];
 
@@ -107,34 +210,79 @@ export default function Home() {
       id: 1,
       name: 'iPhone 15 Pro',
       slug: 'iphone-15-pro',
+      description: 'The latest iPhone with advanced features and premium design',
+      short_description: 'Latest iPhone with premium features',
       price: 999,
-      comparePrice: 1199,
-      image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop',
-      rating: 4.8,
-      reviewsCount: 156,
-      isNew: true,
-      badge: 'Bestseller'
+      sale_price: 1199,
+      sku: 'IPH15PRO-001',
+      stock_quantity: 50,
+      stock_status: 'in_stock',
+      weight: 0.187,
+      length: 15.54,
+      width: 7.65,
+      height: 0.83,
+      status: 'active',
+      is_featured: true,
+      images: ['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop'],
+      featured_image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop',
+      thumbnail_image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=200&h=200&fit=crop',
+      business_name: 'Apple Store',
+      category_name: 'Smartphones',
+      brand_name: 'Apple',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 2,
       name: 'MacBook Pro 16-inch',
       slug: 'macbook-pro-16',
+      description: 'Powerful laptop for professionals and creators',
+      short_description: 'Professional laptop for creators',
       price: 2499,
-      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop',
-      rating: 4.9,
-      reviewsCount: 89,
-      isFeatured: true
+      sale_price: undefined,
+      sku: 'MBP16-001',
+      stock_quantity: 25,
+      stock_status: 'in_stock',
+      weight: 2.0,
+      length: 35.57,
+      width: 24.81,
+      height: 1.68,
+      status: 'active',
+      is_featured: true,
+      images: ['https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop'],
+      featured_image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop',
+      thumbnail_image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&h=200&fit=crop',
+      business_name: 'Apple Store',
+      category_name: 'Laptops',
+      brand_name: 'Apple',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 3,
       name: 'Samsung Galaxy S24 Ultra',
       slug: 'samsung-galaxy-s24-ultra',
+      description: 'Latest Android smartphone with advanced camera system',
+      short_description: 'Latest Android smartphone',
       price: 1199,
-      comparePrice: 1299,
-      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop',
-      rating: 4.7,
-      reviewsCount: 234,
-      isSale: true
+      sale_price: 1299,
+      sku: 'SGS24U-001',
+      stock_quantity: 75,
+      stock_status: 'in_stock',
+      weight: 0.232,
+      length: 16.24,
+      width: 7.9,
+      height: 0.88,
+      status: 'active',
+      is_featured: true,
+      images: ['https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop'],
+      featured_image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop',
+      thumbnail_image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200&h=200&fit=crop',
+      business_name: 'Samsung Store',
+      category_name: 'Smartphones',
+      brand_name: 'Samsung',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 4,
@@ -785,31 +933,30 @@ export default function Home() {
   ];
 
   // Transform API data to match component expectations
-  const displayCategories = categories.length > 0 ? categories.map(cat => ({
-    id: cat.id,
-    name: cat.name,
-    slug: cat.slug,
-    image: cat.image && cat.image.trim() !== '' ? cat.image : '/images/placeholder.svg',
-    productCount: 0, // We'll need to fetch this separately if needed
-    description: cat.description || `Shop ${cat.name.toLowerCase()} products`
-  })) : mockCategories;
+  const displayCategories = categories.length > 0 ? categories : mockCategories;
 
   const displayProducts = featuredProducts.length > 0 ? featuredProducts.map(product => {
     // Safely handle gallery data
     let imageUrl = '/images/placeholder.svg';
     
     try {
-      if (product.gallery) {
-        // If gallery is a string, try to parse it as JSON
-        if (typeof product.gallery === 'string') {
-          const galleryArray = JSON.parse(product.gallery);
-          if (Array.isArray(galleryArray) && galleryArray.length > 0 && galleryArray[0]) {
-            imageUrl = galleryArray[0];
+      if (product.featured_image) {
+        imageUrl = product.featured_image;
+      }
+      else if (product.thumbnail_image) {
+        imageUrl = product.thumbnail_image;
+      }
+      else if (product.images) {
+        // If images is a string, try to parse it as JSON
+        if (typeof product.images === 'string') {
+          const imagesArray = JSON.parse(product.images);
+          if (Array.isArray(imagesArray) && imagesArray.length > 0 && imagesArray[0]) {
+            imageUrl = imagesArray[0];
           }
         } 
-        // If gallery is already an array
-        else if (Array.isArray(product.gallery) && product.gallery.length > 0 && product.gallery[0]) {
-          imageUrl = product.gallery[0];
+        // If images is already an array
+        else if (Array.isArray(product.images) && product.images.length > 0 && product.images[0]) {
+          imageUrl = product.images[0];
         }
       }
     } catch (error) {
@@ -832,62 +979,113 @@ export default function Home() {
   }) : mockFeaturedProducts;
 
   // Transform vehicles data
-  const displayVehicles = vehicles.length > 0 ? vehicles.slice(0, 12).map(vehicle => ({
-    id: vehicle.id,
-    name: vehicle.title || 'Vehicle',
-    slug: vehicle.slug || `vehicle-${vehicle.id}`,
-    price: vehicle.price || 0,
-    comparePrice: undefined,
-    image: vehicle.images?.[0] || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop',
-    rating: 4.5,
-    reviewsCount: Math.floor(Math.random() * 50) + 10,
-    year: vehicle.year || 2023,
-    mileage: vehicle.mileage || Math.floor(Math.random() * 50000) + 10000,
-    fuelType: vehicle.fuel_type || 'Gasoline',
-    transmission: vehicle.transmission || 'Automatic',
-    isNew: Math.random() > 0.7,
-    isFeatured: Math.random() > 0.8,
-    badge: Math.random() > 0.8 ? 'Premium' : undefined
-  })) : mockVehicles;
+  const displayVehicles = vehicles.length > 0 ? vehicles.slice(0, 12).map(vehicle => {
+    // Helper function to safely get first image for vehicles
+    const getFirstVehicleImage = (images: string | string[] | undefined): string => {
+      if (!images) return 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+      if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+        } catch {
+          return images; // If it's not JSON, treat as single URL
+        }
+      }
+      return 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+    };
+
+    return {
+      id: vehicle.id,
+      name: vehicle.title || 'Vehicle',
+      slug: vehicle.slug || `vehicle-${vehicle.id}`,
+      price: vehicle.price || 0,
+      comparePrice: undefined,
+      image: getFirstVehicleImage(vehicle.images),
+      rating: 4.5,
+      reviewsCount: Math.floor(Math.random() * 50) + 10,
+      year: vehicle.year || 2023,
+      mileage: vehicle.mileage || Math.floor(Math.random() * 50000) + 10000,
+      fuelType: vehicle.fuel_type || 'Gasoline',
+      transmission: vehicle.transmission || 'Automatic',
+      isNew: Math.random() > 0.7,
+      isFeatured: Math.random() > 0.8,
+      badge: Math.random() > 0.8 ? 'Premium' : undefined
+    };
+  }) : mockVehicles;
 
   // Transform properties data
-  const displayProperties = properties.length > 0 ? properties.slice(0, 12).map(property => ({
-    id: property.id,
-    name: property.title || 'Property',
-    slug: property.slug || `property-${property.id}`,
-    price: property.price || 0,
-    comparePrice: undefined,
-    image: property.images?.[0] || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop',
-    rating: 4.5,
-    reviewsCount: Math.floor(Math.random() * 50) + 10,
-    bedrooms: property.bedrooms || Math.floor(Math.random() * 4) + 1,
-    bathrooms: property.bathrooms || Math.floor(Math.random() * 3) + 1,
-    area: property.area || Math.floor(Math.random() * 2000) + 800,
-    propertyType: property.type || 'House',
-    location: property.location || 'City',
-    isNew: Math.random() > 0.7,
-    isFeatured: Math.random() > 0.8,
-    badge: Math.random() > 0.8 ? 'Featured' : undefined
-  })) : mockProperties;
+  const displayProperties = properties.length > 0 ? properties.slice(0, 12).map(property => {
+    // Helper function to safely get first image
+    const getFirstImage = (images: string | string[] | undefined): string => {
+      if (!images) return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+      if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+        } catch {
+          return images; // If it's not JSON, treat as single URL
+        }
+      }
+      return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+    };
+
+    return {
+      id: property.id,
+      name: property.title || 'Property',
+      slug: property.slug || `property-${property.id}`,
+      price: property.price || 0,
+      comparePrice: undefined,
+      image: getFirstImage(property.images),
+      rating: 4.5,
+      reviewsCount: Math.floor(Math.random() * 50) + 10,
+      bedrooms: property.bedrooms || Math.floor(Math.random() * 4) + 1,
+      bathrooms: property.bathrooms || Math.floor(Math.random() * 3) + 1,
+      area: property.area_sqft || Math.floor(Math.random() * 2000) + 800,
+      propertyType: property.property_type || 'House',
+      location: `${property.city || 'City'}, ${property.state || 'State'}`,
+      isNew: Math.random() > 0.7,
+      isFeatured: property.is_featured || Math.random() > 0.8,
+      badge: Math.random() > 0.8 ? 'Featured' : undefined
+    };
+  }) : mockProperties;
 
   // Transform auctions data
-  const displayAuctions = auctions.length > 0 ? auctions.slice(0, 12).map(auction => ({
-    id: auction.id,
-    name: auction.product_name || 'Auction Item',
-    slug: auction.slug || `auction-${auction.id}`,
-    currentBid: auction.current_bid || Math.floor(Math.random() * 10000) + 100,
-    reservePrice: auction.reserve_price,
-    image: auction.product_image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
-    rating: 4.5,
-    reviewsCount: Math.floor(Math.random() * 50) + 10,
-    endTime: auction.end_time || new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-    bidCount: Math.floor(Math.random() * 50) + 5,
-    productName: auction.product_name || 'Auction Item',
-    sellerName: auction.seller_name || 'Seller',
-    isNew: Math.random() > 0.7,
-    isFeatured: Math.random() > 0.8,
-    badge: Math.random() > 0.8 ? 'Luxury' : undefined
-  })) : mockAuctions;
+  const displayAuctions = auctions.length > 0 ? auctions.slice(0, 12).map(auction => {
+    // Helper function to safely get first image for auctions
+    const getFirstAuctionImage = (images: string | string[] | undefined): string => {
+      if (!images) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+      if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+        } catch {
+          return images; // If it's not JSON, treat as single URL
+        }
+      }
+      return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+    };
+
+    return {
+      id: auction.id,
+      name: auction.product_name || 'Auction Item',
+      slug: auction.slug || `auction-${auction.id}`,
+      currentBid: auction.current_bid || Math.floor(Math.random() * 10000) + 100,
+      reservePrice: auction.reserve_price,
+      image: getFirstAuctionImage(auction.product_image),
+      rating: 4.5,
+      reviewsCount: Math.floor(Math.random() * 50) + 10,
+      endTime: auction.end_time || new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+      bidCount: Math.floor(Math.random() * 50) + 5,
+      productName: auction.product_name || 'Auction Item',
+      sellerName: auction.seller_name || 'Seller',
+      isNew: Math.random() > 0.7,
+      isFeatured: Math.random() > 0.8,
+      badge: Math.random() > 0.8 ? 'Luxury' : undefined
+    };
+  }) : mockAuctions;
 
   return (
     <Layout>
@@ -898,19 +1096,40 @@ export default function Home() {
       <WoodMartCategories 
         title="Shop by Category"
         subtitle="Browse our collections"
-        categories={displayCategories}
+        categories={displayCategories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug,
+          image: cat.image,
+          productCount: Math.floor(Math.random() * 200) + 50, // Mock product count
+          description: cat.description
+        }))}
         columns={4}
       />
       
       {/* Featured Products */}
-      <WoodMartProductGrid 
-        title="Featured Products"
-        subtitle="Handpicked items just for you"
-        products={displayProducts}
-        columns={4}
-        showViewAll={true}
-        viewAllLink="/shop"
-      />
+        <WoodMartProductGrid 
+          title="Featured Products"
+          subtitle="Handpicked items just for you"
+          products={displayProducts.map(product => ({
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            price: product.price,
+            comparePrice: 'sale_price' in product && product.sale_price && product.sale_price > product.price ? product.sale_price : undefined,
+            image: 'images' in product && product.images && Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : '/images/placeholder.svg',
+            badge: 'is_featured' in product && product.is_featured ? 'Featured' : undefined,
+            badgeColor: 'is_featured' in product && product.is_featured ? 'primary' : undefined,
+            rating: Math.random() * 5, // Mock rating
+            reviewsCount: Math.floor(Math.random() * 200), // Mock reviews count
+            isNew: false, // Example logic
+            isSale: 'sale_price' in product && product.sale_price !== undefined && product.sale_price < product.price,
+            isFeatured: 'is_featured' in product ? product.is_featured : false
+          }))}
+          columns={4}
+          showViewAll={true}
+          viewAllLink="/shop"
+        />
       
       {/* Live Auctions */}
       <WoodMartAuctions 
@@ -942,14 +1161,11 @@ export default function Home() {
         viewAllLink="/properties"
       />
       
+      {/* Blog Section */}
+      <BlogSection />
+      
       {/* Newsletter Section */}
-      <WoodMartNewsletter 
-        title="Stay Updated"
-        subtitle="Newsletter"
-        description="Subscribe to our newsletter and get 10% off your first order"
-        placeholder="Enter your email address"
-        buttonText="Subscribe"
-      />
+      
     </Layout>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Product {
   id: number;
@@ -22,11 +23,14 @@ interface Product {
 }
 
 const ProductGrid: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode] = useState<'grid' | 'list'>('grid');
+  const [wishlistItems, setWishlistItems] = useState<Set<number>>(new Set());
+  const [wishlistLoading, setWishlistLoading] = useState<boolean>(false);
 
   // Mock data - replace with API call
   const mockProducts: Product[] = [
@@ -137,9 +141,8 @@ const ProductGrid: React.FC = () => {
       setLoading(true);
       try {
         // Try to fetch from API first
-        const apiProducts = await apiService.getProducts({ 
-          page: currentPage, 
-          limit: 12 
+        const apiProducts = await apiService.getProducts({
+          limit: 12
         });
         
         // Check if API returned valid data
@@ -165,6 +168,68 @@ const ProductGrid: React.FC = () => {
 
     fetchProducts();
   }, [currentPage]);
+
+  const loadWishlistStatus = async () => {
+    try {
+      setWishlistLoading(true);
+      const promises = products.map(product => 
+        apiService.checkWishlistStatus(product.id.toString())
+      );
+      const responses = await Promise.all(promises);
+      
+      const wishlistSet = new Set<number>();
+      responses.forEach((response, index) => {
+        if (response.success && response.data.in_wishlist) {
+          wishlistSet.add(products[index].id);
+        }
+      });
+      
+      setWishlistItems(wishlistSet);
+    } catch (error) {
+      console.error('Error loading wishlist status:', error);
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  // Load wishlist status for all products
+  useEffect(() => {
+    if (isAuthenticated && products.length > 0) {
+      loadWishlistStatus();
+    }
+  }, [isAuthenticated, products, loadWishlistStatus]);
+
+  const handleWishlistToggle = async (product: Product) => {
+    if (!isAuthenticated) {
+      // Redirect to login or show login modal
+      window.location.href = '/login';
+      return;
+    }
+
+    try {
+      const isInWishlist = wishlistItems.has(product.id);
+      
+      if (isInWishlist) {
+        // Remove from wishlist
+        const response = await apiService.removeFromWishlist(product.id.toString());
+        if (response.success) {
+          setWishlistItems(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(product.id);
+            return newSet;
+          });
+        }
+      } else {
+        // Add to wishlist
+        const response = await apiService.addToWishlist(product.id.toString());
+        if (response.success) {
+          setWishlistItems(prev => new Set(prev).add(product.id));
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+    }
+  };
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -251,8 +316,13 @@ const ProductGrid: React.FC = () => {
 
                   {/* Quick Actions */}
                   <div className="product-actions">
-                    <button className="product-action-btn" title="Add to Wishlist">
-                      <i className="far fa-heart"></i>
+                    <button 
+                      className={`product-action-btn ${wishlistItems.has(product.id) ? 'active' : ''}`}
+                      title={wishlistItems.has(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                      onClick={() => handleWishlistToggle(product)}
+                      disabled={wishlistLoading}
+                    >
+                      <i className={`${wishlistItems.has(product.id) ? 'fas' : 'far'} fa-heart`}></i>
                     </button>
                     <button className="product-action-btn" title="Quick View">
                       <i className="fas fa-eye"></i>
@@ -464,6 +534,16 @@ const ProductGrid: React.FC = () => {
           background: var(--primary-color);
           color: white;
           transform: scale(1.1);
+        }
+
+        .product-action-btn.active {
+          background: var(--danger-color);
+          color: white;
+        }
+
+        .product-action-btn.active:hover {
+          background: var(--danger-color);
+          color: white;
         }
 
         .product-content {

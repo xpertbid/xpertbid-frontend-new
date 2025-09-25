@@ -215,10 +215,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateProfile = async (data: Partial<User>) => {
     try {
-      const response = await apiService.request('/auth/profile', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
+      const response = await apiService.updateUserProfile(data);
       
       if (response && response.success && response.data) {
         const updatedUser = response.data;

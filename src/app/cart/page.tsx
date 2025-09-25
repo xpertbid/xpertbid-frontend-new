@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
+import PriceDisplay from '@/components/PriceDisplay';
 
 
 export default function CartPage() {
@@ -91,7 +92,9 @@ export default function CartPage() {
                       {item.sku && (
                         <p className="item-sku">SKU: {item.sku}</p>
                       )}
-                      <p className="item-price">${parseFloat(item.price.toString()).toFixed(2)}</p>
+                      <p className="item-price">
+                        <PriceDisplay amount={parseFloat(item.price?.toString() || '0')} fromCurrency="USD" />
+                      </p>
                     </div>
                     <div className="item-quantity">
                       <div className="quantity-controls">
@@ -122,7 +125,9 @@ export default function CartPage() {
                       </div>
                     </div>
                     <div className="item-total">
-                      <span className="total-amount">${(parseFloat(item.price.toString()) * item.quantity).toFixed(2)}</span>
+                      <span className="total-amount">
+                        <PriceDisplay amount={parseFloat(item.price?.toString() || '0') * item.quantity} fromCurrency="USD" />
+                      </span>
                     </div>
                     <button 
                       className="remove-btn btn btn-outline-danger btn-sm" 
@@ -162,19 +167,27 @@ export default function CartPage() {
                 <div className="summary-details">
                   <div className="summary-row">
                     <span>Subtotal ({cartItems.length} item{cartItems.length !== 1 ? 's' : ''}):</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(subtotal?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                   <div className="summary-row">
                     <span>Shipping:</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(shipping?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                   <div className="summary-row">
                     <span>Tax:</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(tax?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                   <div className="summary-total">
                     <span>Total:</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(total?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                 </div>
 

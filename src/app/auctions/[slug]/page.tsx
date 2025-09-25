@@ -52,13 +52,22 @@ export default function AuctionDetailPage({ params }: AuctionDetailPageProps) {
             setCurrentBid(foundAuction.current_bid?.toString() || '0');
             setBidAmount((parseFloat(foundAuction.current_bid?.toString() || '0') + 10).toString());
             
-            // Set initial image
-            let initialImage = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop';
+            // Set initial image with safe parsing
+            const getFirstImage = (images: string | string[] | undefined): string => {
+              if (!images) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop';
+              if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop';
+              if (typeof images === 'string') {
+                try {
+                  const parsed = JSON.parse(images);
+                  return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop';
+                } catch {
+                  return images; // If it's not JSON, treat as single URL
+                }
+              }
+              return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&h=600&fit=crop';
+            };
             
-            if (foundAuction.product_image && foundAuction.product_image.trim() !== '') {
-              initialImage = foundAuction.product_image;
-            }
-            
+            const initialImage = getFirstImage(foundAuction.product_image);
             setSelectedImage(initialImage);
           } else {
             // Create a mock auction for demonstration

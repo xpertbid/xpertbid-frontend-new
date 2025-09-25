@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import PriceDisplay from '@/components/PriceDisplay';
+import TranslatedText from '@/components/TranslatedText';
 
 interface Property {
   id: number;
@@ -48,8 +50,12 @@ const WoodMartProperties: React.FC<WoodMartPropertiesProps> = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">{subtitle}</span>
-          <h2 className="section-title">{title}</h2>
+          <span className="section-subtitle">
+            <TranslatedText text={subtitle} />
+          </span>
+          <h2 className="section-title">
+            <TranslatedText text={title} />
+          </h2>
         </div>
 
         {/* Properties Grid */}
@@ -149,16 +155,25 @@ const WoodMartProperties: React.FC<WoodMartPropertiesProps> = ({
 
                     {/* Price */}
                     <div className="property-price">
-                      <span className="current-price">${property.price.toLocaleString()}</span>
+                      <PriceDisplay 
+                        amount={property.price} 
+                        className="current-price"
+                        fromCurrency="USD"
+                      />
                       {property.comparePrice && (
-                        <span className="compare-price">${property.comparePrice.toLocaleString()}</span>
+                        <span className="compare-price">
+                          <PriceDisplay 
+                            amount={property.comparePrice} 
+                            fromCurrency="USD"
+                          />
+                        </span>
                       )}
                     </div>
 
                     {/* Action Button */}
                     <div className="property-actions-bottom">
                       <Link href={`/properties/${property.slug}`} className="btn btn-primary btn-block" onClick={(e) => e.stopPropagation()}>
-                        View Details
+                        <TranslatedText text="View Details" />
                       </Link>
                     </div>
                   </div>

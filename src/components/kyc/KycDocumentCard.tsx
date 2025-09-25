@@ -15,11 +15,11 @@ const KycDocumentCard: React.FC<KycDocumentCardProps> = ({ document }) => {
 
   // Helper function to get type name from kyc_type_id
   const getTypeName = (kycTypeId: number): string => {
-    const kycType = kycTypes.find(type => type.id === kycTypeId);
-    return kycType ? kycType.name : 'Unknown';
+    const kycType = Object.entries(kycTypes).find(([key, type]) => key === kycTypeId.toString());
+    return kycType ? kycType[1].name : 'Unknown';
   };
 
-  const typeName = getTypeName(document.kyc_type_id);
+  const typeName = document.kyc_type;
 
   const handleViewDetails = () => {
     setSelectedDocument(document);
@@ -199,11 +199,11 @@ const KycDocumentDetails: React.FC<KycDocumentDetailsProps> = ({ document, onClo
 
   // Helper function to get type name from kyc_type_id
   const getTypeName = (kycTypeId: number): string => {
-    const kycType = kycTypes.find(type => type.id === kycTypeId);
-    return kycType ? kycType.name : 'Unknown';
+    const kycType = Object.entries(kycTypes).find(([key, type]) => key === kycTypeId.toString());
+    return kycType ? kycType[1].name : 'Unknown';
   };
 
-  const typeName = getTypeName(document.kyc_type_id);
+  const typeName = document.kyc_type;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

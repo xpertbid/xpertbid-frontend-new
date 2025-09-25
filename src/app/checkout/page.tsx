@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { apiService } from '@/services/api';
 import { PaymentGateway } from '@/types';
 import Image from 'next/image';
+import PriceDisplay from '@/components/PriceDisplay';
 
 export default function CheckoutPage() {
   const { items, subtotal, total, shipping, tax, isLoaded, clearCart } = useCart();
@@ -222,7 +223,7 @@ export default function CheckoutPage() {
                   <p className="lead">Thank you for your purchase. Your order has been placed successfully.</p>
                   <div className="order-details">
                     <p><strong>Order Number:</strong> ORD-{Date.now()}</p>
-                    <p><strong>Total Amount:</strong> ${total.toFixed(2)}</p>
+                    <p><strong>Total Amount:</strong> <PriceDisplay amount={parseFloat(total?.toString() || '0')} fromCurrency="USD" /></p>
                     <p>You will receive a confirmation email shortly.</p>
                   </div>
                   <div className="success-actions">
@@ -458,7 +459,7 @@ export default function CheckoutPage() {
                               <small className="gateway-description">{gateway.description}</small>
                               {gateway.transaction_fee > 0 && (
                                 <small className="gateway-fee">
-                                  Fee: {(gateway.transaction_fee * 100).toFixed(2)}% + ${parseFloat(gateway.fixed_fee.toString()).toFixed(2)}
+                                  Fee: {(gateway.transaction_fee * 100).toFixed(2)}% + <PriceDisplay amount={parseFloat(gateway.fixed_fee?.toString() || '0')} fromCurrency="USD" />
                                 </small>
                               )}
                               {gateway.is_test_mode && (
@@ -584,7 +585,7 @@ export default function CheckoutPage() {
                     ) : (
                       <>
                         <i className="fas fa-lock me-2"></i>
-                        Complete Secure Order - ${total.toFixed(2)}
+                        Complete Secure Order - <PriceDisplay amount={parseFloat(total?.toString() || '0')} fromCurrency="USD" />
                       </>
                     )}
                   </button>
@@ -614,7 +615,9 @@ export default function CheckoutPage() {
                       <div className="summary-item-details">
                         <h5 className="summary-item-name">{item.name}</h5>
                         <p className="summary-item-quantity">Qty: {item.quantity}</p>
-                        <p className="summary-item-price">${parseFloat(item.price.toString()).toFixed(2)}</p>
+                        <p className="summary-item-price">
+                          <PriceDisplay amount={parseFloat(item.price?.toString() || '0')} fromCurrency="USD" />
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -623,19 +626,27 @@ export default function CheckoutPage() {
                 <div className="summary-totals">
                   <div className="summary-row">
                     <span>Subtotal ({items.length} item{items.length !== 1 ? 's' : ''}):</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(subtotal?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                   <div className="summary-row">
                     <span>Shipping:</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    <span>
+                      {shipping === 0 ? 'Free' : <PriceDisplay amount={parseFloat(shipping?.toString() || '0')} fromCurrency="USD" />}
+                    </span>
                   </div>
                   <div className="summary-row">
                     <span>Tax:</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(tax?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                   <div className="summary-total">
                     <span>Total:</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>
+                      <PriceDisplay amount={parseFloat(total?.toString() || '0')} fromCurrency="USD" />
+                    </span>
                   </div>
                 </div>
 

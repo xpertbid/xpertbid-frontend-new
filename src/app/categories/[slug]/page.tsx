@@ -55,17 +55,23 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     let imageUrl = 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop';
     
     try {
-      if (product.gallery) {
-        // If gallery is a string, try to parse it as JSON
-        if (typeof product.gallery === 'string') {
-          const galleryArray = JSON.parse(product.gallery);
-          if (Array.isArray(galleryArray) && galleryArray.length > 0 && galleryArray[0]) {
-            imageUrl = galleryArray[0];
+      if (product.featured_image) {
+        imageUrl = product.featured_image;
+      }
+      else if (product.thumbnail_image) {
+        imageUrl = product.thumbnail_image;
+      }
+      else if (product.images) {
+        // If images is a string, try to parse it as JSON
+        if (typeof product.images === 'string') {
+          const imagesArray = JSON.parse(product.images);
+          if (Array.isArray(imagesArray) && imagesArray.length > 0 && imagesArray[0]) {
+            imageUrl = imagesArray[0];
           }
         } 
-        // If gallery is already an array
-        else if (Array.isArray(product.gallery) && product.gallery.length > 0 && product.gallery[0]) {
-          imageUrl = product.gallery[0];
+        // If images is already an array
+        else if (Array.isArray(product.images) && product.images.length > 0 && product.images[0]) {
+          imageUrl = product.images[0];
         }
       }
     } catch (error) {

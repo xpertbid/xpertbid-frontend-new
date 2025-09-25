@@ -1,7 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { CartItem } from '@/types';
+import { CartItem, CartApiItem } from '@/types';
+import { apiService } from '@/services/api';
 
 interface CartState {
   items: CartItem[];
@@ -91,7 +92,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 const calculateTotals = (state: CartState): CartState => {
   const subtotal = state.items.reduce((sum, item) => {
-    const price = item.salePrice || item.price;
+    const price = parseFloat((item.salePrice || item.price)?.toString() || '0');
     return sum + (price * item.quantity);
   }, 0);
 
@@ -132,54 +133,130 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const [sessionId, setSessionId] = React.useState<string>('');
 
-  // Load cart from localStorage on mount
+  // Generate or get session ID
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        const cartItems = JSON.parse(savedCart);
-        dispatch({ type: 'LOAD_CART', payload: cartItems });
-        console.log('Cart loaded from localStorage:', cartItems);
-      } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
-      }
+    let currentSessionId = localStorage.getItem('cart_session_id');
+    if (!currentSessionId) {
+      currentSessionId = 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('cart_session_id', currentSessionId);
     }
-    setIsLoaded(true);
+    setSessionId(currentSessionId);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Load cart from backend on mount
+  useEffect(() => {
+    const loadCart = async () => {
+      if (!sessionId) return;
+      
+      try {
+        const response = await apiService.getCart(sessionId);
+        if (response.success) {
+          const cartItems: CartItem[] = response.data.map((item: CartApiItem) => ({
+            id: item.id.toString(),
+            productId: item.product_id.toString(),
+            name: item.name,
+            price: parseFloat(item.price.toString()),
+            salePrice: item.sale_price ? parseFloat(item.sale_price.toString()) : undefined,
+            quantity: item.quantity,
+            variations: item.variations ? JSON.parse(item.variations) : {},
+            image: item.images ? JSON.parse(item.images)[0] : '',
+            slug: item.slug || '',
+            vendor: item.vendor || '',
+            sku: item.sku || '',
+          }));
+          dispatch({ type: 'LOAD_CART', payload: cartItems });
+        }
+      } catch (error) {
+        console.error('Error loading cart from backend:', error);
+        // Fallback to localStorage
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+          try {
+            const cartItems = JSON.parse(savedCart);
+            dispatch({ type: 'LOAD_CART', payload: cartItems });
+          } catch (error) {
+            console.error('Error loading cart from localStorage:', error);
+          }
+        }
+      }
+      setIsLoaded(true);
+    };
+
+    loadCart();
+  }, [sessionId]);
+
+  // Save cart to localStorage whenever it changes (as backup)
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(state.items));
   }, [state.items]);
 
-  const addToCart = (item: Omit<CartItem, 'id'>) => {
+  const addToCart = async (item: Omit<CartItem, 'id'>) => {
+    if (!sessionId) return;
+    
     const cartItem: CartItem = {
       ...item,
       id: generateCartItemId(item.productId, item.variations),
     };
-    dispatch({ type: 'ADD_TO_CART', payload: cartItem });
-    setIsDrawerOpen(true); // Open drawer when item is added
+    
+    try {
+      await apiService.addToCart(sessionId, parseInt(item.productId), item.quantity, item.variations);
+      dispatch({ type: 'ADD_TO_CART', payload: cartItem });
+      setIsDrawerOpen(true);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      // Fallback to local state
+      dispatch({ type: 'ADD_TO_CART', payload: cartItem });
+      setIsDrawerOpen(true);
+    }
   };
 
-  const removeFromCart = (id: string) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: id });
+  const removeFromCart = async (id: string) => {
+    if (!sessionId) return;
+    
+    try {
+      await apiService.removeFromCart(sessionId, parseInt(id));
+      dispatch({ type: 'REMOVE_FROM_CART', payload: id });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      // Fallback to local state
+      dispatch({ type: 'REMOVE_FROM_CART', payload: id });
+    }
   };
 
-  const removeItem = (id: string) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: id });
+  const removeItem = async (id: string) => {
+    await removeFromCart(id);
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+  const updateQuantity = async (id: string, quantity: number) => {
+    if (!sessionId) return;
+    
+    try {
+      await apiService.updateCartItem(sessionId, parseInt(id), quantity);
+      dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+    } catch (error) {
+      console.error('Error updating cart:', error);
+      // Fallback to local state
+      dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+    }
   };
 
-  const clearCart = () => {
-    dispatch({ type: 'CLEAR_CART' });
+  const clearCart = async () => {
+    if (!sessionId) return;
+    
+    try {
+      await apiService.clearCart(sessionId);
+      dispatch({ type: 'CLEAR_CART' });
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      // Fallback to local state
+      dispatch({ type: 'CLEAR_CART' });
+    }
   };
 
   const getItemTotal = (item: CartItem): number => {
-    const price = item.salePrice || item.price;
+    const price = parseFloat((item.salePrice || item.price)?.toString() || '0');
     return price * item.quantity;
   };
 

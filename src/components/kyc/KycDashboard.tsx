@@ -71,9 +71,9 @@ const KycDashboard: React.FC<KycDashboardProps> = ({ user }) => {
     );
   }
 
-  const availableTypes = kycTypes.map(type => type.name);
+  const availableTypes = Object.values(kycTypes).map(type => type.name);
   const submittedTypes = documents.map(doc => {
-    const kycType = kycTypes.find(type => type.id === doc.kyc_type_id);
+    const kycType = Object.values(kycTypes).find(type => type.name === doc.kyc_type);
     return kycType ? kycType.name : 'Unknown';
   });
   const pendingDocuments = documents.filter(doc => doc.status === 'pending' || doc.status === 'under_review');
@@ -158,7 +158,7 @@ const KycDashboard: React.FC<KycDashboardProps> = ({ user }) => {
               {availableTypes.map(type => {
                 const isSubmitted = submittedTypes.includes(type);
                 const userDocument = documents.find(doc => {
-                  const kycType = kycTypes.find(kt => kt.id === doc.kyc_type_id);
+                  const kycType = Object.values(kycTypes).find(kt => kt.name === doc.kyc_type);
                   return kycType && kycType.name === type;
                 });
                 const status = userDocument?.status;

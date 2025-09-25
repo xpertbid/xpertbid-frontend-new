@@ -149,13 +149,13 @@ const FeaturedProducts: React.FC = () => {
             apiProducts = await apiService.getFeaturedProducts();
             break;
           case 'trending':
-            apiProducts = await apiService.getTrendingProducts();
+            apiProducts = await apiService.getProducts();
             break;
           case 'new':
-            apiProducts = await apiService.getProducts({ filter: 'new' });
+            apiProducts = await apiService.getProducts();
             break;
           case 'sale':
-            apiProducts = await apiService.getProducts({ filter: 'sale' });
+            apiProducts = await apiService.getProducts();
             break;
           default:
             apiProducts = await apiService.getFeaturedProducts();

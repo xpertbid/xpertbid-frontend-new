@@ -22,20 +22,21 @@ interface ProductPageProps {
     category: string;
     tags: string[];
     sku: string;
+    slug?: string;
   };
 }
 
 const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
   const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedVariation, setSelectedVariation] = useState<Record<string, unknown> | null>(null);
+  // const [selectedVariation, setSelectedVariation] = useState<Record<string, unknown> | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [showAddToCartSuccess, setShowAddToCartSuccess] = useState(false);
 
   const handleAddToCart = () => {
-    const variations = {};
+    const variations: Record<string, string> = {};
     if (selectedSize) variations.size = selectedSize;
     if (selectedColor) variations.color = selectedColor;
 
@@ -49,6 +50,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
       variations: Object.keys(variations).length > 0 ? variations : undefined,
       vendor: product.vendor,
       sku: product.sku,
+      slug: product.slug || '',
     });
 
     setShowAddToCartSuccess(true);
@@ -215,10 +217,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                         <button
                           key={index}
                           className={`btn btn-outline-secondary ${selectedSize === variation.size ? 'active' : ''}`}
-                          onClick={() => setSelectedSize(variation.size)}
+                          onClick={() => setSelectedSize(String(variation.size))}
                           style={{ minWidth: '50px' }}
                         >
-                          {variation.size}
+                          {String(variation.size)}
                         </button>
                       ))}
                     </div>
@@ -235,13 +237,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                           style={{
                             width: '40px',
                             height: '40px',
-                            backgroundColor: variation.colorCode || '#ccc',
+                            backgroundColor: String(variation.colorCode) || '#ccc',
                             border: '2px solid #dee2e6',
                             borderRadius: '50%',
                             cursor: 'pointer'
                           }}
-                          onClick={() => setSelectedColor(variation.color)}
-                          title={variation.color}
+                          onClick={() => setSelectedColor(String(variation.color))}
+                          title={String(variation.color)}
                         />
                       ))}
                     </div>

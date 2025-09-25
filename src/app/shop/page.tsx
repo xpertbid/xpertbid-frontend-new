@@ -6,6 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
 import { Product } from '@/types';
+import { useCurrency } from '@/contexts/CurrencyLanguageContext';
+import PriceDisplay from '@/components/PriceDisplay';
 
 interface FilterState {
   priceRange: [number, number];
@@ -19,6 +21,7 @@ interface FilterState {
 }
 
 export default function ShopPage() {
+  // const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -216,18 +219,27 @@ export default function ShopPage() {
     let imageUrl = 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop';
     
     try {
-      if (product.gallery) {
-        if (typeof product.gallery === 'string') {
-          const galleryArray = JSON.parse(product.gallery);
-          if (Array.isArray(galleryArray) && galleryArray.length > 0 && galleryArray[0]) {
-            imageUrl = galleryArray[0];
+      // First try featured_image
+      if (product.featured_image) {
+        imageUrl = product.featured_image;
+      }
+      // Then try thumbnail_image
+      else if (product.thumbnail_image) {
+        imageUrl = product.thumbnail_image;
+      }
+      // Finally try images array
+      else if (product.images) {
+        if (typeof product.images === 'string') {
+          const imagesArray = JSON.parse(product.images);
+          if (Array.isArray(imagesArray) && imagesArray.length > 0 && imagesArray[0]) {
+            imageUrl = imagesArray[0];
           }
-        } else if (Array.isArray(product.gallery) && product.gallery.length > 0 && product.gallery[0]) {
-          imageUrl = product.gallery[0];
+        } else if (Array.isArray(product.images) && product.images.length > 0 && product.images[0]) {
+          imageUrl = product.images[0];
         }
       }
     } catch (error) {
-      console.warn('Error parsing product gallery:', error);
+      console.warn('Error parsing product images:', error);
     }
     
     return imageUrl;
@@ -471,14 +483,23 @@ export default function ShopPage() {
                             <Link href={`/shop/${product.slug}`}>{product.name}</Link>
                           </h4>
                           
-                          <div className="product-price">
-                            <span className="current-price">${parseFloat(product.price?.toString() || '0').toLocaleString()}</span>
-                            {product.sale_price && (
-                              <span className="compare-price">
-                                <del>${parseFloat(product.sale_price.toString()).toLocaleString()}</del>
-                              </span>
-                            )}
-                          </div>
+                      <div className="product-price">
+                        <PriceDisplay 
+                          amount={parseFloat(product.price?.toString() || '0')} 
+                          className="current-price"
+                          fromCurrency="USD"
+                        />
+                        {product.sale_price && (
+                          <span className="compare-price">
+                            <del>
+                              <PriceDisplay 
+                                amount={parseFloat(product.sale_price.toString())} 
+                                fromCurrency="USD"
+                              />
+                            </del>
+                          </span>
+                        )}
+                      </div>
 
                           {/* Rating */}
                           <div className="product-rating">
@@ -672,11 +693,14 @@ export default function ShopPage() {
           display: flex;
           align-items: center;
           padding: 20px;
+          height: auto;
+          flex-direction: row;
         }
 
         .products-grid.list-view .product-image-wrapper {
           flex: 0 0 200px;
           margin-right: 20px;
+          height: auto;
         }
 
         .products-grid.list-view .product-info {
@@ -690,7 +714,9 @@ export default function ShopPage() {
           overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          height: 100%;
+          height: 450px;
+          display: flex;
+          flex-direction: column;
         }
 
         .product-card:hover {
@@ -701,11 +727,13 @@ export default function ShopPage() {
         .product-image-wrapper {
           position: relative;
           overflow: hidden;
+          height: 250px;
+          flex-shrink: 0;
         }
 
         .product-image {
           position: relative;
-          padding-top: 100%;
+          height: 100%;
           overflow: hidden;
         }
 
@@ -758,6 +786,10 @@ export default function ShopPage() {
 
         .product-info {
           padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
 
         .product-title {

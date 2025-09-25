@@ -3,25 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
-
-interface Auction {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  current_bid: number;
-  starting_bid: number;
-  buy_now_price?: number;
-  end_time: string;
-  image: string;
-  bid_count: number;
-  vendor: {
-    name: string;
-    slug: string;
-  };
-  category: string;
-  featured: boolean;
-}
+import { Auction } from '@/types';
 
 const AuctionSection: React.FC = () => {
   const [auctions, setAuctions] = useState<Auction[]>([]);
@@ -29,64 +11,98 @@ const AuctionSection: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<{ [key: number]: string }>({});
 
   // Mock data - replace with API call
-  const mockAuctions: Auction[] = [
+  const mockAuctions = [
     {
       id: 1,
-      title: 'Vintage Rolex Submariner Watch',
       slug: 'vintage-rolex-submariner-watch',
-      description: 'Authentic 1960s Rolex Submariner in excellent condition',
+      product_name: 'Vintage Rolex Submariner Watch',
+      product_image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop',
+      seller_name: 'LuxuryWatches',
       current_bid: 8500,
-      starting_bid: 5000,
-      buy_now_price: 12000,
+      reserve_price: 5000,
       end_time: '2024-12-25T15:30:00Z',
-      image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop',
       bid_count: 23,
+      status: 'active',
+      description: 'Authentic 1960s Rolex Submariner in excellent condition',
+      category_name: 'Jewelry & Watches',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      title: 'Vintage Rolex Submariner Watch',
+      image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop',
       vendor: { name: 'LuxuryWatches', slug: 'luxurywatches' },
       category: 'Jewelry & Watches',
-      featured: true
+      featured: true,
+      starting_bid: 5000,
+      buy_now_price: 12000
     },
     {
       id: 2,
-      title: 'Limited Edition Gaming Console',
       slug: 'limited-edition-gaming-console',
-      description: 'Rare limited edition gaming console with custom artwork',
+      product_name: 'Limited Edition Gaming Console',
+      product_image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop',
+      seller_name: 'GameCollectors',
       current_bid: 1200,
-      starting_bid: 800,
+      reserve_price: 800,
       end_time: '2024-12-24T20:00:00Z',
-      image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop',
       bid_count: 15,
+      status: 'active',
+      description: 'Rare limited edition gaming console with custom artwork',
+      category_name: 'Electronics',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      title: 'Limited Edition Gaming Console',
+      image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop',
       vendor: { name: 'GameCollectors', slug: 'gamecollectors' },
       category: 'Electronics',
-      featured: true
+      featured: true,
+      starting_bid: 800,
+      buy_now_price: undefined
     },
     {
       id: 3,
-      title: 'Antique Persian Rug',
       slug: 'antique-persian-rug',
-      description: 'Beautiful hand-woven Persian rug from the 1800s',
+      product_name: 'Antique Persian Rug',
+      product_image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
+      seller_name: 'AntiqueTreasures',
       current_bid: 3200,
-      starting_bid: 2000,
-      buy_now_price: 4500,
+      reserve_price: 2000,
       end_time: '2024-12-26T12:00:00Z',
-      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
       bid_count: 8,
+      status: 'active',
+      description: 'Beautiful hand-woven Persian rug from the 1800s',
+      category_name: 'Home & Garden',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      title: 'Antique Persian Rug',
+      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
       vendor: { name: 'AntiqueTreasures', slug: 'antiquetreasures' },
       category: 'Home & Garden',
-      featured: true
+      featured: true,
+      starting_bid: 2000,
+      buy_now_price: 4500
     },
     {
       id: 4,
-      title: 'Signed Sports Memorabilia',
       slug: 'signed-sports-memorabilia',
-      description: 'Autographed jersey from legendary athlete',
+      product_name: 'Signed Sports Memorabilia',
+      product_image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+      seller_name: 'SportsCollectibles',
       current_bid: 1800,
-      starting_bid: 1000,
+      reserve_price: 1000,
       end_time: '2024-12-23T18:30:00Z',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
       bid_count: 31,
+      status: 'active',
+      description: 'Autographed jersey from legendary athlete',
+      category_name: 'Sports',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      title: 'Signed Sports Memorabilia',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
       vendor: { name: 'SportsCollectibles', slug: 'sportscollectibles' },
       category: 'Sports',
-      featured: true
+      featured: true,
+      starting_bid: 1000,
+      buy_now_price: undefined
     }
   ];
 
@@ -95,21 +111,32 @@ const AuctionSection: React.FC = () => {
       setLoading(true);
       try {
         // Try to fetch from API first
-        const apiAuctions = await apiService.getFeaturedAuctions();
+        const apiAuctions = await apiService.getAuctions();
         
         // Check if API returned valid data
-        if (apiAuctions && Array.isArray(apiAuctions) && apiAuctions.length > 0) {
-          setAuctions(apiAuctions);
+        if (apiAuctions && apiAuctions.success && Array.isArray(apiAuctions.data) && apiAuctions.data.length > 0) {
+          // Map API data to component format
+          const mappedAuctions = apiAuctions.data.map(auction => ({
+            ...auction,
+            title: auction.product_name,
+            image: auction.product_image,
+            vendor: { name: auction.seller_name, slug: auction.seller_name.toLowerCase().replace(/\s+/g, '-') },
+            category: auction.category_name || 'General',
+            featured: true,
+            starting_bid: auction.reserve_price,
+            buy_now_price: undefined
+          }));
+          setAuctions(mappedAuctions as unknown as Auction[]);
         } else {
           // API returned null/empty, use mock data
           console.log('API auctions not available, using mock data');
-          setAuctions(mockAuctions);
+          setAuctions(mockAuctions as unknown as Auction[]);
         }
       } catch (error) {
         console.error('Error fetching auctions:', error);
         // Fallback to mock data
         console.log('Using mock auctions due to error');
-        setAuctions(mockAuctions);
+        setAuctions(mockAuctions as unknown as Auction[]);
       } finally {
         setLoading(false);
       }
@@ -224,8 +251,8 @@ const AuctionSection: React.FC = () => {
                 <div className="auction-card">
                   <div className="auction-image">
                     <img 
-                      src={auction.image} 
-                      alt={auction.title}
+                      src={auction.product_image} 
+                      alt={auction.product_name}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '/images/placeholder-auction.jpg';
@@ -233,7 +260,7 @@ const AuctionSection: React.FC = () => {
                     />
                     
                     {/* Featured Badge */}
-                    {auction.featured && (
+                    {true && (
                       <div className="auction-badge">
                         <i className="fas fa-star me-1"></i>
                         Featured
@@ -242,7 +269,7 @@ const AuctionSection: React.FC = () => {
 
                     {/* Category */}
                     <div className="auction-category">
-                      {auction.category}
+                      {auction.category_name || 'General'}
                     </div>
 
                     {/* Quick Actions */}
@@ -261,13 +288,13 @@ const AuctionSection: React.FC = () => {
                       <span className="vendor-name" onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        window.location.href = `/vendors/${auction.vendor.slug}`;
+                        window.location.href = `/vendors/${auction.seller_name.toLowerCase().replace(/\s+/g, '-')}`;
                       }}>
-                        {auction.vendor.name}
+                        {auction.seller_name}
                       </span>
                     </div>
                     
-                    <h4 className="auction-title">{auction.title}</h4>
+                    <h4 className="auction-title">{auction.product_name}</h4>
                     
                     <div className="auction-bid-info">
                       <div className="current-bid">
@@ -288,12 +315,6 @@ const AuctionSection: React.FC = () => {
                       </div>
                     </div>
 
-                    {auction.buy_now_price && (
-                      <div className="buy-now-price">
-                        <span className="buy-now-label">Buy Now:</span>
-                        <span className="buy-now-amount">{formatCurrency(auction.buy_now_price)}</span>
-                      </div>
-                    )}
 
                     <button className="btn btn-primary btn-bid w-100">
                       <i className="fas fa-gavel me-2"></i>

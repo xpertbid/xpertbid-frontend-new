@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { apiService } from '@/services/api';
+import { ApiResponse } from '@/types';
 
 interface Product {
   id: number;
@@ -49,7 +50,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await apiService.request('/admin/products', {
+      const response = await apiService.customRequest<ApiResponse<Product[]>>('/admin/products', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
         },
@@ -59,7 +60,8 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
         setProducts(response.data);
       }
     } catch (error: unknown) {
-      setError('Failed to fetch products: ' + error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError('Failed to fetch products: ' + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -82,7 +84,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
 
       if (editingProduct) {
         // Update existing product
-        const response = await apiService.request(`/admin/products/${editingProduct.id}`, {
+        const response = await apiService.customRequest<ApiResponse<Product>>(`/admin/products/${editingProduct.id}`, {
           method: 'PUT',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
@@ -95,7 +97,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
         }
       } else {
         // Create new product
-        const response = await apiService.request('/admin/products', {
+        const response = await apiService.customRequest<ApiResponse<Product>>('/admin/products', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
@@ -111,7 +113,8 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
       resetForm();
       setShowModal(false);
     } catch (error: unknown) {
-      setError('Failed to save product: ' + error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError('Failed to save product: ' + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -140,7 +143,7 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
 
     try {
       setLoading(true);
-      const response = await apiService.request(`/admin/products/${productId}`, {
+      const response = await apiService.customRequest<ApiResponse<{ message: string }>>(`/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
@@ -151,7 +154,8 @@ const ProductCRUD: React.FC<ProductCRUDProps> = ({ vendorId }) => {
         setProducts(products.filter(p => p.id !== productId));
       }
     } catch (error: unknown) {
-      setError('Failed to delete product: ' + error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError('Failed to delete product: ' + errorMessage);
     } finally {
       setLoading(false);
     }

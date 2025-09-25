@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+// import Logo from './Logo';
 
 interface FooterProps {
   className?: string;
@@ -96,14 +97,19 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       </div>
 
       {/* Main Footer */}
-      <div className="footer-main bg-dark text-white py-5">
+      <div className="footer-main bg-white text-dark py-5">
         <div className="container">
           <div className="row">
             {/* Company Info */}
             <div className="col-lg-4 col-md-6 mb-4">
               <div className="footer-widget">
                 <Link href="/" className="footer-logo mb-3 d-inline-block">
-                  <h3 className="text-white mb-0">XpertBid</h3>
+                  <img 
+                    src="/images/xpertbid-logo.png" 
+                    alt="XpertBid" 
+                    className="logo-image"
+                    style={{ height: '40px', width: 'auto' }}
+                  />
                 </Link>
                 <p className="mb-4 opacity-75">
                   Your premier destination for multi-vendor marketplace and auction platform. 
@@ -272,7 +278,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         }
 
         .footer-main {
-          background-color: var(--secondary-dark);
+          background-color: white;
         }
 
         .footer-logo h3 {
@@ -297,7 +303,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         }
 
         .footer-link {
-          color: rgba(255, 255, 255, 0.75);
+          color: rgba(0, 0, 0, 0.75);
           text-decoration: none;
           font-size: 14px;
           transition: var(--transition-fast);
@@ -309,7 +315,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
         .contact-info span {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.75);
+          color: rgba(0, 0, 0, 0.75);
         }
 
         .social-link {
@@ -318,8 +324,8 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           justify-content: center;
           width: 40px;
           height: 40px;
-          background-color: rgba(255, 255, 255, 0.1);
-          color: white;
+          background-color: rgba(0, 0, 0, 0.1);
+          color: #333;
           border-radius: 50%;
           text-decoration: none;
           transition: var(--transition-fast);

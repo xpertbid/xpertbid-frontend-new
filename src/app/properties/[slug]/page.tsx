@@ -7,6 +7,24 @@ import Image from 'next/image';
 import { apiService } from '@/services/api';
 import { Property } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+import { extractPropertyId } from '@/utils/slug';
+
+// Utility function to safely get images array
+const getImagesArray = (images: string | string[] | undefined): string[] => {
+  if (!images) return [];
+  if (Array.isArray(images)) return images;
+  if (typeof images === 'string') {
+    try {
+      // Try to parse as JSON first
+      const parsed = JSON.parse(images);
+      return Array.isArray(parsed) ? parsed : [images];
+    } catch {
+      // If not JSON, treat as single image URL
+      return [images];
+    }
+  }
+  return [];
+};
 
 interface PropertyDetailPageProps {
   params: Promise<{
@@ -29,11 +47,14 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
       try {
         setLoading(true);
         
-        // Get all properties first, then find by slug
+        // Extract property ID from slug
+        const propertyId = extractPropertyId(resolvedParams.slug);
+        
+        // Get all properties first, then find by ID
         const propertiesResponse = await apiService.getProperties();
         
         if (propertiesResponse.success) {
-          const foundProperty = propertiesResponse.data.find(p => p.slug === resolvedParams.slug);
+          const foundProperty = propertiesResponse.data.find(p => p.id === propertyId);
           
           if (foundProperty) {
             setProperty(foundProperty);
@@ -41,8 +62,9 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             // Set initial image
             let initialImage = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=600&fit=crop';
             
-            if (foundProperty.images && foundProperty.images.length > 0 && foundProperty.images[0].trim() !== '') {
-              initialImage = foundProperty.images[0];
+            const imagesArray = getImagesArray(foundProperty.images);
+            if (imagesArray.length > 0 && imagesArray[0].trim() !== '') {
+              initialImage = imagesArray[0];
             }
             
             setSelectedImage(initialImage);
@@ -50,11 +72,12 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             // Fetch related properties (same category or random)
             const relatedPropertiesData = propertiesResponse.data.filter(p => 
               p.id !== foundProperty.id &&
-              p.status === 'publish'
+              p.property_status === 'publish'
             ).slice(0, 4); // Show 4 related properties
             
             setRelatedProperties(relatedPropertiesData);
           } else {
+            setError('Property not found');
             // Create a mock property for demonstration
             const mockProperty = {
               id: 999,
@@ -74,12 +97,13 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
               updated_at: '2024-01-01T00:00:00Z'
             };
             
-            setProperty(mockProperty);
+            setProperty(mockProperty as unknown as Property);
             setSelectedImage(mockProperty.images[0]);
           }
         }
       } catch (err) {
         console.error('Error fetching property:', err);
+        setError('Failed to load property details');
         
         // Create a fallback property for demonstration
         const fallbackProperty = {
@@ -100,7 +124,7 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
           updated_at: '2024-01-01T00:00:00Z'
         };
         
-        setProperty(fallbackProperty);
+        setProperty(fallbackProperty as unknown as Property);
         setSelectedImage(fallbackProperty.images[0]);
       } finally {
         setLoading(false);
@@ -120,9 +144,9 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
       price: parseFloat(property.price.toString()),
       quantity: quantity,
       image: selectedImage,
-      slug: property.slug,
+      slug: property.slug || '',
       vendor: 'Property Dealer',
-      sku: property.slug,
+      sku: property.slug || '',
     });
     
     // Open the cart drawer
@@ -130,8 +154,9 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
   };
 
   const getGalleryImages = () => {
-    if (!property?.images || property.images.length === 0) return [selectedImage];
-    return property.images;
+    if (!property?.images) return [selectedImage];
+    const imagesArray = getImagesArray(property.images);
+    return imagesArray.length > 0 ? imagesArray : [selectedImage];
   };
 
   const galleryImages = getGalleryImages();
@@ -226,8 +251,8 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
               <div className="property-details">
                 <h1 className="property-title">{property.title}</h1>
                 <div className="property-meta mb-3">
-                  <span className="type me-3">Type: <strong>{property.type || 'House'}</strong></span>
-                  <span className="location">Location: <strong>{property.location || 'Downtown'}</strong></span>
+                  <span className="type me-3">Type: <strong>{property.property_type || 'House'}</strong></span>
+                  <span className="location">Location: <strong>{property.city || 'Downtown'}</strong></span>
                 </div>
 
                 <div className="property-rating mb-3">
@@ -292,15 +317,15 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
                         <strong>Bathrooms:</strong> {property.bathrooms || 'N/A'}
                       </div>
                       <div className="spec-item">
-                        <strong>Area:</strong> {property.area || 'N/A'}
+                        <strong>Area:</strong> {property.area_sqft || 'N/A'} sq ft
                       </div>
                     </div>
                     <div className="col-6">
                       <div className="spec-item">
-                        <strong>Property Type:</strong> {property.type || 'House'}
+                        <strong>Property Type:</strong> {property.property_type || 'House'}
                       </div>
                       <div className="spec-item">
-                        <strong>Location:</strong> {property.location || 'N/A'}
+                        <strong>Location:</strong> {property.city || 'N/A'}
                       </div>
                     </div>
                   </div>
@@ -447,8 +472,9 @@ export default function PropertyDetailPage({ params }: PropertyDetailPageProps) 
             {relatedProperties.map((relatedProperty) => {
               let relatedImageUrl = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&h=300&fit=crop';
               
-              if (relatedProperty.images && relatedProperty.images.length > 0 && relatedProperty.images[0].trim() !== '') {
-                relatedImageUrl = relatedProperty.images[0];
+              const relatedImagesArray = getImagesArray(relatedProperty.images);
+              if (relatedImagesArray.length > 0 && relatedImagesArray[0].trim() !== '') {
+                relatedImageUrl = relatedImagesArray[0];
               }
 
               return (

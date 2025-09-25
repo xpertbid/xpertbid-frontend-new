@@ -4,6 +4,7 @@ import Script from "next/script";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { KycProvider } from "@/contexts/KycContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { CurrencyProvider, LanguageProvider } from '@/contexts/CurrencyLanguageContext';
 
 export const metadata: Metadata = {
   title: "XpertBid - Multi-Vendor E-Commerce & Auction Platform",
@@ -30,13 +31,18 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body>
         <AuthProvider>
           <KycProvider>
             <CartProvider>
-              {children}
+              <LanguageProvider>
+                <CurrencyProvider>
+                  {children}
+                </CurrencyProvider>
+              </LanguageProvider>
             </CartProvider>
           </KycProvider>
         </AuthProvider>
