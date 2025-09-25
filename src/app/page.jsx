@@ -8,7 +8,7 @@ import WoodMartProductGrid from '@/components/sections/WoodMartProductGrid';
 import WoodMartVehicles from '@/components/sections/WoodMartVehicles';
 import WoodMartProperties from '@/components/sections/WoodMartProperties';
 import WoodMartAuctions from '@/components/sections/WoodMartAuctions';
-import WoodMartNewsletter from '@/components/sections/WoodMartNewsletter';
+//import WoodMartNewsletter from '@/components/sections/WoodMartNewsletter';
 import { apiService, Product, Category } from '@/services/api';
 // Types removed - using plain JavaScript objects
 
@@ -949,13 +949,7 @@ export default function Home() {
       />
       
       {/* Newsletter Section */}
-      <WoodMartNewsletter 
-        title="Stay Updated"
-        subtitle="Newsletter"
-        description="Subscribe to our newsletter and get 10% off your first order"
-        placeholder="Enter your email address"
-        buttonText="Subscribe"
-      />
+      
     </Layout>
   );
 }
