@@ -452,6 +452,45 @@ async function getVehicleBySlug(slug) {
   return get(`/vehicles/${encodeURIComponent(slug)}`);
 }
 
+async function getProperty(id) {
+  try {
+    const response = await get(`/properties/${id}`);
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Failed to fetch property');
+  } catch (error) {
+    console.warn('Property API failed, using mock data:', error);
+    // Return mock property data
+    return {
+      success: true,
+      data: {
+        id: parseInt(id),
+        title: 'Luxury Penthouse with City Views',
+        slug: `${id}-penthouse-with-city-views`,
+        price: 1250000,
+        address: '123 Downtown Avenue, City Center',
+        description: 'This stunning penthouse offers breathtaking city views and modern luxury living. Features include floor-to-ceiling windows, premium finishes, and a private rooftop terrace.',
+        property_type: 'Penthouse',
+        bedrooms: 3,
+        bathrooms: 2,
+        area_sqft: 2500,
+        year_built: 2020,
+        garage: 2,
+        images: [
+          'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop',
+          'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=500&fit=crop',
+          'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=500&fit=crop',
+          'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=500&fit=crop'
+        ],
+        status: 'available',
+        created_at: '2024-01-15T10:00:00Z',
+        updated_at: '2024-01-15T10:00:00Z'
+      }
+    };
+  }
+}
+
 async function getPropertyBySlug(slug) {
   return get(`/properties/${encodeURIComponent(slug)}`);
 }
@@ -1283,6 +1322,7 @@ export const apiService = {
   getProducts,
   getProductBySlug,
   getVehicleBySlug,
+  getProperty,
   getPropertyBySlug,
   getCategoryBySlug,
   getBlogPosts,

@@ -328,7 +328,7 @@ export default function PropertiesPage() {
                     className="btn btn-outline-secondary btn-sm d-lg-none"
                     onClick={() => setShowFilters(!showFilters)}
                   >
-                    <i className="f-filter me-1"></i>
+                    <i className="fas fa-filter me-1"></i>
                     Filters
                   </button>
                 </div>
@@ -451,7 +451,7 @@ export default function PropertiesPage() {
               <div className="properties-grid">
                 {filteredProperties.length === 0 ? (
                   <div className="text-center py-5">
-                    <i className="f-home fa-3x text-muted mb-3"></i>
+                    <i className="fas fa-home fa-3x text-muted mb-3"></i>
                     <h5 className="text-muted">No properties found</h5>
                     <p className="text-muted">Try adjusting your filters to see more results.</p>
                   </div>
@@ -489,20 +489,20 @@ export default function PropertiesPage() {
                               </Link>
                             </h5>
                             <p className="property-location text-muted">
-                              <i className="f-map-marker-alt me-1"></i>
+                              <i className="fas fa-map-marker-alt me-1"></i>
                               {property.address}, {property.city}, {property.state}
                             </p>
                             <div className="property-features">
                               <div className="feature-item">
-                                <i className="f-bed me-1"></i>
+                                <i className="fas fa-bed me-1"></i>
                                 <span>{property.bedrooms} beds</span>
                               </div>
                               <div className="feature-item">
-                                <i className="f-bath me-1"></i>
+                                <i className="fas fa-bath me-1"></i>
                                 <span>{property.bathrooms} baths</span>
                               </div>
                               <div className="feature-item">
-                                <i className="f-ruler-combined me-1"></i>
+                                <i className="fas fa-ruler-combined me-1"></i>
                                 <span>{property.area_sqft?.toLocaleString()} sq ft</span>
                               </div>
                             </div>
@@ -510,6 +510,15 @@ export default function PropertiesPage() {
                               <small className="text-muted">
                                 Listed {new Date(property.created_at).toLocaleDateString()}
                               </small>
+                            </div>
+                            <div className="property-actions mt-3">
+                              <Link 
+                                href={`/properties/${generatePropertySlug(property.id, property.title)}`}
+                                className="btn btn-primary btn-sm w-100"
+                              >
+                                <i className="fas fa-eye me-1"></i>
+                                View Details
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -529,7 +538,7 @@ export default function PropertiesPage() {
           
           .page-title {
             font-family: 'Poppins', sans-serif;
-            font-weight;
+            font-weight: 600;
             color: #000;
             font-size: 2.5rem;
           }
@@ -540,27 +549,27 @@ export default function PropertiesPage() {
           
           .filters-sidebar {
             background: #fff;
-            border-radius;
+            border-radius: 8px;
             padding: 1.5rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position;
-            top;
+            position: sticky;
+            top: 20px;
           }
           
           .filter-title {
             font-family: 'Poppins', sans-serif;
-            font-weight;
+            font-weight: 600;
             color: #000;
             margin-bottom: 0.75rem;
             font-size: 0.9rem;
-            text-transform;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
           }
           
           .property-card {
             background: #fff;
-            border-radius;
-            overflow;
+            border-radius: 8px;
+            overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
           }
@@ -571,15 +580,15 @@ export default function PropertiesPage() {
           }
           
           .property-image {
-            position;
-            overflow;
-            height;
+            position: relative;
+            overflow: hidden;
+            height: 200px;
           }
           
           .property-image img {
             width: 100%;
             height: 100%;
-            object-fit;
+            object-fit: cover;
             transition: transform 0.3s ease;
           }
           
@@ -588,20 +597,20 @@ export default function PropertiesPage() {
           }
           
           .property-badge {
-            position;
-            top;
-            left;
+            position: absolute;
+            top: 10px;
+            left: 10px;
           }
           
           .property-price {
-            position;
-            bottom;
-            left;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
             background: rgba(0, 0, 0, 0.8);
-            color;
+            color: #fff;
             padding: 0.5rem 1rem;
-            border-radius;
-            font-weight;
+            border-radius: 4px;
+            font-weight: 600;
           }
           
           .property-content {
@@ -610,13 +619,13 @@ export default function PropertiesPage() {
           
           .property-title {
             font-family: 'Poppins', sans-serif;
-            font-weight;
+            font-weight: 600;
             margin-bottom: 0.5rem;
           }
           
           .property-title a {
             color: #000;
-            text-decoration;
+            text-decoration: none;
           }
           
           .property-title a:hover {
@@ -625,18 +634,18 @@ export default function PropertiesPage() {
           
           .property-location {
             font-size: 0.9rem;
-            margin-bottom;
+            margin-bottom: 1rem;
           }
           
           .property-features {
-            display;
-            gap;
-            margin-bottom;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
           }
           
           .feature-item {
-            display;
-            align-items;
+            display: flex;
+            align-items: center;
             font-size: 0.85rem;
             color: #666;
           }
@@ -647,16 +656,51 @@ export default function PropertiesPage() {
           
           .property-meta {
             border-top: 1px solid #eee;
-            padding-top;
+            padding-top: 1rem;
+          }
+          
+          .property-actions {
+            margin-top: 1rem;
+          }
+          
+          .property-actions .btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+          }
+          
+          .property-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 172, 233, 0.3);
+          }
+          
+          .filters-content {
+            display: none;
+          }
+          
+          .filters-content.show {
+            display: block;
           }
           
           @media (max-width: 991.98px) {
+            .filters-sidebar {
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              z-index: 1000;
+              background: #fff;
+              border-radius: 0;
+              box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            }
+            
             .filters-content {
-              display;
+              display: block;
             }
             
             .filters-content.show {
-              display;
+              display: block;
             }
           }
         `}</style>
