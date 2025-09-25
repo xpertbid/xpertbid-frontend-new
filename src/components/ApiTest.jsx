@@ -83,8 +83,8 @@ export default function ApiTest() {
 
       {apiStatus === 'error' && (
         <div className="text-danger">
-          <p>Failed to connect to API. Make sure the Laravel backend is running on http://v2.xpertbid.com</p>
-          <p>Check if the API server is accessible at: <code>http://v2.xpertbid.com/api</code></p>
+          <p>Failed to connect to API. Make sure the Laravel backend is running on https://v2.xpertbid.com</p>
+          <p>Check if the API server is accessible at: <code>https://v2.xpertbid.com/api</code></p>
         </div>
       )}
     </div>

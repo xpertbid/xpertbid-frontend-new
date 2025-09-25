@@ -163,7 +163,7 @@ src/
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
-- Backend API accessible at http://v2.xpertbid.com/api
+- Backend API accessible at https://v2.xpertbid.com/api
 
 ### Installation
 ```bash
@@ -174,9 +174,9 @@ npm install
 ### Environment Variables
 Create `.env.local` file:
 ```env
-NEXT_PUBLIC_API_URL=http://v2.xpertbid.com/api
+NEXT_PUBLIC_API_URL=https://v2.xpertbid.com/api
 NEXT_PUBLIC_APP_NAME=XpertBid
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=https://localhost:3000
 ```
 
 ### Development

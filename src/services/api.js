@@ -3,7 +3,7 @@
 // If you already have an axios instance/baseUrl, replace `fetchJson` with your client.
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || 'http://v2.xpertbid.com/api';
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || 'https://v2.xpertbid.com/api';
 
 // Basic helper; swap with axios if you prefer
 async function fetchJson(url, init = {}) {
