@@ -1,7 +1,7 @@
 # XpertBid Frontend Implementation
 
 ## Overview
-This document outlines the implementation of the XpertBid frontend using Next.js 15, React 19, and TypeScript, with a Woodmart-inspired design system.
+This document outlines the implementation of the XpertBid frontend using Next.js 15, React 19s, and TypeScript, with a Woodmart-inspired design system.
 
 ## 🎨 Design System
 
