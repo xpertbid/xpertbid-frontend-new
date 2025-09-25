@@ -4,17 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { socialAuthService } from '../services/socialAuth';
 
-// Type definitions for Google API
-;
-}
-
-// Google ;
-}
-
-
-
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
-  const { login, register, error, clearError } = useAuth();
+const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+  const { login, register, clearError, error: authError } = useAuth();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -23,11 +14,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     password_confirmation: ''
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [socialLoading, setSocialLoading] = useState({ google, facebook: false });
+ const [socialLoading, setSocialLoading] = useState({ google: false, facebook: false });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -35,7 +26,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -103,47 +94,56 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     }
   }, [isOpen]);
 
-  // Handle Google Login
-  const handleGoogleLogin = async () => {
-    setSocialLoading(prev => ({ ...prev, google: true }));
-    setError('');
-    
-    try {
-      if (!window.google) {
-        throw new Error('Google Sign-In is not available. Please try again.');
-      }
+  // Handle Google Login (JS/JSX)
+const handleGoogleLogin = async () => {
+  setSocialLoading(prev => ({ ...prev, google: true }));
+  setError('');
 
-      const response = await new Promise((resolve, reject) => {
-        // Set up a timeout to prevent hanging
-        const timeout = setTimeout(() => {
-          reject(new Error('Google Sign-In timed out. Please try again.'));
-        }, 30000); // 30 second timeout
-        
-        (window { google: { accounts: GoogleAccounts } }).google.accounts.id.callback = (response) => {
-          clearTimeout(timeout);
-          socialAuthService['handleGoogleResponse'](response)
-            .then(resolve)
-            .catch(reject);
-        };
-        
-        try {
-          (window { google: { accounts: GoogleAccounts } }).google.accounts.id.prompt();
-        } catch (_error) {
-          clearTimeout(timeout);
-          reject(new Error('Failed to start Google Sign-In. Please try again.'));
-        }
-      });
-
-      if (response) {
-        onLoginSuccess();
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Google login failed. Please try again.';
-      setError(errorMessage);
-    } finally {
-      setSocialLoading(prev => ({ ...prev, google: false }));
+  try {
+    const ga = window?.google?.accounts?.id;
+    if (!ga) {
+      throw new Error('Google Sign-In is not available. Please try again.');
     }
-  };
+
+    const response = await new Promise((resolve, reject) => {
+      // 30s timeout so we don’t hang forever
+      const timeout = setTimeout(() => {
+        reject(new Error('Google Sign-In timed out. Please try again.'));
+      }, 30000);
+
+      // Define the callback Google will invoke
+      ga.callback = (credResponse) => {
+        clearTimeout(timeout);
+        socialAuthService
+          .handleGoogleResponse(credResponse)
+          .then(resolve)
+          .catch(reject);
+      };
+
+      try {
+        // Recommended way is via initialize, but prompt works if already initialized
+        // ga.initialize({ client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, callback: ga.callback });
+        ga.prompt();
+      } catch (_err) {
+        clearTimeout(timeout);
+        reject(new Error('Failed to start Google Sign-In. Please try again.'));
+      }
+    });
+
+    if (response) {
+      onLoginSuccess();
+    }
+  } catch (err) {
+    const msg =
+      err instanceof Error
+        ? err.message
+        : 'Google login failed. Please try again.';
+    setError(msg);
+  } finally {
+    setSocialLoading(prev => ({ ...prev, google: false }));
+  }
+};
+
 
   // Handle Facebook Login
   const handleFacebookLogin = async () => {
