@@ -15,16 +15,64 @@ export const CurrencyProvider = ({ children }) => {
   useEffect(() => {
     const loadCurrencies = async () => {
       try {
+        // First, try to load saved currency from localStorage
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        if (savedCurrency) {
+          try {
+            const parsedCurrency = JSON.parse(savedCurrency);
+            setCurrentCurrency(parsedCurrency);
+          } catch (error) {
+            console.warn('Failed to parse saved currency:', error);
+          }
+        }
+
         const response = await apiService.getCurrencies();
         if (response.success) {
-          setCurrencies(response.data || []);
-          // Set default currency
-          if (response.data && response.data.length > 0) {
-            setCurrentCurrency(response.data[0]);
+          const currenciesData = response.data || [];
+          setCurrencies(currenciesData);
+          
+          // Set default currency if none is saved or saved currency is not in the list
+          if (!savedCurrency || !currenciesData.find(c => c.code === JSON.parse(savedCurrency || '{}').code)) {
+            if (currenciesData.length > 0) {
+              const defaultCurrency = currenciesData[0];
+              setCurrentCurrency(defaultCurrency);
+              localStorage.setItem('selectedCurrency', JSON.stringify(defaultCurrency));
+            }
+          }
+        } else {
+          // Fallback to default currencies if API fails
+          const fallbackCurrencies = [
+            { id: 1, code: 'USD', name: 'US Dollar', symbol: '$', rate: 1.0 },
+            { id: 2, code: 'EUR', name: 'Euro', symbol: '€', rate: 0.85 },
+            { id: 3, code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.73 }
+          ];
+          setCurrencies(fallbackCurrencies);
+          
+          if (!savedCurrency) {
+            setCurrentCurrency(fallbackCurrencies[0]);
+            localStorage.setItem('selectedCurrency', JSON.stringify(fallbackCurrencies[0]));
           }
         }
       } catch (error) {
         console.error('Failed to load currencies:', error);
+        // Fallback currencies
+        const fallbackCurrencies = [
+          { id: 1, code: 'USD', name: 'US Dollar', symbol: '$', rate: 1.0 },
+          { id: 2, code: 'EUR', name: 'Euro', symbol: '€', rate: 0.85 },
+          { id: 3, code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.73 }
+        ];
+        setCurrencies(fallbackCurrencies);
+        
+        const savedCurrency = localStorage.getItem('selectedCurrency');
+        if (savedCurrency) {
+          try {
+            setCurrentCurrency(JSON.parse(savedCurrency));
+          } catch {
+            setCurrentCurrency(fallbackCurrencies[0]);
+          }
+        } else {
+          setCurrentCurrency(fallbackCurrencies[0]);
+        }
       } finally {
         setLoading(false);
       }
@@ -34,6 +82,7 @@ export const CurrencyProvider = ({ children }) => {
   }, []);
 
   const changeCurrency = (currency) => {
+    console.log('Changing currency to:', currency);
     setCurrentCurrency(currency);
     localStorage.setItem('selectedCurrency', JSON.stringify(currency));
   };
@@ -75,16 +124,64 @@ export const LanguageProvider = ({ children }) => {
   useEffect(() => {
     const loadLanguages = async () => {
       try {
+        // First, try to load saved language from localStorage
+        const savedLanguage = localStorage.getItem('selectedLanguage');
+        if (savedLanguage) {
+          try {
+            const parsedLanguage = JSON.parse(savedLanguage);
+            setCurrentLanguage(parsedLanguage);
+          } catch (error) {
+            console.warn('Failed to parse saved language:', error);
+          }
+        }
+
         const response = await apiService.getLanguages();
         if (response.success) {
-          setLanguages(response.data || []);
-          // Set default language
-          if (response.data && response.data.length > 0) {
-            setCurrentLanguage(response.data[0]);
+          const languagesData = response.data || [];
+          setLanguages(languagesData);
+          
+          // Set default language if none is saved or saved language is not in the list
+          if (!savedLanguage || !languagesData.find(l => l.code === JSON.parse(savedLanguage || '{}').code)) {
+            if (languagesData.length > 0) {
+              const defaultLanguage = languagesData[0];
+              setCurrentLanguage(defaultLanguage);
+              localStorage.setItem('selectedLanguage', JSON.stringify(defaultLanguage));
+            }
+          }
+        } else {
+          // Fallback to default languages if API fails
+          const fallbackLanguages = [
+            { id: 1, code: 'en', name: 'English', flag: '🇺🇸' },
+            { id: 2, code: 'es', name: 'Español', flag: '🇪🇸' },
+            { id: 3, code: 'fr', name: 'Français', flag: '🇫🇷' }
+          ];
+          setLanguages(fallbackLanguages);
+          
+          if (!savedLanguage) {
+            setCurrentLanguage(fallbackLanguages[0]);
+            localStorage.setItem('selectedLanguage', JSON.stringify(fallbackLanguages[0]));
           }
         }
       } catch (error) {
         console.error('Failed to load languages:', error);
+        // Fallback languages
+        const fallbackLanguages = [
+          { id: 1, code: 'en', name: 'English', flag: '🇺🇸' },
+          { id: 2, code: 'es', name: 'Español', flag: '🇪🇸' },
+          { id: 3, code: 'fr', name: 'Français', flag: '🇫🇷' }
+        ];
+        setLanguages(fallbackLanguages);
+        
+        const savedLanguage = localStorage.getItem('selectedLanguage');
+        if (savedLanguage) {
+          try {
+            setCurrentLanguage(JSON.parse(savedLanguage));
+          } catch {
+            setCurrentLanguage(fallbackLanguages[0]);
+          }
+        } else {
+          setCurrentLanguage(fallbackLanguages[0]);
+        }
       } finally {
         setLoading(false);
       }

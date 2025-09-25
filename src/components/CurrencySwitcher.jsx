@@ -7,7 +7,10 @@ const CurrencySwitcher = ({ className = '', showLabel = true, variant = 'default
   const [isOpen, setIsOpen] = useState(false);
   const { currencies, currentCurrency, changeCurrency, loading } = useCurrency();
 
+  console.log('CurrencySwitcher render:', { currencies, currentCurrency, loading });
+
   const handleCurrencyChange = (currency) => {
+    console.log('CurrencySwitcher: Changing currency to:', currency);
     changeCurrency(currency);
     setIsOpen(false);
   };
@@ -18,6 +21,18 @@ const CurrencySwitcher = ({ className = '', showLabel = true, variant = 'default
         <div className="spinner-border spinner-border-sm" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
+      </div>
+    );
+  }
+
+  // Fallback if no currencies are available
+  if (!currencies || currencies.length === 0) {
+    return (
+      <div className={`currency-switcher ${className}`}>
+        <button className="btn btn-outline-secondary" disabled>
+          <span className="symbol">$</span>
+          {showLabel && <span className="ms-1">USD</span>}
+        </button>
       </div>
     );
   }
@@ -43,7 +58,7 @@ const CurrencySwitcher = ({ className = '', showLabel = true, variant = 'default
       </button>
 
       {isOpen && (
-        <div className="dropdown-menu show">
+        <div className="dropdown-menu show" style={{ position: 'absolute', top: '100%', right: '0', zIndex: 1050 }}>
           {currencies.map((currency) => (
             <button
               key={currency.code}

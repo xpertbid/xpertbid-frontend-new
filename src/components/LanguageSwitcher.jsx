@@ -22,6 +22,18 @@ const LanguageSwitcher = ({ className = '', showLabel = true, variant = 'default
     );
   }
 
+  // Fallback if no languages are available
+  if (!languages || languages.length === 0) {
+    return (
+      <div className={`language-switcher ${className}`}>
+        <button className="btn btn-outline-secondary" disabled>
+          <span className="flag">🇺🇸</span>
+          {showLabel && <span className="ms-1">EN</span>}
+        </button>
+      </div>
+    );
+  }
+
   const buttonClass = variant === 'header' 
     ? "btn btn-link text-white p-0 border-0" 
     : "btn btn-outline-secondary dropdown-toggle";
@@ -43,7 +55,7 @@ const LanguageSwitcher = ({ className = '', showLabel = true, variant = 'default
       </button>
 
       {isOpen && (
-        <div className="dropdown-menu show">
+        <div className="dropdown-menu show" style={{ position: 'absolute', top: '100%', right: '0', zIndex: 1050 }}>
           {languages.map((language) => (
             <button
               key={language.code}

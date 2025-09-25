@@ -34,13 +34,13 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <KycProvider>
             <CartProvider>
-              <LanguageProvider>
-                <CurrencyProvider>
+              <CurrencyProvider>
+                <LanguageProvider>
                   <ErrorBoundary>
                     {children}
                   </ErrorBoundary>
-                </CurrencyProvider>
-              </LanguageProvider>
+                </LanguageProvider>
+              </CurrencyProvider>
             </CartProvider>
           </KycProvider>
         </AuthProvider>
