@@ -62,6 +62,17 @@ const Header = ({ className = '' }) => {
               </div>
               <div className="col-md-6">
                 <div className="header-top-right d-flex justify-content-end align-items-center">
+                  <div className="header-top-social">
+                    <a href="#" className="social-link me-2"><i className="fab fa-facebook-f"></i></a>
+                    <a href="#" className="social-link me-2"><i className="fab fa-twitter"></i></a>
+                    <a href="#" className="social-link me-2"><i className="fab fa-instagram"></i></a>
+                    <a href="#" className="social-link me-2"><i className="fab fa-youtube"></i></a>
+                  </div>
+                  <div className="header-top-links">
+                    <Link href="/newsletter">NEWSLETTER</Link>
+                    <Link href="/contact">CONTACT US</Link>
+                    <Link href="/faqs">FAQS</Link>
+                  </div>
                   <div className="header-top-dropdowns">
                     <select className="form-select me-3">
                       <option>ENGLISH</option>
@@ -74,17 +85,6 @@ const Header = ({ className = '' }) => {
                       <option>CANADA</option>
                       <option>UK</option>
                     </select>
-                  </div>
-                  <div className="header-top-social">
-                    <a href="#" className="social-link me-2"><i className="fab fa-facebook-f"></i></a>
-                    <a href="#" className="social-link me-2"><i className="fab fa-twitter"></i></a>
-                    <a href="#" className="social-link me-2"><i className="fab fa-instagram"></i></a>
-                    <a href="#" className="social-link me-2"><i className="fab fa-youtube"></i></a>
-                  </div>
-                  <div className="header-top-links">
-                    <Link href="/newsletter">NEWSLETTER</Link>
-                    <Link href="/contact">CONTACT US</Link>
-                    <Link href="/faqs">FAQS</Link>
                   </div>
                 </div>
               </div>
@@ -117,6 +117,9 @@ const Header = ({ className = '' }) => {
                       placeholder="Search for products"
                       aria-label="Search"
                     />
+                    <button className="btn search-btn" type="submit">
+                      <i className="fas fa-search"></i>
+                    </button>
                     <select className="form-select search-category">
                       <option value="">SELECT CATEGORY</option>
                       <option value="furniture">Furniture</option>
@@ -125,9 +128,6 @@ const Header = ({ className = '' }) => {
                       <option value="fashion">Fashion</option>
                       <option value="lighting">Lighting</option>
                     </select>
-                    <button className="btn search-btn" type="submit">
-                      <i className="fas fa-search"></i>
-                    </button>
                   </div>
                 </form>
               </div>
@@ -167,51 +167,80 @@ const Header = ({ className = '' }) => {
           </button>
 
           <div className={`navbar-collapse ${isMenuOpen ? 'show' : ''}`}>
-            <div className="navbar-nav d-flex align-items-center w-100">
+            <div className="navbar-nav d-flex align-items-center w-100" style={{ minHeight: '60px' }}>
               <button className="btn btn-primary browse-categories-btn me-4">
                 <i className="fas fa-bars me-2"></i>
                 BROWSE CATEGORIES
                 <i className="fas fa-chevron-down ms-2"></i>
               </button>
-              <ul className="navbar-nav d-flex align-items-center">
-                <li className="nav-item dropdown">
+              <ul className="navbar-nav d-flex align-items-center mx-auto">
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('home')} onMouseLeave={() => setActiveMenu(null)}>
                   <Link href="/" className="nav-link dropdown-toggle">
                     HOME
-                    <i className="fas fa-chevron-down ms-1"></i>
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
                   </Link>
                 </li>
-                <li className="nav-item dropdown">
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('products')} onMouseLeave={() => setActiveMenu(null)}>
                   <Link href="/shop" className="nav-link dropdown-toggle">
-                    SHOP
-                    <i className="fas fa-chevron-down ms-1"></i>
+                    PRODUCTS
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
                   </Link>
+                  <ul className={`dropdown-menu ${activeMenu === 'products' ? 'show' : ''}`}>
+                    <li><Link href="/shop" className="dropdown-item">All Products</Link></li>
+                  </ul>
                 </li>
-                <li className="nav-item dropdown">
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('categories')} onMouseLeave={() => setActiveMenu(null)}>
+                  <Link href="/categories" className="nav-link dropdown-toggle">
+                    CATEGORIES
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
+                  </Link>
+                  <ul className={`dropdown-menu ${activeMenu === 'categories' ? 'show' : ''}`}>
+                    <li><Link href="/categories" className="dropdown-item">All Categories</Link></li>
+                  </ul>
+                </li>
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('properties')} onMouseLeave={() => setActiveMenu(null)}>
+                  <Link href="/properties" className="nav-link dropdown-toggle">
+                    PROPERTIES
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
+                  </Link>
+                  <ul className={`dropdown-menu ${activeMenu === 'properties' ? 'show' : ''}`}>
+                    <li><Link href="/properties" className="dropdown-item">All Properties</Link></li>
+                  </ul>
+                </li>
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('vehicles')} onMouseLeave={() => setActiveMenu(null)}>
+                  <Link href="/vehicles" className="nav-link dropdown-toggle">
+                    VEHICLES
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
+                  </Link>
+                  <ul className={`dropdown-menu ${activeMenu === 'vehicles' ? 'show' : ''}`}>
+                    <li><Link href="/vehicles" className="dropdown-item">All Vehicles</Link></li>
+                  </ul>
+                </li>
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('auction')} onMouseLeave={() => setActiveMenu(null)}>
+                  <Link href="/auctions" className="nav-link dropdown-toggle">
+                    AUCTION
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
+                  </Link>
+                  <ul className={`dropdown-menu ${activeMenu === 'auction' ? 'show' : ''}`}>
+                    <li><Link href="/auctions" className="dropdown-item">All Auctions</Link></li>
+                  </ul>
+                </li>
+                <li className="nav-item dropdown" onMouseEnter={() => setActiveMenu('blog')} onMouseLeave={() => setActiveMenu(null)}>
                   <Link href="/blog" className="nav-link dropdown-toggle">
                     BLOG
-                    <i className="fas fa-chevron-down ms-1"></i>
+                    <i className="fas fa-chevron-down ms-1" style={{ fontSize: '10px' }}></i>
                   </Link>
-                </li>
-                <li className="nav-item dropdown">
-                  <Link href="/pages" className="nav-link dropdown-toggle">
-                    PAGES
-                    <i className="fas fa-chevron-down ms-1"></i>
-                  </Link>
-                </li>
-                <li className="nav-item dropdown">
-                  <Link href="/elements" className="nav-link dropdown-toggle">
-                    ELEMENTS
-                    <i className="fas fa-chevron-down ms-1"></i>
-                  </Link>
+                  <ul className={`dropdown-menu ${activeMenu === 'blog' ? 'show' : ''}`}>
+                    <li><Link href="/blog" className="dropdown-item">All Blogs</Link></li>
+                  </ul>
                 </li>
                 <li className="nav-item">
-                  <Link href="/buy" className="nav-link">BUY</Link>
+                  <Link href="/about" className="nav-link">ABOUT</Link>
+                </li>
+                <li className="nav-item">
+                  <Link href="/contact" className="nav-link">CONTACT US</Link>
                 </li>
               </ul>
-              <div className="ms-auto">
-                <Link href="/special-offer" className="nav-link me-3">SPECIAL OFFER</Link>
-                <Link href="/purchase-theme" className="nav-link">PURCHASE THEME</Link>
-              </div>
             </div>
           </div>
         </div>
@@ -230,9 +259,11 @@ const Header = ({ className = '' }) => {
         .header-top {
           background-color: #83B735 !important;
           border-bottom: none;
-          padding: 12px 0;
+          padding: 8px 0;
           font-size: 12px;
-          min-height: 45px;
+          min-height: 40px;
+          display: flex;
+          align-items: center;
         }
 
         .header-top-left .welcome-text {
@@ -291,7 +322,10 @@ const Header = ({ className = '' }) => {
         }
 
         .header-main {
-          padding: 16px 0;
+          padding: 20px 0;
+          min-height: 80px;
+          display: flex;
+          align-items: center;
         }
 
         .logo-section .logo-link {
@@ -315,11 +349,19 @@ const Header = ({ className = '' }) => {
           margin-top: -5px;
         }
 
+        .search-form {
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+
         .search-form .input-group {
           border-radius: 0;
           overflow: hidden;
           box-shadow: none;
           border: 1px solid #e5e7eb;
+          display: flex;
+          height: 45px;
         }
 
         .search-form .form-control {
@@ -327,6 +369,8 @@ const Header = ({ className = '' }) => {
           padding: 12px 16px;
           font-size: 14px;
           border-radius: 0;
+          order: 1;
+          flex: 1;
         }
 
         .search-form .form-control:focus {
@@ -342,6 +386,7 @@ const Header = ({ className = '' }) => {
           background-color: #f9fafb;
           color: #374151;
           min-width: 150px;
+          order: 3;
         }
 
         .search-btn {
@@ -351,6 +396,7 @@ const Header = ({ className = '' }) => {
           color: white !important;
           border-radius: 0;
           font-weight: 500;
+          order: 2;
         }
 
         .search-btn:hover {
@@ -420,18 +466,24 @@ const Header = ({ className = '' }) => {
           background-color: #ffffff;
           border-bottom: 1px solid #e5e7eb;
           padding: 0;
+          min-height: 60px;
+          display: flex;
+          align-items: center;
         }
 
         .browse-categories-btn {
           background-color: #83B735 !important;
           border-color: #83B735 !important;
           color: white !important;
-          padding: 12px 20px;
+          padding: 20px 20px;
           font-size: 12px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
           border-radius: 0;
+          display: flex;
+          align-items: center;
+          height: 60px;
         }
 
         .browse-categories-btn:hover {
@@ -444,18 +496,63 @@ const Header = ({ className = '' }) => {
           font-weight: 600;
           font-size: 12px;
           color: #374151 !important;
-          padding: 16px 15px;
+          padding: 20px 15px;
           text-decoration: none;
           text-transform: uppercase;
           letter-spacing: 0.5px;
           transition: all 0.15s ease;
           border-radius: 0;
           position: relative;
+          display: flex;
+          align-items: center;
         }
 
         .nav-link:hover {
           color: #83B735 !important;
           background-color: rgba(131, 183, 53, 0.1);
+        }
+
+        .dropdown-menu {
+          border: none;
+          border-radius: 8px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          padding: 8px 0;
+          background-color: #ffffff;
+          border: 1px solid #e5e7eb;
+          min-width: 180px;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          z-index: 1000;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-10px);
+          transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+        }
+
+        .dropdown-item {
+          font-size: 12px;
+          color: #374151;
+          padding: 10px 20px;
+          transition: all 0.15s ease;
+          text-transform: none;
+          letter-spacing: normal;
+          font-weight: 500;
+        }
+
+        .dropdown-item:hover {
+          background-color: #83B735;
+          color: white;
+        }
+
+        .nav-item.dropdown {
+          position: relative;
         }
 
         .nav-link::after {
