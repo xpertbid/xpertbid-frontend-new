@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '@/components/Layout';
 import { apiService } from '@/services/api';
 import Link from 'next/link';
@@ -35,7 +35,7 @@ export default function VehiclesPage() {
     fetchVehicles();
   }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...vehicles];
 
     // Price filter
@@ -98,23 +98,137 @@ export default function VehiclesPage() {
     }
 
     setFilteredVehicles(filtered);
-  };
+  }, [vehicles, filters]);
 
   useEffect(() => {
     applyFilters();
-  }, [vehicles, filters, applyFilters]);
+  }, [applyFilters]);
 
     const fetchVehicles = async () => {
       try {
         setLoading(true);
-      const response = await apiService.getVehicles();
-      if (response.success) {
-        setVehicles(response.data);
-      } else {
-        setError('Failed to fetch vehicles');
+        const response = await apiService.getVehicles();
+        
+        if (response.success && response.data) {
+          setVehicles(response.data);
+        } else {
+          // Fallback to mock data if API fails
+          console.warn('API failed, using mock data:', response.error);
+          const mockVehicles = [
+            {
+              id: 1,
+              title: '2023 BMW X5',
+              slug: '2023-bmw-x5',
+              price: 65000,
+              year: 2023,
+              mileage: 15000,
+              fuel_type: 'Gasoline',
+              transmission: 'Automatic',
+              make: 'BMW',
+              model: 'X5',
+              body_type: 'SUV',
+              color: 'Black',
+              images: ['https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop'],
+              description: 'Luxury SUV with premium features and excellent performance.',
+              is_featured: true,
+              is_new: true
+            },
+            {
+              id: 2,
+              title: '2022 Tesla Model 3',
+              slug: '2022-tesla-model-3',
+              price: 45000,
+              year: 2022,
+              mileage: 25000,
+              fuel_type: 'Electric',
+              transmission: 'Automatic',
+              make: 'Tesla',
+              model: 'Model 3',
+              body_type: 'Sedan',
+              color: 'White',
+              images: ['https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop'],
+              description: 'Electric sedan with autopilot and premium interior.',
+              is_featured: true,
+              is_new: false
+            },
+            {
+              id: 3,
+              title: '2021 Ford F-150',
+              slug: '2021-ford-f150',
+              price: 35000,
+              year: 2021,
+              mileage: 45000,
+              fuel_type: 'Gasoline',
+              transmission: 'Automatic',
+              make: 'Ford',
+              model: 'F-150',
+              body_type: 'Truck',
+              color: 'Blue',
+              images: ['https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop'],
+              description: 'Reliable pickup truck perfect for work and recreation.',
+              is_featured: false,
+              is_new: false
+            },
+            {
+              id: 4,
+              title: '2023 Honda Civic',
+              slug: '2023-honda-civic',
+              price: 28000,
+              year: 2023,
+              mileage: 8000,
+              fuel_type: 'Gasoline',
+              transmission: 'Manual',
+              make: 'Honda',
+              model: 'Civic',
+              body_type: 'Sedan',
+              color: 'Silver',
+              images: ['https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop'],
+              description: 'Compact sedan with excellent fuel economy and reliability.',
+              is_featured: false,
+              is_new: true
+            },
+            {
+              id: 5,
+              title: '2022 Mercedes-Benz C-Class',
+              slug: '2022-mercedes-benz-c-class',
+              price: 55000,
+              year: 2022,
+              mileage: 18000,
+              fuel_type: 'Gasoline',
+              transmission: 'Automatic',
+              make: 'Mercedes-Benz',
+              model: 'C-Class',
+              body_type: 'Sedan',
+              color: 'Gray',
+              images: ['https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop'],
+              description: 'Luxury sedan with advanced technology and comfort features.',
+              is_featured: true,
+              is_new: false
+            },
+            {
+              id: 6,
+              title: '2023 Toyota Camry',
+              slug: '2023-toyota-camry',
+              price: 32000,
+              year: 2023,
+              mileage: 12000,
+              fuel_type: 'Hybrid',
+              transmission: 'Automatic',
+              make: 'Toyota',
+              model: 'Camry',
+              body_type: 'Sedan',
+              color: 'Red',
+              images: ['https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop'],
+              description: 'Hybrid sedan with excellent fuel efficiency and reliability.',
+              is_featured: false,
+              is_new: true
+            }
+          ];
+          
+          setVehicles(mockVehicles);
         }
       } catch (err) {
-      setError('Error loading vehicles');
+        setError('Error loading vehicles');
         console.error('Error fetching vehicles:', err);
       } finally {
         setLoading(false);

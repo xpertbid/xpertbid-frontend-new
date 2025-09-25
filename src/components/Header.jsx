@@ -37,6 +37,18 @@ const Header = ({ className = '' }) => {
       { name: 'Upcoming', href: '/auctions/upcoming' },
       { name: 'Ended', href: '/auctions/ended' },
     ]},
+    { name: 'Vehicles', href: '/vehicles', hasDropdown: true, children: [
+      { name: 'All Vehicles', href: '/vehicles' },
+      { name: 'Cars', href: '/vehicles?type=car' },
+      { name: 'Trucks', href: '/vehicles?type=truck' },
+      { name: 'Motorcycles', href: '/vehicles?type=motorcycle' },
+    ]},
+    { name: 'Properties', href: '/properties', hasDropdown: true, children: [
+      { name: 'All Properties', href: '/properties' },
+      { name: 'Houses', href: '/properties?type=house' },
+      { name: 'Apartments', href: '/properties?type=apartment' },
+      { name: 'Commercial', href: '/properties?type=commercial' },
+    ]},
     { name: 'About', href: '/about', hasDropdown: false },
     { name: 'Contact', href: '/contact', hasDropdown: false },
   ];

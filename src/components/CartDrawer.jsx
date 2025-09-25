@@ -81,8 +81,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
           height: 100vh;
           background: white;
           z-index: 1000;
-          transition: right 0.3s ease;
-          box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+          transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+          border-left: 1px solid var(--gray-200);
         }
 
         .cart-drawer.open {
@@ -95,14 +96,21 @@ const CartDrawer = ({ isOpen, onClose }) => {
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: rgba(0,0,0,0.5);
-          z-index: -1;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          z-index: 999;
           opacity: 0;
-          transition: opacity 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
         }
 
         .cart-drawer.open .cart-drawer-overlay {
           opacity: 1;
+          pointer-events: auto;
+        }
+
+        .cart-drawer-overlay {
+          pointer-events: none;
         }
 
         .cart-drawer-content {
@@ -112,11 +120,35 @@ const CartDrawer = ({ isOpen, onClose }) => {
         }
 
         .cart-drawer-header {
-          padding: 20px;
-          border-bottom: 1px solid #eee;
+          padding: 24px;
+          border-bottom: 1px solid var(--gray-200);
           display: flex;
           justify-content: space-between;
           align-items: center;
+          background: var(--light-color);
+        }
+
+        .cart-drawer-header h5 {
+          font-family: var(--font-family-heading);
+          font-size: var(--font-size-h5);
+          font-weight: 600;
+          color: var(--secondary-color);
+          margin: 0;
+        }
+
+        .btn-close {
+          background: none;
+          border: none;
+          color: var(--gray-600);
+          cursor: pointer;
+          padding: 8px;
+          border-radius: var(--border-radius);
+          transition: all 0.2s ease;
+        }
+
+        .btn-close:hover {
+          background: var(--gray-100);
+          color: var(--secondary-color);
         }
 
         .cart-drawer-body {
@@ -128,8 +160,16 @@ const CartDrawer = ({ isOpen, onClose }) => {
         .cart-item {
           display: flex;
           align-items: center;
-          padding: 15px 0;
-          border-bottom: 1px solid #f0f0f0;
+          padding: 16px 0;
+          border-bottom: 1px solid var(--gray-200);
+          transition: background-color 0.2s ease;
+        }
+
+        .cart-item:hover {
+          background-color: var(--gray-50);
+          margin: 0 -20px;
+          padding-left: 20px;
+          padding-right: 20px;
         }
 
         .item-image {
@@ -150,14 +190,20 @@ const CartDrawer = ({ isOpen, onClose }) => {
         }
 
         .item-details h6 {
-          margin: 0 0 5px 0;
-          font-size: 14px;
+          margin: 0 0 8px 0;
+          font-family: var(--font-family-heading);
+          font-size: var(--font-size-base);
+          font-weight: 600;
+          color: var(--secondary-color);
+          line-height: 1.4;
         }
 
         .item-price {
-          margin: 0 0 10px 0;
-          font-weight: bold;
-          color: #333;
+          margin: 0 0 12px 0;
+          font-family: var(--font-family-heading);
+          font-weight: 700;
+          color: var(--primary-color);
+          font-size: var(--font-size-lg);
         }
 
         .quantity-controls {
@@ -167,31 +213,95 @@ const CartDrawer = ({ isOpen, onClose }) => {
         }
 
         .quantity-controls button {
-          width: 25px;
-          height: 25px;
-          border: 1px solid #ddd;
+          width: 28px;
+          height: 28px;
+          border: 1px solid var(--gray-300);
           background: white;
-          border-radius: 3px;
+          border-radius: var(--border-radius);
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          color: var(--gray-700);
+          transition: all 0.2s ease;
+        }
+
+        .quantity-controls button:hover {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          color: white;
+        }
+
+        .quantity-controls button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .quantity-controls span {
+          font-weight: 600;
+          color: var(--secondary-color);
+          min-width: 20px;
+          text-align: center;
         }
 
         .remove-item {
           background: none;
           border: none;
-          color: #999;
+          color: var(--gray-500);
           cursor: pointer;
-          padding: 5px;
+          padding: 8px;
+          border-radius: var(--border-radius);
+          transition: all 0.2s ease;
+        }
+
+        .remove-item:hover {
+          background: var(--danger-color);
+          color: white;
         }
 
         .cart-drawer-footer {
-          padding: 20px;
-          border-top: 1px solid #eee;
+          padding: 24px;
+          border-top: 1px solid var(--gray-200);
+          background: var(--light-color);
         }
 
         .cart-total {
-          margin-bottom: 15px;
+          margin-bottom: 20px;
           text-align: center;
-          font-size: 18px;
+          font-family: var(--font-family-heading);
+          font-size: var(--font-size-xl);
+          font-weight: 700;
+          color: var(--secondary-color);
+        }
+
+        .btn {
+          padding: 14px 24px;
+          font-family: var(--font-family-heading);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: var(--border-radius);
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-block;
+          border: 2px solid transparent;
+          cursor: pointer;
+        }
+
+        .btn-primary {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          color: white;
+          width: 100%;
+        }
+
+        .btn-primary:hover {
+          background: var(--primary-hover);
+          border-color: var(--primary-hover);
+          color: white;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(67, 172, 233, 0.3);
         }
 
         .empty-cart {

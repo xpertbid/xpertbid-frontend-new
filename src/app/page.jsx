@@ -8,6 +8,7 @@ import WoodMartProductGrid from '@/components/sections/WoodMartProductGrid';
 import WoodMartVehicles from '@/components/sections/WoodMartVehicles';
 import WoodMartProperties from '@/components/sections/WoodMartProperties';
 import WoodMartAuctions from '@/components/sections/WoodMartAuctions';
+import BlogSection from '@/components/sections/BlogSection';
 //import WoodMartNewsletter from '@/components/sections/WoodMartNewsletter';
 import { apiService, Product, Category } from '@/services/api';
 // Types removed - using plain JavaScript objects
@@ -41,6 +42,13 @@ export default function Home() {
           apiService.getAuctions()
         ]);
 
+        console.log('Raw API responses:');
+        console.log('Categories response:', categoriesResponse);
+        console.log('Featured Products response:', productsResponse);
+        console.log('Vehicles response:', vehiclesResponse);
+        console.log('Properties response:', propertiesResponse);
+        console.log('Auctions response:', auctionsResponse);
+
         if (categoriesResponse.success) {
           setCategories(categoriesResponse.data);
         }
@@ -64,6 +72,12 @@ export default function Home() {
         console.error('Error fetching data:', err);
         setError('Failed to load data. Please try again later.');
       } finally {
+        console.log('Categories:', categories.length);
+        console.log('Featured Products:', featuredProducts.length);
+        console.log('Vehicles:', vehicles.length);
+        console.log('Properties:', properties.length);
+        console.log('Auctions:', auctions.length);
+        
         setLoading(false);
       }
     };
@@ -838,62 +852,115 @@ export default function Home() {
   }) : mockFeaturedProducts;
 
   // Transform vehicles data
-  const displayVehicles = vehicles.length > 0 ? vehicles.slice(0, 12).map(vehicle => ({
-    id: vehicle.id,
-    name: vehicle.name || 'Vehicle',
-    slug: vehicle.slug || `vehicle-${vehicle.id}`,
-    price: vehicle.price || 0,
-    comparePrice: vehicle.sale_price,
-    image: vehicle.featured_image || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop',
-    rating: 4.5,
-    reviewsCount: Math.floor(Math.random() * 50) + 10,
-    year: vehicle.year || 2023,
-    mileage: vehicle.mileage || Math.floor(Math.random() * 50000) + 10000,
-    fuelType: vehicle.fuel_type || 'Gasoline',
-    transmission: vehicle.transmission || 'Automatic',
-    isNew: Math.random() > 0.7,
-    isFeatured: Math.random() > 0.8,
-    badge: Math.random() > 0.8 ? 'Premium' : undefined
-  })) : mockVehicles;
+  console.log('Raw vehicles data:', vehicles);
+  const displayVehicles = vehicles.length > 0 ? vehicles.slice(0, 12).map(vehicle => {
+    // Helper function to safely get first image for vehicles
+    const getFirstVehicleImage = (images) => {
+      if (!images) return 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+      if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+        } catch (error) {
+          return images; // If it's not JSON, return the string as-is
+        }
+      }
+      return 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop';
+    };
+
+    return {
+      id: vehicle.id,
+      name: vehicle.title || 'Vehicle',
+      slug: vehicle.slug || `vehicle-${vehicle.id}`,
+      price: vehicle.price || 0,
+      comparePrice: 349.99,
+      image: getFirstVehicleImage(vehicle.images),
+      rating: 4.5,
+      reviewsCount: Math.floor(Math.random() * 50) + 10,
+      year: vehicle.year || 2023,
+      mileage: vehicle.mileage || Math.floor(Math.random() * 50000) + 10000,
+      fuelType: vehicle.fuel_type || 'Gasoline',
+      transmission: vehicle.transmission || 'Automatic',
+      isNew: Math.random() > 0.7,
+      isFeatured: Math.random() > 0.8,
+      badge: Math.random() > 0.8 ? 'Premium' : undefined
+    };
+  }) : [];
 
   // Transform properties data
-  const displayProperties = properties.length > 0 ? properties.slice(0, 12).map(property => ({
-    id: property.id,
-    name: property.name || 'Property',
-    slug: property.slug || `property-${property.id}`,
-    price: property.price || 0,
-    comparePrice: property.sale_price,
-    image: property.featured_image || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop',
-    rating: 4.5,
-    reviewsCount: Math.floor(Math.random() * 50) + 10,
-    bedrooms: property.bedrooms || Math.floor(Math.random() * 4) + 1,
-    bathrooms: property.bathrooms || Math.floor(Math.random() * 3) + 1,
-    area: property.area || Math.floor(Math.random() * 2000) + 800,
-    propertyType: property.property_type || 'House',
-    location: property.location || 'City',
-    isNew: Math.random() > 0.7,
-    isFeatured: Math.random() > 0.8,
-    badge: Math.random() > 0.8 ? 'Featured' : undefined
-  })) : mockProperties;
+  const displayProperties = properties.length > 0 ? properties.slice(0, 12).map(property => {
+    // Helper function to safely get first image
+    const getFirstImage = (images) => {
+      if (!images) return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+      if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+        } catch {
+          return images; // If it's not JSON, return the string as-is
+        }
+      }
+      return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop';
+    };
+
+    return {
+      id: property.id,
+      name: property.title || 'Property',
+      slug: property.slug || `property-${property.id}`,
+      price: property.price || 0,
+      comparePrice: 349.99,
+      image: getFirstImage(property.images),
+      rating: 4.5,
+      reviewsCount: Math.floor(Math.random() * 50) + 10,
+      bedrooms: property.bedrooms || Math.floor(Math.random() * 4) + 1,
+      bathrooms: property.bathrooms || Math.floor(Math.random() * 3) + 1,
+      area: property.area_sqft || Math.floor(Math.random() * 2000) + 800,
+      propertyType: property.property_type || 'House',
+      location: `${property.city || 'City'}, ${property.state || 'State'}`,
+      isNew: Math.random() > 0.7,
+      isFeatured: property.is_featured || Math.random() > 0.8,
+      badge: Math.random() > 0.8 ? 'Featured' : undefined
+    };
+  }) : [];
 
   // Transform auctions data
-  const displayAuctions = auctions.length > 0 ? auctions.slice(0, 12).map(auction => ({
-    id: auction.id,
-    name: auction.product_name || 'Auction Item',
-    slug: auction.slug || `auction-${auction.id}`,
-    currentBid: auction.current_bid || Math.floor(Math.random() * 10000) + 100,
-    reservePrice: auction.reserve_price,
-    image: auction.product_image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
-    rating: 4.5,
-    reviewsCount: Math.floor(Math.random() * 50) + 10,
-    endTime: auction.end_time || new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-    bidCount: Math.floor(Math.random() * 50) + 5,
-    productName: auction.product_name || 'Auction Item',
-    sellerName: auction.seller_name || 'Seller',
-    isNew: Math.random() > 0.7,
-    isFeatured: Math.random() > 0.8,
-    badge: Math.random() > 0.8 ? 'Luxury' : undefined
-  })) : mockAuctions;
+  console.log('Raw auctions data:', auctions);
+  const displayAuctions = auctions.length > 0 ? auctions.slice(0, 12).map(auction => {
+    // Helper function to safely get first image for auctions
+    const getFirstAuctionImage = (images) => {
+      if (!images) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+      if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+      if (typeof images === 'string') {
+        try {
+          const parsed = JSON.parse(images);
+          return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+        } catch {
+          return images;
+        }
+      }
+      return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop';
+    };
+
+    return {
+      id: auction.id,
+      name: auction.product_name || 'Auction Item',
+      slug: auction.slug || `auction-${auction.id}`,
+      currentBid: auction.current_bid || Math.floor(Math.random() * 10000) + 100,
+      reservePrice: auction.reserve_price,
+      image: getFirstAuctionImage(auction.product_image),
+      rating: 4.5,
+      reviewsCount: Math.floor(Math.random() * 50) + 10,
+      endTime: auction.end_time || new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+      bidCount: Math.floor(Math.random() * 50) + 5,
+      productName: auction.product_name || 'Auction Item',
+      sellerName: auction.seller_name || 'Seller',
+      isNew: Math.random() > 0.7,
+      isFeatured: Math.random() > 0.8,
+      badge: Math.random() > 0.8 ? 'Luxury' : undefined
+    };
+  }) : [];
 
   return (
     <Layout>
@@ -947,6 +1014,9 @@ export default function Home() {
         showViewAll={true}
         viewAllLink="/properties"
       />
+      
+      {/* Blog Section */}
+      <BlogSection />
       
       {/* Newsletter Section */}
       

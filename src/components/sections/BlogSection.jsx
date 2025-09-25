@@ -12,6 +12,45 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
+        // For now, use mock data since the blog API doesn't exist
+        const mockBlogPosts = [
+          {
+            id: 1,
+            title: "Welcome to XpertBid",
+            slug: "welcome-to-xpertbid",
+            excerpt: "Discover the world of online auctions and bidding with XpertBid. Find amazing deals on products, vehicles, and properties.",
+            featured_image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
+            category: "General",
+            author: "Admin",
+            published_at: "2025-09-25"
+          },
+          {
+            id: 2,
+            title: "How to Win Auctions",
+            slug: "how-to-win-auctions",
+            excerpt: "Learn the best strategies and tips for winning auctions on XpertBid. From bidding timing to maximum bid strategies.",
+            featured_image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop",
+            category: "Tips",
+            author: "Admin",
+            published_at: "2025-09-24"
+          },
+          {
+            id: 3,
+            title: "Featured Vehicles This Week",
+            slug: "featured-vehicles-this-week",
+            excerpt: "Check out our featured vehicles this week. From luxury cars to practical SUVs, find your perfect ride.",
+            featured_image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&h=300&fit=crop",
+            category: "Vehicles",
+            author: "Admin",
+            published_at: "2025-09-23"
+          }
+        ];
+        
+        setBlogPosts(mockBlogPosts);
+        setLoading(false);
+        
+        // Uncomment this when the blog API is available
+        /*
         const response = await apiService.getBlogPosts();
         
         if (response.success) {
@@ -30,9 +69,9 @@ const BlogSection = () => {
           // Take only the first 3 posts for the home page
           setBlogPosts(transformedPosts.slice(0, 3));
         }
+        */
       } catch (error) {
         console.error('Error fetching blog posts:', error);
-      } finally {
         setLoading(false);
       }
     };

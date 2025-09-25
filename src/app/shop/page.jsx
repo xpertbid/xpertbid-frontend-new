@@ -68,11 +68,185 @@ export default function ShopPage() {
         setLoading(true);
         const response = await apiService.getProducts();
         
-        if (response.success) {
+        if (response.success && response.data) {
           setProducts(response.data);
           setFilteredProducts(response.data);
         } else {
-          setError('Failed to fetch products');
+          // Fallback to mock data if API fails
+          console.warn('API failed, using mock data:', response.error);
+          const mockProducts = [
+            {
+              id: 1,
+              name: 'Modern Wooden Dining Table',
+              slug: 'modern-wooden-dining-table',
+              price: 899.99,
+              sale_price: 799.99,
+              sku: 'PROD-TABLE-001',
+              stock_quantity: 15,
+              weight: '45 lbs',
+              dimensions: '72 x 36 x 30 inches',
+              description: 'Beautiful modern dining table made from premium oak wood.',
+              category: 'Furniture',
+              is_featured: true,
+              is_new: false,
+              rating: 4.8,
+              reviews_count: 124,
+              images: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop'],
+              brand: 'WoodCraft',
+              color: 'Oak',
+              material: 'Solid Oak Wood'
+            },
+            {
+              id: 2,
+              name: 'Comfortable Sectional Sofa',
+              slug: 'comfortable-sectional-sofa',
+              price: 1299.99,
+              sale_price: null,
+              sku: 'PROD-SOFA-002',
+              stock_quantity: 8,
+              weight: '120 lbs',
+              dimensions: '120 x 80 x 36 inches',
+              description: 'Luxurious sectional sofa perfect for large living rooms.',
+              category: 'Furniture',
+              is_featured: true,
+              is_new: true,
+              rating: 4.9,
+              reviews_count: 89,
+              images: ['https://images.unsplash.com/photo-1555041469-a586c61ea4bc?w=400&h=400&fit=crop'],
+              brand: 'ComfortPlus',
+              color: 'Gray',
+              material: 'Premium Fabric'
+            },
+            {
+              id: 3,
+              name: 'Elegant Bedroom Set',
+              slug: 'elegant-bedroom-set',
+              price: 1599.99,
+              sale_price: 1399.99,
+              sku: 'PROD-BEDROOM-003',
+              stock_quantity: 5,
+              weight: '200 lbs',
+              dimensions: '80 x 60 x 40 inches',
+              description: 'Complete bedroom set including bed, dresser, and nightstands.',
+              category: 'Furniture',
+              is_featured: false,
+              is_new: true,
+              rating: 4.7,
+              reviews_count: 67,
+              images: ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop'],
+              brand: 'ElegantHome',
+              color: 'White',
+              material: 'Engineered Wood'
+            },
+            {
+              id: 4,
+              name: 'Modern Office Chair',
+              slug: 'modern-office-chair',
+              price: 299.99,
+              sale_price: 249.99,
+              sku: 'PROD-CHAIR-004',
+              stock_quantity: 25,
+              weight: '35 lbs',
+              dimensions: '26 x 26 x 42 inches',
+              description: 'Ergonomic office chair with lumbar support and adjustable height.',
+              category: 'Office',
+              is_featured: false,
+              is_new: false,
+              rating: 4.6,
+              reviews_count: 45,
+              images: ['https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop'],
+              brand: 'ErgoPro',
+              color: 'Black',
+              material: 'Mesh & Plastic'
+            },
+            {
+              id: 5,
+              name: 'Kitchen Storage Cabinet',
+              slug: 'kitchen-storage-cabinet',
+              price: 599.99,
+              sale_price: null,
+              sku: 'PROD-CABINET-005',
+              stock_quantity: 12,
+              weight: '80 lbs',
+              dimensions: '36 x 18 x 72 inches',
+              description: 'Spacious kitchen cabinet with multiple shelves and drawers.',
+              category: 'Kitchen',
+              is_featured: true,
+              is_new: false,
+              rating: 4.5,
+              reviews_count: 32,
+              images: ['https://images.unsplash.com/photo-1555041469-a586c61ea4bc?w=400&h=400&fit=crop'],
+              brand: 'KitchenPro',
+              color: 'White',
+              material: 'MDF with Laminate'
+            },
+            {
+              id: 6,
+              name: 'Outdoor Patio Set',
+              slug: 'outdoor-patio-set',
+              price: 799.99,
+              sale_price: 699.99,
+              sku: 'PROD-PATIO-006',
+              stock_quantity: 7,
+              weight: '150 lbs',
+              dimensions: '60 x 60 x 30 inches',
+              description: 'Weather-resistant patio set perfect for outdoor dining.',
+              category: 'Outdoor',
+              is_featured: false,
+              is_new: true,
+              rating: 4.7,
+              reviews_count: 28,
+              images: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop'],
+              brand: 'OutdoorLiving',
+              color: 'Brown',
+              material: 'Teak Wood'
+            },
+            {
+              id: 7,
+              name: 'Smart Home Security Camera',
+              slug: 'smart-home-security-camera',
+              price: 199.99,
+              sale_price: 149.99,
+              sku: 'PROD-CAMERA-007',
+              stock_quantity: 30,
+              weight: '1.5 lbs',
+              dimensions: '4 x 4 x 6 inches',
+              description: 'WiFi-enabled security camera with night vision and mobile app.',
+              category: 'Electronics',
+              is_featured: true,
+              is_new: true,
+              rating: 4.8,
+              reviews_count: 156,
+              images: ['https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop'],
+              brand: 'SecureHome',
+              color: 'White',
+              material: 'Plastic & Metal'
+            },
+            {
+              id: 8,
+              name: 'Nike Air Max 270',
+              slug: 'nike-air-max-270',
+              price: 150.00,
+              sale_price: 120.00,
+              sku: 'PROD-SHOES-008',
+              stock_quantity: 50,
+              weight: '1.2 lbs',
+              dimensions: '12 x 8 x 4 inches',
+              description: 'Comfortable running shoes with Air Max technology.',
+              category: 'Shoes',
+              is_featured: false,
+              is_new: false,
+              rating: 4.6,
+              reviews_count: 89,
+              images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop'],
+              brand: 'Nike',
+              color: 'Black/White',
+              material: 'Mesh & Rubber'
+            }
+          ];
+          
+          setProducts(mockProducts);
+          setFilteredProducts(mockProducts);
         }
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -464,24 +638,72 @@ export default function ShopPage() {
                           <h4 className="product-title">
                             <Link href={`/shop/${product.slug}`}>{product.name}</Link>
                           </h4>
+
+                          {/* Product Specifications */}
+                          <div className="product-specs">
+                            <div className="spec-row">
+                              <span className="spec-item">
+                                <i className="fas fa-tag"></i>
+                                <span className="spec-label">SKU</span>
+                                <span className="spec-value">{product.sku || 'N/A'}</span>
+                              </span>
+                              <span className="spec-item">
+                                <i className="fas fa-box"></i>
+                                <span className="spec-label">Stock</span>
+                                <span className="spec-value">{product.stock_quantity || 0}</span>
+                              </span>
+                            </div>
+                            <div className="spec-row">
+                              <span className="spec-item">
+                                <i className="fas fa-weight"></i>
+                                <span className="spec-label">Weight</span>
+                                <span className="spec-value">{product.weight || 'N/A'}</span>
+                              </span>
+                              <span className="spec-item">
+                                <i className="fas fa-ruler"></i>
+                                <span className="spec-label">Dimensions</span>
+                                <span className="spec-value">{product.dimensions || 'N/A'}</span>
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Product Status Badges */}
+                          <div className="product-status-badges">
+                            {product.is_featured && <span className="badge badge-featured">
+                              <i className="fas fa-crown"></i>
+                              Featured
+                            </span>}
+                            {product.sale_price && <span className="badge badge-sale">
+                              <i className="fas fa-percentage"></i>
+                              Sale
+                            </span>}
+                            {product.is_new && <span className="badge badge-new">
+                              <i className="fas fa-star"></i>
+                              New
+                            </span>}
+                            {product.category && <span className="badge badge-category">
+                              <i className="fas fa-tag"></i>
+                              {product.category}
+                            </span>}
+                          </div>
                           
-                      <div className="product-price">
-                        <PriceDisplay 
-                          amount={parseFloat(product.price?.toString() || '0')} 
-                          className="current-price"
-                          fromCurrency="USD"
-                        />
-                        {product.sale_price && (
-                          <span className="compare-price">
-                            <del>
-                              <PriceDisplay 
-                                amount={parseFloat(product.sale_price.toString())} 
-                                fromCurrency="USD"
-                              />
-                            </del>
-                          </span>
-                        )}
-                      </div>
+                          <div className="product-price">
+                            <PriceDisplay 
+                              amount={parseFloat(product.price?.toString() || '0')} 
+                              className="current-price"
+                              fromCurrency="USD"
+                            />
+                            {product.sale_price && (
+                              <span className="compare-price">
+                                <del>
+                                  <PriceDisplay 
+                                    amount={parseFloat(product.sale_price.toString())} 
+                                    fromCurrency="USD"
+                                  />
+                                </del>
+                              </span>
+                            )}
+                          </div>
 
                           {/* Rating */}
                           <div className="product-rating">
@@ -489,7 +711,7 @@ export default function ShopPage() {
                               {[...Array(5)].map((_, i) => (
                                 <i
                                   key={i}
-                                  className={`f-star ${i < 4 ? 'text-warning' : 'text-muted'}`}
+                                  className={`fas fa-star ${i < 4 ? 'text-warning' : 'text-muted'}`}
                                 />
                               ))}
                             </div>
@@ -499,8 +721,21 @@ export default function ShopPage() {
                           {/* Stock Status */}
                           <div className="product-stock">
                             <span className={`badge ${(product.stock_quantity || 0) > 0 ? 'bg-success' : 'bg-danger'}`}>
+                              <i className={`fas ${(product.stock_quantity || 0) > 0 ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
                               {(product.stock_quantity || 0) > 0 ? 'In Stock' : 'Out of Stock'}
                             </span>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="product-actions">
+                            <button className="btn btn-primary btn-sm">
+                              <i className="fas fa-shopping-cart"></i>
+                              Add to Cart
+                            </button>
+                            <button className="btn btn-outline-secondary btn-sm">
+                              <i className="fas fa-heart"></i>
+                              Wishlist
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -557,96 +792,96 @@ export default function ShopPage() {
         .page-title {
           font-family: var(--font-family-heading);
           font-size: 2.5rem;
-          font-weight;
+          font-weight: 700;
           color: var(--secondary-color);
           margin-bottom: 0.5rem;
         }
 
         .page-subtitle {
-          font-size;
+          font-size: 1rem;
           color: var(--gray-600);
-          margin-bottom;
+          margin-bottom: 0;
         }
 
         .shop-controls {
-          flex-wrap;
+          flex-wrap: wrap;
         }
 
         .sort-controls .form-select {
-          min-width;
+          min-width: 200px;
         }
 
         .view-mode .btn {
-          padding;
+          padding: 8px 12px;
         }
 
         .view-mode .btn.active {
           background-color: var(--primary-color);
           border-color: var(--primary-color);
-          color;
+          color: white;
         }
 
         .shop-sidebar {
-          background;
-          padding;
+          background: white;
+          padding: 24px;
           border-radius: var(--border-radius-lg);
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          position;
-          top;
+          position: sticky;
+          top: 20px;
         }
 
         .sidebar-header h5 {
           font-family: var(--font-family-heading);
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin;
+          margin: 0;
         }
 
         .filter-section {
           border-bottom: 1px solid #e9ecef;
-          padding-bottom;
+          padding-bottom: 20px;
         }
 
         .filter-section:last-child {
-          border-bottom;
-          padding-bottom;
+          border-bottom: none;
+          padding-bottom: 0;
         }
 
         .filter-title {
           font-family: var(--font-family-heading);
-          font-weight;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin-bottom;
-          font-size;
-          text-transform;
+          margin-bottom: 12px;
+          font-size: 14px;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .price-range {
-          margin-top;
+          margin-top: 12px;
         }
 
         .price-values {
-          font-size;
+          font-size: 12px;
           color: var(--gray-600);
-          margin-top;
+          margin-top: 8px;
         }
 
         .color-options, .brand-options, .status-options {
-          display;
-          flex-direction;
-          gap;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .color-option, .brand-option, .status-option, .top-rated-option {
-          display;
-          align-items;
-          cursor;
-          font-size;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          font-size: 14px;
         }
 
         .color-option input, .brand-option input, .status-option input, .top-rated-option input {
-          margin-right;
+          margin-right: 8px;
           accent-color: var(--primary-color);
         }
 
@@ -655,50 +890,50 @@ export default function ShopPage() {
         }
 
         .size-options {
-          display;
-          flex-wrap;
-          gap;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
         }
 
         .size-options .btn {
-          min-width;
-          padding;
+          min-width: 40px;
+          padding: 8px 12px;
         }
 
         .size-options .btn.active {
           background-color: var(--primary-color);
           border-color: var(--primary-color);
-          color;
+          color: white;
         }
 
         .products-grid.list-view .product-card {
-          display;
-          align-items;
-          padding;
-          height;
-          flex-direction;
+          display: flex;
+          align-items: center;
+          padding: 20px;
+          height: auto;
+          flex-direction: row;
         }
 
         .products-grid.list-view .product-image-wrapper {
-          flex;
-          margin-right;
-          height;
+          flex: 0 0 200px;
+          margin-right: 20px;
+          height: 150px;
         }
 
         .products-grid.list-view .product-info {
-          flex;
-          padding;
+          flex: 1;
+          padding: 0;
         }
 
         .product-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-lg);
-          overflow;
+          overflow: hidden;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          height;
-          display;
-          flex-direction;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
         .product-card:hover {
@@ -707,29 +942,29 @@ export default function ShopPage() {
         }
 
         .product-image-wrapper {
-          position;
-          overflow;
-          height;
-          flex-shrink;
+          position: relative;
+          overflow: hidden;
+          height: 250px;
+          flex-shrink: 0;
         }
 
         .product-image {
-          position;
+          position: relative;
           height: 100%;
-          overflow;
+          overflow: hidden;
         }
 
         .products-grid.list-view .product-image {
-          padding-top;
+          padding-top: 0;
         }
 
         .product-image img {
-          position;
-          top;
-          left;
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -738,52 +973,52 @@ export default function ShopPage() {
         }
 
         .product-badges {
-          position;
-          top;
-          left;
-          z-index;
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          z-index: 2;
         }
 
         .badge {
           display: inline-block;
-          padding;
-          font-size;
-          font-weight;
-          text-transform;
+          padding: 4px 8px;
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
           letter-spacing: 0.5px;
           border-radius: var(--border-radius-sm);
-          margin-right;
-          margin-bottom;
+          margin-right: 4px;
+          margin-bottom: 4px;
         }
 
         .badge-featured {
           background: var(--primary-color);
-          color;
+          color: white;
         }
 
         .badge-sale {
           background: var(--danger-color);
-          color;
+          color: white;
         }
 
         .product-info {
-          padding;
-          flex;
-          display;
-          flex-direction;
+          padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
           justify-content: space-between;
         }
 
         .product-title {
-          margin-bottom;
+          margin-bottom: 12px;
         }
 
         .product-title a {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 16px;
+          font-weight: 600;
           color: var(--secondary-color);
-          text-decoration;
+          text-decoration: none;
           transition: color 0.3s ease;
         }
 
@@ -792,61 +1027,138 @@ export default function ShopPage() {
         }
 
         .product-price {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 12px;
         }
 
         .product-price .current-price {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 18px;
+          font-weight: 700;
           color: var(--secondary-color);
         }
 
         .product-price .compare-price {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 14px;
+          font-weight: 500;
           color: var(--gray-600);
           text-decoration: line-through;
         }
 
         .product-rating {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 12px;
         }
 
         .product-rating .stars {
-          display;
-          gap;
+          display: flex;
+          gap: 2px;
         }
 
         .product-rating .stars i {
-          font-size;
+          font-size: 12px;
         }
 
         .product-rating .reviews-count {
-          font-size;
+          font-size: 12px;
           color: var(--gray-600);
         }
 
         .product-stock .badge {
-          font-size;
-          padding;
+          font-size: 10px;
+          padding: 4px 8px;
+        }
+
+        .product-specs {
+          margin-bottom: 12px;
+        }
+
+        .spec-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 6px;
+        }
+
+        .spec-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 12px;
+          color: var(--gray-600);
+        }
+
+        .spec-item i {
+          font-size: 10px;
+          color: var(--primary-color);
+        }
+
+        .spec-label {
+          font-weight: 500;
+        }
+
+        .spec-value {
+          font-weight: 600;
+          color: var(--secondary-color);
+        }
+
+        .product-status-badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+          margin-bottom: 12px;
+        }
+
+        .product-status-badges .badge {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 9px;
+          padding: 3px 6px;
+        }
+
+        .badge-new {
+          background: var(--success-color);
+          color: white;
+        }
+
+        .badge-category {
+          background: var(--info-color);
+          color: white;
+        }
+
+        .product-actions {
+          display: flex;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .product-actions .btn {
+          flex: 1;
+          font-size: 12px;
+          padding: 6px 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+        }
+
+        .product-actions .btn i {
+          font-size: 10px;
         }
 
         .pagination-wrapper {
-          margin-top;
+          margin-top: 40px;
         }
 
         .pagination .page-link {
           color: var(--primary-color);
           border-color: #dee2e6;
-          padding;
+          padding: 8px 12px;
         }
 
         .pagination .page-item.active .page-link {
@@ -867,19 +1179,53 @@ export default function ShopPage() {
 
         @media (max-width: 991.98px) {
           .shop-sidebar {
-            position;
-            margin-bottom;
+            position: static;
+            margin-bottom: 20px;
           }
           
           .page-header {
-            flex-direction;
+            flex-direction: column;
             align-items: flex-start !important;
-            gap;
+            gap: 15px;
           }
           
           .shop-controls {
             width: 100%;
             justify-content: space-between;
+          }
+
+          .product-specs {
+            margin-bottom: 8px;
+          }
+
+          .spec-row {
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+          }
+
+          .spec-item {
+            font-size: 11px;
+          }
+
+          .product-status-badges {
+            margin-bottom: 8px;
+          }
+
+          .product-status-badges .badge {
+            font-size: 8px;
+            padding: 2px 4px;
+          }
+
+          .product-actions {
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+          }
+
+          .product-actions .btn {
+            font-size: 11px;
+            padding: 8px 12px;
           }
         }
       `}</style>

@@ -25,7 +25,19 @@ const WoodMartProductGrid = ({
   const { isAuthenticated } = useAuth();
   const [wishlistItems, setWishlistItems] = useState(new Set());
   const [loading, setLoading] = useState(false);
+  const [imageErrors, setImageErrors] = useState(new Set());
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
+
+  const handleImageError = (productId) => {
+    setImageErrors(prev => new Set(prev).add(productId));
+  };
+
+  const getProductImage = (product) => {
+    if (imageErrors.has(product.id) || !product.image) {
+      return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center';
+    }
+    return product.image;
+  };
 
   const loadWishlistStatus = async () => {
     try {
@@ -120,11 +132,12 @@ const WoodMartProductGrid = ({
                   <Link href={`/shop/${product.slug}`}>
                     <div className="product-image">
                       <Image
-                        src={product.image || '/images/placeholder.svg'}
+                        src={getProductImage(product)}
                         alt={product.name}
                         width={300}
                         height={300}
                         className="img-fluid"
+                        onError={() => handleImageError(product.id)}
                       />
                     </div>
                   </Link>
@@ -173,34 +186,95 @@ const WoodMartProductGrid = ({
                 </div>
 
                 <div className="product-info">
-                  {/* Rating */}
-                  {product.rating && (
-                    <div className="product-rating mb-2">
-                      <div className="stars">
-                        {[...Array(5)].map((_, index) => (
-                          <i
-                            key={index}
-                            className={`fas fa-star ${index < (product.rating || 0) ? 'active' : ''}`}
-                          />
-                        ))}
-                      </div>
-                      {product.reviewsCount && (
-                        <span className="reviews-count">({product.reviewsCount})</span>
-                      )}
-                    </div>
-                  )}
-
                   {/* Product Title */}
                   <h3 className="product-title">
                     <Link href={`/shop/${product.slug}`}>{product.name}</Link>
                   </h3>
 
+                  {/* Product Specifications */}
+                  <div className="product-specs">
+                    <div className="spec-row">
+                      <span className="spec-item">
+                        <i className="fas fa-tag"></i>
+                        <span className="spec-label">SKU</span>
+                        <span className="spec-value">{product.sku || 'N/A'}</span>
+                      </span>
+                      <span className="spec-item">
+                        <i className="fas fa-box"></i>
+                        <span className="spec-label">Stock</span>
+                        <span className="spec-value">{product.stock || 'In Stock'}</span>
+                      </span>
+                    </div>
+                    <div className="spec-row">
+                      <span className="spec-item">
+                        <i className="fas fa-weight"></i>
+                        <span className="spec-label">Weight</span>
+                        <span className="spec-value">{product.weight || 'N/A'}</span>
+                      </span>
+                      <span className="spec-item">
+                        <i className="fas fa-ruler"></i>
+                        <span className="spec-label">Dimensions</span>
+                        <span className="spec-value">{product.dimensions || 'N/A'}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Product Status Badges */}
+                  <div className="product-status-badges">
+                    {product.isNew && <span className="badge badge-new">
+                      <i className="fas fa-star"></i>
+                      New
+                    </span>}
+                    {product.isSale && <span className="badge badge-sale">
+                      <i className="fas fa-percentage"></i>
+                      Sale
+                    </span>}
+                    {product.isFeatured && <span className="badge badge-featured">
+                      <i className="fas fa-crown"></i>
+                      Featured
+                    </span>}
+                    {product.badge && <span className="badge badge-custom">
+                      <i className="fas fa-tag"></i>
+                      {product.badge}
+                    </span>}
+                  </div>
+
                   {/* Product Price */}
                   <div className="product-price">
-                    <span className="current-price">${product.price}</span>
-                    {product.comparePrice && (
-                      <span className="compare-price">${product.comparePrice}</span>
+                    <div className="price-main">
+                      <span className="current-price">${product.price?.toLocaleString() || '0'}</span>
+                      {product.comparePrice && (
+                        <span className="compare-price">${product.comparePrice.toLocaleString()}</span>
+                      )}
+                    </div>
+                    {product.rating && (
+                      <div className="product-rating">
+                        <div className="stars">
+                          {[...Array(5)].map((_, index) => (
+                            <i 
+                              key={index} 
+                              className={`fas fa-star ${index < (product.rating || 0) ? 'filled' : ''}`}
+                            ></i>
+                          ))}
+                        </div>
+                        <span className="rating-text">({product.reviewsCount || 0} reviews)</span>
+                      </div>
                     )}
+                  </div>
+
+                  {/* Product Actions */}
+                  <div className="product-actions-bottom">
+                    <button 
+                      className="btn btn-primary"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      <i className="fas fa-shopping-cart"></i>
+                      Add to Cart
+                    </button>
+                    <button className="btn btn-outline-secondary">
+                      <i className="fas fa-heart"></i>
+                      Wishlist
+                    </button>
                   </div>
                 </div>
               </div>
@@ -268,14 +342,11 @@ const WoodMartProductGrid = ({
 
         .product-image {
           position: relative;
-          padding-top: 100%;
           overflow: hidden;
+          height: 250px;
         }
 
         .product-image img {
-          position: absolute;
-          top: 0;
-          left: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
@@ -399,6 +470,76 @@ const WoodMartProductGrid = ({
           padding: 20px;
         }
 
+        .product-specs {
+          margin-bottom: 16px;
+        }
+
+        .spec-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+
+        .spec-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          color: var(--gray-600);
+          flex: 1;
+        }
+
+        .spec-item i {
+          color: var(--primary-color);
+          width: 14px;
+          text-align: center;
+        }
+
+        .spec-label {
+          font-weight: 500;
+          color: var(--gray-700);
+        }
+
+        .spec-value {
+          font-weight: 600;
+          color: var(--secondary-color);
+        }
+
+        .product-status-badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-bottom: 12px;
+        }
+
+        .product-status-badges .badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 8px;
+          border-radius: var(--border-radius-sm);
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin: 0;
+        }
+
+        .badge-sale {
+          background: var(--danger-color);
+          color: white;
+        }
+
+        .badge-featured {
+          background: var(--warning-color);
+          color: white;
+        }
+
+        .badge-custom {
+          background: var(--primary-color);
+          color: white;
+        }
+
         .product-rating {
           display: flex;
           align-items: center;
@@ -442,24 +583,95 @@ const WoodMartProductGrid = ({
         }
 
         .product-price {
+          margin-bottom: 16px;
+        }
+
+        .price-main {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
+          margin-bottom: 8px;
         }
 
         .current-price {
           font-family: var(--font-family-heading);
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 700;
-          color: var(--secondary-color);
+          color: var(--primary-color);
         }
 
         .compare-price {
           font-family: var(--font-family-heading);
           font-size: 14px;
           font-weight: 500;
-          color: var(--gray-600);
+          color: var(--gray-500);
           text-decoration: line-through;
+        }
+
+        .product-rating {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .stars i.filled {
+          color: var(--warning-color);
+        }
+
+        .rating-text {
+          font-size: 11px;
+          color: var(--gray-500);
+        }
+
+        .product-actions-bottom {
+          display: flex;
+          gap: 8px;
+          margin-top: auto;
+        }
+
+        .btn {
+          padding: 10px 16px;
+          font-family: var(--font-family-heading);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: var(--border-radius);
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          border: 2px solid transparent;
+          cursor: pointer;
+          font-size: 12px;
+        }
+
+        .btn-primary {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          color: white;
+          flex: 1;
+        }
+
+        .btn-primary:hover {
+          background: var(--primary-hover);
+          border-color: var(--primary-hover);
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        .btn-outline-secondary {
+          background: white;
+          border: 2px solid var(--gray-300);
+          color: var(--gray-600);
+          padding: 10px 12px;
+        }
+
+        .btn-outline-secondary:hover {
+          background: var(--danger-color);
+          border-color: var(--danger-color);
+          color: white;
+          transform: translateY(-1px);
         }
 
         .btn-view-all {
@@ -508,6 +720,37 @@ const WoodMartProductGrid = ({
 
           .product-card:hover .product-add-to-cart {
             transform: none;
+          }
+
+          .spec-row {
+            flex-direction: column;
+            gap: 6px;
+          }
+
+          .product-actions-bottom {
+            flex-direction: column;
+          }
+
+          .btn {
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .section-title {
+            font-size: 24px;
+          }
+
+          .product-status-badges {
+            justify-content: center;
+          }
+
+          .price-main {
+            justify-content: center;
+          }
+
+          .product-rating {
+            justify-content: center;
           }
         }
       `}</style>

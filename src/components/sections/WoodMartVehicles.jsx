@@ -1,37 +1,29 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import PriceDisplay from '@/components/PriceDisplay';
-import TranslatedText from '@/components/TranslatedText';
-
-
-
-
 
 const WoodMartVehicles = ({
   title = "Featured Vehicles",
   subtitle = "Find your perfect ride",
-  vehicles,
+  vehicles = [],
   columns = 4,
   showViewAll = true,
   viewAllLink = "/vehicles"
 }) => {
+  const [imageErrors, setImageErrors] = useState(new Set());
   const gridClass = `col-lg-${12 / columns} col-md-6 col-sm-6 col-12`;
 
-  // Helper function to safely get first image
-  const getFirstImage = (images)=> {
-    if (!images) return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
-    if (Array.isArray(images)) return images[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
-    if (typeof images === 'string') {
-      try {
-        const parsed = JSON.parse(images);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
-      } catch {
-        return images; // If it's not JSON, treat }
+  const handleImageError = (vehicleId) => {
+    setImageErrors(prev => new Set(prev).add(vehicleId));
+  };
+
+  const getVehicleImage = (vehicle) => {
+    if (imageErrors.has(vehicle.id) || !vehicle.image) {
+      return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop&crop=center';
     }
-    return 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&h=200&fit=crop';
+    return vehicle.image;
   };
 
   return (
@@ -39,137 +31,128 @@ const WoodMartVehicles = ({
       <div className="container">
         {/* Section Header */}
         <div className="section-header text-center mb-5">
-          <span className="section-subtitle">
-            <TranslatedText text={subtitle} />
-          </span>
-          <h2 className="section-title">
-            <TranslatedText text={title} />
-          </h2>
+          <span className="section-subtitle">{subtitle}</span>
+          <h2 className="section-title">{title}</h2>
         </div>
 
         {/* Vehicles Grid */}
-        <div className="row g-4">
-          {vehicles.map((vehicle, index) => (
-            <div key={`vehicle-${index}`} className={gridClass}>
-              <div className="vehicle-card" onClick={() => window.location.href = `/vehicles/${vehicle.slug}`} style={{ cursor: 'pointer' }}>
-                <div className="vehicle-link">
-                  <div className="vehicle-image-wrapper">
-                    <div className="vehicle-image">
-                      <Image
-                        src={getFirstImage(vehicle.image)}
-                        alt={vehicle.name}
-                        width={300}
-                        height={200}
-                        className="img-fluid"
-                      />
-                    </div>
-                    
-                    {/* Vehicle Badges */}
-                    <div className="vehicle-badges">
-                      {vehicle.isNew && <span className="badge badge-new">New</span>}
-                      {vehicle.isSale && <span className="badge badge-sale">Sale</span>}
-                      {vehicle.isFeatured && <span className="badge badge-featured">Featured</span>}
-                      {vehicle.badge && <span className="badge badge-custom">{vehicle.badge}</span>}
-                    </div>
-
-                    {/* Vehicle Overlay */}
-                    <div className="vehicle-overlay">
-                      <div className="vehicle-actions">
-                        <button className="btn-action btn-wishlist" title="Add to Wishlist">
-                          <i className="far fa-heart"></i>
-                        </button>
-                        <button className="btn-action btn-compare" title="Add to Compare">
-                          <i className="f-balance-scale"></i>
-                        </button>
-                        <button className="btn-action btn-quick-view" title="Quick View">
-                          <i className="f-eye"></i>
-                        </button>
-                      </div>
-                    </div>
+        <div className="row">
+          {vehicles && vehicles.length > 0 ? (
+            vehicles.map((vehicle, index) => (
+              <div key={`vehicle-${index}`} className={gridClass}>
+                <div className="vehicle-card">
+                  <div className="vehicle-image">
+                    <Image
+                      src={getVehicleImage(vehicle)}
+                      alt={vehicle.name || 'Vehicle'}
+                      width={300}
+                      height={200}
+                      className="img-fluid"
+                      onError={() => handleImageError(vehicle.id)}
+                    />
                   </div>
-
                   <div className="vehicle-content">
-                    <h3 className="vehicle-name">{vehicle.name}</h3>
+                    <h3 className="vehicle-name">{vehicle.name || 'Vehicle'}</h3>
                     
-                    {/* Vehicle Specs */}
+                    {/* Vehicle Specifications */}
                     <div className="vehicle-specs">
-                      {vehicle.year && (
+                      <div className="spec-row">
                         <span className="spec-item">
-                          <i className="f-calendar"></i>
-                          {vehicle.year}
+                          <i className="fas fa-calendar-alt"></i>
+                          <span className="spec-label">Year</span>
+                          <span className="spec-value">{vehicle.year || '2023'}</span>
                         </span>
-                      )}
-                      {vehicle.mileage && (
                         <span className="spec-item">
-                          <i className="f-tachometer-alt"></i>
-                          {vehicle.mileage.toLocaleString()} km
+                          <i className="fas fa-tachometer-alt"></i>
+                          <span className="spec-label">Mileage</span>
+                          <span className="spec-value">{vehicle.mileage?.toLocaleString() || '0'} mi</span>
                         </span>
-                      )}
-                      {vehicle.fuelType && (
-                        <span className="spec-item">
-                          <i className="f-gas-pump"></i>
-                          {vehicle.fuelType}
-                        </span>
-                      )}
-                      {vehicle.transmission && (
-                        <span className="spec-item">
-                          <i className="f-cogs"></i>
-                          {vehicle.transmission}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Rating */}
-                    <div className="vehicle-rating">
-                      <div className="stars">
-                        {[...Array(5)].map((_, i) => (
-                          <i
-                            key={i}
-                            className={`f-star ${i < Math.floor(vehicle.rating) ? 'active' : ''}`}
-                          />
-                        ))}
                       </div>
-                      <span className="rating-text">
-                        ({vehicle.reviewsCount} reviews)
-                      </span>
+                      <div className="spec-row">
+                        <span className="spec-item">
+                          <i className="fas fa-gas-pump"></i>
+                          <span className="spec-label">Fuel</span>
+                          <span className="spec-value">{vehicle.fuelType || 'Gasoline'}</span>
+                        </span>
+                        <span className="spec-item">
+                          <i className="fas fa-cogs"></i>
+                          <span className="spec-label">Transmission</span>
+                          <span className="spec-value">{vehicle.transmission || 'Automatic'}</span>
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Price */}
+                    {/* Vehicle Status Badges */}
+                    <div className="vehicle-badges">
+                      {vehicle.isNew && <span className="badge badge-new">
+                        <i className="fas fa-star"></i>
+                        New
+                      </span>}
+                      {vehicle.isFeatured && <span className="badge badge-featured">
+                        <i className="fas fa-crown"></i>
+                        Featured
+                      </span>}
+                      {vehicle.badge && <span className="badge badge-custom">
+                        <i className="fas fa-tag"></i>
+                        {vehicle.badge}
+                      </span>}
+                    </div>
+
+                    {/* Price Section */}
                     <div className="vehicle-price">
-                      <PriceDisplay 
-                        amount={vehicle.price} 
-                        className="current-price"
-                        fromCurrency="USD"
-                      />
-                      {vehicle.comparePrice && (
-                        <span className="compare-price">
-                          <PriceDisplay 
-                            amount={vehicle.comparePrice} 
-                            fromCurrency="USD"
-                          />
-                        </span>
+                      <div className="price-main">
+                        <span className="current-price">${vehicle.price?.toLocaleString() || '0'}</span>
+                        {vehicle.comparePrice && (
+                          <span className="compare-price">${vehicle.comparePrice.toLocaleString()}</span>
+                        )}
+                      </div>
+                      {vehicle.rating && (
+                        <div className="vehicle-rating">
+                          <div className="stars">
+                            {[...Array(5)].map((_, index) => (
+                              <i
+                                key={index}
+                                className={`fas fa-star ${index < (vehicle.rating || 0) ? 'filled' : ''}`}
+                              ></i>
+                            ))}
+                          </div>
+                          <span className="rating-text">({vehicle.reviewsCount || 0} reviews)</span>
+                        </div>
                       )}
                     </div>
 
-                    {/* Action Button */}
-                    <div className="vehicle-actions-bottom">
-                      <Link href={`/vehicles/${vehicle.slug}`} className="btn btn-primary btn-block" onClick={(e) => e.stopPropagation()}>
-                        <TranslatedText text="View Details" />
+                    {/* Action Buttons */}
+                    <div className="vehicle-actions">
+                      <Link href={`/vehicles/${vehicle.slug || vehicle.id}`} className="btn btn-primary">
+                        <i className="fas fa-eye"></i>
+                        View Details
                       </Link>
+                      <button className="btn btn-outline-secondary">
+                        <i className="fas fa-heart"></i>
+                        Save
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="col-12 text-center py-5">
+              <div className="empty-state">
+                <i className="fas fa-car fa-3x text-muted mb-3"></i>
+                <h4 className="text-muted">No vehicles available</h4>
+                <p className="text-muted">Check back later for new vehicle listings.</p>
+              </div>
             </div>
-          ))}
+          )}
         </div>
 
         {/* View All Button */}
-        {showViewAll && (
-          <div className="text-center mt-5">
-            <Link href={viewAllLink} className="btn btn-outline-primary btn-lg">
+        {showViewAll && vehicles && vehicles.length > 0 && (
+          <div className="text-center mt-4">
+            <Link href={viewAllLink} className="btn btn-outline-primary">
               View All Vehicles
-              <i className="f-arrow-right ms-2"></i>
+              <i className="fas fa-arrow-right ms-2"></i>
             </Link>
           </div>
         )}
@@ -177,76 +160,58 @@ const WoodMartVehicles = ({
 
       <style jsx>{`
         .woodmart-vehicles {
-          background: var(--gray-100);
+          background: var(--light-color);
         }
 
         .section-header {
-          margin-bottom;
+          margin-bottom: 3rem;
         }
 
         .section-subtitle {
-          display: inline-block;
-          font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing;
+          display: block;
+          font-size: 14px;
+          font-weight: 600;
           color: var(--primary-color);
-          margin-bottom;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 8px;
         }
 
         .section-title {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 36px;
+          font-weight: 700;
           color: var(--secondary-color);
-          margin-bottom;
+          margin: 0;
+          line-height: 1.2;
         }
 
         .vehicle-card {
-          background;
+          background: white;
           border-radius: var(--border-radius-lg);
-          overflow;
+          box-shadow: var(--shadow-sm);
           transition: all 0.3s ease;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+          overflow: hidden;
           height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
         .vehicle-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .vehicle-link {
-          display;
-          text-decoration;
-          color;
-          height: 100%;
-        }
-
-        .vehicle-link:hover {
-          text-decoration;
-          color;
-        }
-
-        .vehicle-image-wrapper {
-          position;
-          overflow;
-          padding-top: 66.66%; /* 3:2 aspect ratio */
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
         }
 
         .vehicle-image {
-          position;
-          top;
-          left;
-          width: 100%;
-          height: 100%;
+          position: relative;
+          height: 250px;
+          overflow: hidden;
         }
 
         .vehicle-image img {
           width: 100%;
           height: 100%;
-          object-fit;
+          object-fit: cover;
           transition: transform 0.3s ease;
         }
 
@@ -254,206 +219,251 @@ const WoodMartVehicles = ({
           transform: scale(1.05);
         }
 
-        .vehicle-badges {
-          position;
-          top;
-          left;
-          z-index;
-          display;
-          flex-direction;
-          gap;
-        }
-
-        .badge {
-          font-size;
-          font-weight;
-          text-transform;
-          letter-spacing: 0.5px;
-          padding;
-          border-radius: var(--border-radius-sm);
-        }
-
-        .badge-new {
-          background: var(--success-color);
-          color;
-        }
-
-        .badge-sale {
-          background: var(--accent-color);
-          color;
-        }
-
-        .badge-featured {
-          background: var(--primary-color);
-          color;
-        }
-
-        .badge-custom {
-          background: var(--warning-color);
-          color;
-        }
-
-        .vehicle-overlay {
-          position;
-          top;
-          left;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.7);
-          display;
-          align-items;
-          justify-content;
-          opacity;
-          transition: opacity 0.3s ease;
-          z-index;
-        }
-
-        .vehicle-card:hover .vehicle-overlay {
-          opacity;
-        }
-
-        .vehicle-actions {
-          display;
-          gap;
-        }
-
-        .btn-action {
-          width;
-          height;
-          border-radius: 50%;
-          border;
-          background;
-          color: var(--secondary-color);
-          display;
-          align-items;
-          justify-content;
-          transition: all 0.3s ease;
-          cursor;
-        }
-
-        .btn-action:hover {
-          background: var(--primary-color);
-          color;
-          transform: scale(1.1);
-        }
-
         .vehicle-content {
-          padding;
+          padding: 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .vehicle-name {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 18px;
+          font-weight: 600;
           color: var(--secondary-color);
-          margin-bottom;
+          margin-bottom: 15px;
           line-height: 1.3;
         }
 
         .vehicle-specs {
-          display;
-          flex-wrap;
-          gap;
-          margin-bottom;
+          margin-bottom: 16px;
+        }
+
+        .spec-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
         }
 
         .spec-item {
-          display;
-          align-items;
-          gap;
-          font-size;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
           color: var(--gray-600);
+          flex: 1;
         }
 
         .spec-item i {
           color: var(--primary-color);
-          width;
+          width: 14px;
+          text-align: center;
         }
 
-        .vehicle-rating {
-          display;
-          align-items;
-          gap;
-          margin-bottom;
+        .spec-label {
+          font-weight: 500;
+          color: var(--gray-700);
         }
 
-        .stars {
-          display;
-          gap;
+        .spec-value {
+          font-weight: 600;
+          color: var(--secondary-color);
         }
 
-        .stars i {
-          font-size;
-          color: var(--gray-300);
+        .vehicle-badges {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-bottom: 12px;
         }
 
-        .stars i.active {
-          color: var(--warning-color);
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 8px;
+          border-radius: var(--border-radius-sm);
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
-        .rating-text {
-          font-size;
-          color: var(--gray-600);
+        .badge-new {
+          background: var(--success-color);
+          color: white;
+        }
+
+        .badge-featured {
+          background: var(--warning-color);
+          color: white;
+        }
+
+        .badge-custom {
+          background: var(--primary-color);
+          color: white;
         }
 
         .vehicle-price {
-          margin-bottom;
+          margin-bottom: 16px;
+        }
+
+        .price-main {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
         }
 
         .current-price {
           font-family: var(--font-family-heading);
-          font-size;
-          font-weight;
+          font-size: 20px;
+          font-weight: 700;
           color: var(--primary-color);
         }
 
         .compare-price {
-          font-size;
+          font-family: var(--font-family-heading);
+          font-size: 14px;
+          font-weight: 500;
           color: var(--gray-500);
           text-decoration: line-through;
-          margin-left;
         }
 
-        .vehicle-actions-bottom .btn {
-          width: 100%;
-          font-size;
-          font-weight;
-          padding;
+        .vehicle-rating {
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
 
-        /* Responsive Design */
-        @media (max-width) {
+        .stars {
+          display: flex;
+          gap: 2px;
+        }
+
+        .stars i {
+          font-size: 12px;
+          color: var(--gray-300);
+        }
+
+        .stars i.filled {
+          color: var(--warning-color);
+        }
+
+        .rating-text {
+          font-size: 11px;
+          color: var(--gray-500);
+        }
+
+        .vehicle-actions {
+          margin-top: auto;
+        }
+
+        .btn {
+          padding: 10px 16px;
+          font-family: var(--font-family-heading);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: var(--border-radius);
+          transition: all 0.3s ease;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          border: 2px solid transparent;
+          cursor: pointer;
+          font-size: 12px;
+        }
+
+        .btn-primary {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          color: white;
+          flex: 1;
+        }
+
+        .btn-primary:hover {
+          background: var(--primary-hover);
+          border-color: var(--primary-hover);
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        .btn-outline-secondary {
+          background: white;
+          border: 2px solid var(--gray-300);
+          color: var(--gray-600);
+          padding: 10px 12px;
+        }
+
+        .btn-outline-secondary:hover {
+          background: var(--danger-color);
+          border-color: var(--danger-color);
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        .empty-state {
+          padding: 3rem 1rem;
+        }
+
+        .empty-state i {
+          color: var(--gray-400);
+        }
+
+        .empty-state h4 {
+          margin-bottom: 1rem;
+          font-family: var(--font-family-heading);
+        }
+
+        @media (max-width: 768px) {
           .section-title {
-            font-size;
-          }
-
-          .vehicle-name {
-            font-size;
+            font-size: 28px;
           }
 
           .vehicle-content {
-            padding;
+            padding: 15px;
           }
 
-          .vehicle-specs {
-            gap;
+          .vehicle-name {
+            font-size: 16px;
           }
 
-          .spec-item {
-            font-size;
+          .spec-row {
+            flex-direction: column;
+            gap: 6px;
+          }
+
+          .vehicle-actions {
+            flex-direction: column;
+          }
+
+          .btn {
+            justify-content: center;
           }
         }
 
-        @media (max-width) {
-          .vehicle-specs {
-            flex-direction;
-            gap;
+        @media (max-width: 576px) {
+          .section-title {
+            font-size: 24px;
+          }
+
+          .vehicle-badges {
+            justify-content: center;
+          }
+
+          .price-main {
+            justify-content: center;
+          }
+
+          .vehicle-rating {
+            justify-content: center;
           }
         }
       `}</style>
     </section>
   );
 };
-}
-export default WoodMartVehicles;
 
+export default WoodMartVehicles;

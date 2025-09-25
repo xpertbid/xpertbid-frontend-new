@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '@/components/Layout';
 import { apiService } from '@/services/api';
 import { Property } from '@/types';
@@ -48,7 +48,7 @@ export default function PropertiesPage() {
     fetchProperties();
   }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...properties];
 
     // Price filter
@@ -100,11 +100,11 @@ export default function PropertiesPage() {
     }
 
     setFilteredProperties(filtered);
-  };
+  }, [properties, filters]);
 
   useEffect(() => {
     applyFilters();
-  }, [properties, filters, applyFilters]);
+  }, [applyFilters]);
 
     const fetchProperties = async () => {
       try {
