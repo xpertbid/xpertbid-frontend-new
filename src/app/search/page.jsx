@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
 import { useCurrency } from '@/contexts/CurrencyLanguageContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import TranslatedText, { TranslatedOption } from '@/components/TranslatedText';
 
 function SearchContent() {
@@ -22,6 +23,7 @@ function SearchContent() {
   const [sortOrder, setSortOrder] = useState('desc');
 
   const { formatPrice } = useCurrency();
+  const { trackSearch } = useAnalytics();
 
   const performSearch = useCallback(async () => {
     if (!query.trim()) {
@@ -44,8 +46,12 @@ function SearchContent() {
       
       if (response.success) {
         setProducts(response.data);
+        // Track search event
+        trackSearch(query, response.data.length);
       } else {
         setError('No products found for your search');
+        // Track search with 0 results
+        trackSearch(query, 0);
       }
     } catch (err) {
       console.error('Search error:', err);

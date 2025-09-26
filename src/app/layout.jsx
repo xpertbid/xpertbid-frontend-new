@@ -5,6 +5,10 @@ import { KycProvider } from "@/contexts/KycContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { CurrencyProvider, LanguageProvider } from '@/contexts/CurrencyLanguageContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import GoogleTagManager from '@/components/GoogleTagManager';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import GTMNoScript from '@/components/GTMNoScript';
+import PageTracker from '@/components/PageTracker';
 
 export const metadata = {
   title: "XpertBid - Premium Auctions, Vehicles, Properties & Products",
@@ -19,6 +23,9 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en">
       <head>
@@ -29,14 +36,24 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+        
+        {/* Google Tag Manager */}
+        {gtmId && <GoogleTagManager gtmId={gtmId} />}
+        
+        {/* Google Analytics */}
+        {gaId && <GoogleAnalytics gaId={gaId} />}
       </head>
       <body>
+        {/* Google Tag Manager (noscript) */}
+        {gtmId && <GTMNoScript gtmId={gtmId} />}
+        
         <AuthProvider>
           <KycProvider>
             <CartProvider>
               <CurrencyProvider>
                 <LanguageProvider>
                   <ErrorBoundary>
+                    <PageTracker />
                     {children}
                   </ErrorBoundary>
                 </LanguageProvider>

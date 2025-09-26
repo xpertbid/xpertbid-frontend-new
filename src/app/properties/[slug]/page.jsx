@@ -8,10 +8,12 @@ import Link from 'next/link';
 import { apiService } from '@/services/api';
 import { useCurrency } from '@/contexts/CurrencyLanguageContext';
 import PriceDisplay from '@/components/PriceDisplay';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function PropertyDetailPage() {
   const params = useParams();
   const { formatPrice } = useCurrency();
+  const { trackPropertyView } = useAnalytics();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,6 +35,13 @@ export default function PropertyDetailPage() {
       const response = await apiService.getProperty(propertyId);
       if (response.success) {
         setProperty(response.data);
+        // Track property view
+        trackPropertyView(
+          response.data.id,
+          response.data.title,
+          response.data.price,
+          'Property'
+        );
         // Fetch related properties
         fetchRelatedProperties(response.data);
       } else {

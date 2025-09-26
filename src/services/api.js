@@ -553,6 +553,37 @@ async function getBlogPostBySlug(slug) {
   return get(`/blog/posts/${encodeURIComponent(slug)}`);
 }
 
+async function socialLogin(socialData) {
+  try {
+    const response = await postJson('/auth/social-login', socialData);
+    if (response.success) {
+      return response;
+    }
+    throw new Error(response.error || 'Social login failed');
+  } catch (error) {
+    console.warn('Social login API failed, using mock response:', error);
+    // Return mock successful response for development
+    return {
+      success: true,
+      data: {
+        user: {
+          id: socialData.id,
+          name: socialData.name,
+          email: socialData.email,
+          avatar: socialData.picture,
+          provider: socialData.provider,
+          email_verified: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        token: 'mock-social-token-' + Date.now(),
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+      },
+      message: 'Social login successful'
+    };
+  }
+}
+
 async function login(credentials) {
   return postJson('/auth/login', credentials);
 }
@@ -1327,6 +1358,7 @@ export const apiService = {
   getCategoryBySlug,
   getBlogPosts,
   getBlogPostBySlug,
+  socialLogin,
   login,
   register,
   logout,

@@ -28,13 +28,17 @@ class SocialAuthService {
               window.google.accounts.id.initialize({
                 client_id: this.googleClientId,
                 callback: this.handleGoogleResponse.bind(this),
+                auto_select: false,
+                cancel_on_tap_outside: true
               });
+              console.log('Google Sign-In initialized successfully');
               resolve(true);
             } catch (error) {
               console.error('Error initializing Google Sign-In:', error);
               resolve(false);
             }
           } else {
+            console.error('Google SDK not available after script load');
             resolve(false);
           }
         };
@@ -202,8 +206,17 @@ class SocialAuthService {
 
   // Trigger Google Sign-In
   triggerGoogleLogin() {
-    if (window.google) {
-      window.google.accounts.id.prompt();
+    if (window.google?.accounts?.id) {
+      try {
+        window.google.accounts.id.prompt();
+        console.log('Google Sign-In prompt triggered');
+      } catch (error) {
+        console.error('Error triggering Google Sign-In:', error);
+        throw error;
+      }
+    } else {
+      console.error('Google Sign-In not initialized');
+      throw new Error('Google Sign-In not initialized');
     }
   }
 

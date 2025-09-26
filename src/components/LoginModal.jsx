@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { socialAuthService } from '../services/socialAuth';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const { login, register, clearError, error: authError } = useAuth();
+  const { trackLogin, trackSignUp } = useAnalytics();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -50,6 +52,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       // Check if login/register was successful
       if (result && result.success) {
         console.log('Login successful, closing modal and redirecting');
+        // Track login/signup event
+        if (isLoginMode) {
+          trackLogin('email');
+        } else {
+          trackSignUp('email');
+        }
         // Only close modal and redirect on successful login
         onLoginSuccess();
         
@@ -114,20 +122,26 @@ const handleGoogleLogin = async () => {
   setError('');
 
   try {
-    const ga = window?.google?.accounts?.id;
-    if (!ga) {
+    // Initialize Google Sign-In if not already done
+    await socialAuthService.initializeGoogle();
+    
+    if (!window.google?.accounts?.id) {
       throw new Error('Google Sign-In is not available. Please try again.');
     }
 
     const response = await new Promise((resolve, reject) => {
-      // 30s timeout so we don’t hang forever
+      // 30s timeout so we don't hang forever
       const timeout = setTimeout(() => {
         reject(new Error('Google Sign-In timed out. Please try again.'));
       }, 30000);
 
       // Define the callback Google will invoke
-      ga.callback = (credResponse) => {
+      const originalCallback = window.google.accounts.id.callback;
+      window.google.accounts.id.callback = (credResponse) => {
         clearTimeout(timeout);
+        // Restore original callback
+        window.google.accounts.id.callback = originalCallback;
+        
         socialAuthService
           .handleGoogleResponse(credResponse)
           .then(resolve)
@@ -135,17 +149,21 @@ const handleGoogleLogin = async () => {
       };
 
       try {
-        // Recommended way is via initialize, but prompt works if already initialized
-        // ga.initialize({ client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID, callback: ga.callback });
-        ga.prompt();
+        // Use the triggerGoogleLogin method
+        socialAuthService.triggerGoogleLogin();
       } catch (_err) {
         clearTimeout(timeout);
+        // Restore original callback
+        window.google.accounts.id.callback = originalCallback;
         reject(new Error('Failed to start Google Sign-In. Please try again.'));
       }
     });
 
-    if (response) {
+    if (response && response.success) {
+      trackLogin('google');
       onLoginSuccess();
+    } else {
+      throw new Error('Google login failed. Please try again.');
     }
   } catch (err) {
     const msg =
@@ -171,6 +189,7 @@ const handleGoogleLogin = async () => {
 
       const response = await socialAuthService.triggerFacebookLogin();
       if (response) {
+        trackLogin('facebook');
         onLoginSuccess();
       }
     } catch (error) {
