@@ -3,6 +3,7 @@
 import React from 'react';
 import Layout from '@/components/Layout';
 import GoogleSignInTest from '@/components/GoogleSignInTest';
+import ApiServiceTest from '@/components/ApiServiceTest';
 
 export default function GoogleTestPage() {
   return (
@@ -10,6 +11,8 @@ export default function GoogleTestPage() {
       <div className="container py-5">
         <h1>Google Sign-In Test Page</h1>
         <p>This page helps debug Google Sign-In integration issues.</p>
+        
+        <ApiServiceTest />
         
         <GoogleSignInTest />
         
